@@ -35,6 +35,7 @@ def ensure_dependencies():
         ("scipy", ["scipy"]),
         ("matplotlib", ["matplotlib"]),
         ("skan", ["skan"]),
+        ("sklearn", ["scikit-learn"]),
         ("fastapi", ["fastapi", "uvicorn", "python-multipart"]),
     ]
     for imp, pip_args in base:

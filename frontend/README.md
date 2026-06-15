@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+# Fungi AI Pipeline Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This directory contains the user interface for the Fungi AI Pipeline, built using **React**, **TypeScript**, and **Vite**.
 
-Currently, two official plugins are available:
+## 1. UI Aesthetic & Style Guide
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The UI is designed to look like a retro-modern, handcrafted **scientific instrument readout** rather than a generic SaaS product. Key design tokens are defined in [index.css](src/index.css):
 
-## React Compiler
+- **Typography**:
+  - Headings (`h1`, `h2`, `h3`): `Silkscreen` (monospaced retro-pixel display font).
+  - Body, Buttons, & Labels: `Space Mono` (utilitarian monospace).
+- **Color Palette**:
+  - Background: Muted black-navy (`#0a0e14`).
+  - Panels: Solid dark grey-navy (`#12171f`) with a `1px` subtle border (`#1e2a3a`).
+  - Accent color: Warm instrument amber (`#e6b450` / hover: `#ffcc5c`).
+  - Success indicators: Subdued green (`#7fd962`).
+- **Texture**:
+  - A fixed scanline vertical gradient overlay (`body::after` repeating-linear-gradient) to simulate a physical CRT monitor.
+  - Rectilinear flat panels with angular `4px` maximum border-radius (no glassmorphism, no round circles, no glowing SaaS gradients).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 2. Key Modules & Layout
 
-## Expanding the ESLint configuration
+The main interface is defined in [App.tsx](src/App.tsx) and features two workspaces:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Tab A: Analyze Video (Standard Mode)
+- **Upload Zone**: A dashed drag-and-drop box for time-lapse videos or multi-page TIFF files.
+- **Settings Drawer**: Configurable constants (Pixel size in \(\mu m\)/px, frame capture interval, minimum object size threshold, and DeepCell access token).
+- **Execution Lifecycle**:
+  - Submits file to `/api/upload`.
+  - Polls `/api/status/{job_id}` for completion.
+  - Renders a responsive dashboard:
+    - **KPI Cards**: Max growth rate, average growth rate, final branch points count, and maximum tip counts.
+    - **Overlay Video**: An HTML5 video player playing the processed mask/skeleton overlay on top of the original time-lapse (`/api/media/video`).
+    - **Recharts Analytics**: A dual-axis time-series chart showing total hyphal length (\(\mu m\)) and branch points over time.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Tab B: Auto-Tune Parameters (Calibration Mode)
+For segmenting complex or noisy slides where standard parameters fail.
+- **Multi-Frame Sampling**: Automatically extracts up to 5 evenly spaced frames from the uploaded video.
+- **Preference Loop**:
+  - Sends file to `/api/tune/start` to begin a tuning session.
+  - Presents a **2x2 grid** showing 4 different parameter candidate overlays.
+  - Overlays are vertically stacked composites of all 5 frames, allowing the researcher to evaluate parameter robustness across the entire time-lapse.
+  - The researcher selects the preferred overlay option.
+  - Submits choice to `/api/tune/feedback`, which runs a **Gaussian Process** model on the backend to propose the next 4 candidates.
+  - Completes after 6 rounds, showing the optimized settings and allowing the researcher to "Apply Parameters" to the main segmentation form.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 3. Development Commands
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+From the `frontend` directory:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Launch Development Server**:
+  ```bash
+  npm run dev
+  ```
+  Runs the local dev server at `http://localhost:5173`. Proxies backend requests to `http://localhost:8000/api`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Type-Check & Build**:
+  ```bash
+  npm run build
+  ```
+  Compiles TypeScript and bundles static assets into the `dist/` directory.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **Lint Code**:
+  ```bash
+  npm run lint
+  ```
+  Runs ESLint rules.

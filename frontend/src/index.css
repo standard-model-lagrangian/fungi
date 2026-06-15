@@ -43,7 +43,7 @@ h1, h2, h3 {
   font-family: 'Silkscreen', cursive;
 }
 
-.glass-panel {
+.instrument-panel {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   border-radius: 4px;

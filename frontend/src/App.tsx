@@ -234,7 +234,7 @@ function App() {
       </header>
 
       {!job && !results && (
-        <div className="glass-panel" style={{ maxWidth: mode === 'tuning' && tuningSessionId ? 800 : 600, margin: '0 auto' }}>
+        <div className="instrument-panel" style={{ maxWidth: mode === 'tuning' && tuningSessionId ? 800 : 600, margin: '0 auto' }}>
           <div style={{ display: 'flex', borderBottom: '1px solid var(--panel-border)', marginBottom: 20, paddingBottom: 10, gap: 16 }}>
             <button
               onClick={() => { if (!tuningSessionId) setMode('standard') }}
@@ -642,7 +642,7 @@ function App() {
       )}
 
       {job?.status === 'processing' && (
-        <div className="glass-panel" style={{ maxWidth: 600, margin: '0 auto', textAlign: 'center', padding: '60px 20px' }}>
+        <div className="instrument-panel" style={{ maxWidth: 600, margin: '0 auto', textAlign: 'center', padding: '60px 20px' }}>
           <div className="pulse-circle"></div>
           <h2>Segmenting Frames with CellSAM...</h2>
           <p style={{ color: 'var(--text-secondary)', marginTop: 12 }}>
@@ -652,7 +652,7 @@ function App() {
       )}
 
       {job?.status === 'failed' && (
-        <div className="glass-panel" style={{ maxWidth: 600, margin: '0 auto', textAlign: 'center' }}>
+        <div className="instrument-panel" style={{ maxWidth: 600, margin: '0 auto', textAlign: 'center' }}>
           <AlertCircle size={48} color="var(--accent)" style={{ margin: '0 auto 16px' }} />
           <h2>Processing Failed</h2>
           <p style={{ color: 'var(--text-secondary)', marginTop: 12 }}>
@@ -665,7 +665,7 @@ function App() {
       {results && job?.status === 'completed' && (
         <div className="dashboard-grid">
           <div className="main-content">
-            <div className="glass-panel" style={{ marginBottom: 24, padding: 0, overflow: 'hidden' }}>
+            <div className="instrument-panel" style={{ marginBottom: 24, padding: 0, overflow: 'hidden' }}>
               <div className="video-container">
                 <video 
                   src={`${API_URL}/media/video`} 
@@ -683,7 +683,7 @@ function App() {
               </div>
             </div>
 
-            <div className="glass-panel">
+            <div className="instrument-panel">
               <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Activity size={20} color="var(--accent)" /> Growth Dynamics
               </h3>
@@ -711,7 +711,7 @@ function App() {
           </div>
 
           <div className="sidebar">
-            <div className="glass-panel">
+            <div className="instrument-panel">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                 <h3>Statistics</h3>
                 <CheckCircle2 size={20} color="var(--success)" />
