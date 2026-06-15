@@ -1,0 +1,13 @@
+{
+  "frame_index": 155,
+  "pixels_recovered": 25264,
+  "pixels_removed_flicker": 47,
+  "area_before": 10841,
+  "area_after": 35937,
+  "middle_frame_recovery_applied": true,
+  "bridges_added": 0,
+  "tube_repair_applied": false,
+  "repair_skipped": false,
+  "repair_skip_reason": null,
+  "frame_elapsed_sec": 0.116
+}

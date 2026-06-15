@@ -1,0 +1,17 @@
+{
+  "frame_index": 20,
+  "image_width": 1280,
+  "image_height": 720,
+  "is_keyframe": true,
+  "accepted_preview": false,
+  "preview_status": "none",
+  "object_points": [],
+  "background_points": [],
+  "static_background_points": [],
+  "object_brush_strokes": [],
+  "background_brush_strokes": [],
+  "static_background_brush_strokes": [],
+  "bounding_boxes": [],
+  "timestamp": "2026-06-15T19:12:10.341989+00:00",
+  "tool_version": "1.1"
+}

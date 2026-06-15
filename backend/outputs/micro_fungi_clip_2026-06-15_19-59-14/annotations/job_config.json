@@ -1,0 +1,22 @@
+{
+  "annotation_mode": "keyframes",
+  "tool_version": "1.1",
+  "propagation_window": 10,
+  "use_temporal_propagation": true,
+  "repair_disconnected_tubes": false,
+  "max_bridge_gap_px": 15,
+  "max_bridge_angle_degrees": 45,
+  "use_temporal_continuity": true,
+  "temporal_memory_frames": 3,
+  "temporal_persistence_weight": 0.5,
+  "max_allowed_area_drop_fraction": 0.15,
+  "recover_missing_middle_frames": true,
+  "min_temporal_component_persistence": 2,
+  "allow_tip_growth": true,
+  "min_bridge_intensity_percentile": 60,
+  "max_endpoints_per_frame": 40,
+  "max_bridge_pair_checks": 80,
+  "max_bridges_per_frame": 5,
+  "frame_time_budget_sec": 25.0,
+  "timestamp": "2026-06-15T18:59:14.385856+00:00"
+}

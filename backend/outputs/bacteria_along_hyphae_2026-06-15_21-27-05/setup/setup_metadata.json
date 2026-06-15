@@ -1,0 +1,13 @@
+{
+  "setup_completed": false,
+  "roi_defined": true,
+  "ignore_defined": false,
+  "preview_frame_indices": {
+    "first": 0,
+    "middle": 326,
+    "last": 652
+  },
+  "updated_at": "2026-06-15T20:31:13.740323+00:00",
+  "image_width": 1280,
+  "image_height": 720
+}

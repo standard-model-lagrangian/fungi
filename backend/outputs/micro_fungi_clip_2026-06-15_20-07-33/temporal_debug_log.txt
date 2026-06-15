@@ -1,0 +1,1042 @@
+=== temporal continuity log 2026-06-15T19:12:19.695610+00:00 ===
+2026-06-15T19:12:19.702610+00:00 loaded 47 masks for temporal pass
+2026-06-15T19:12:19.859799+00:00 loaded hard annotation and correction masks for 47 frames
+2026-06-15T19:12:19.860801+00:00 loading static ignore mask
+2026-06-15T19:12:19.861800+00:00 processing 47 frames (repair=True)
+2026-06-15T19:12:19.861800+00:00 frame 1/47: begin
+2026-06-15T19:12:19.863302+00:00 frame 1: start load_mask
+2026-06-15T19:12:19.864305+00:00 frame 1: done load_mask (0.001s)
+2026-06-15T19:12:19.864808+00:00 frame 1: start intensity_maps
+2026-06-15T19:12:19.871811+00:00 frame 1: done intensity_maps (0.007s)
+2026-06-15T19:12:19.871811+00:00 frame 1: start nearby_persistent
+2026-06-15T19:12:19.877525+00:00 frame 1: done nearby_persistent (0.005s)
+2026-06-15T19:12:19.879523+00:00 frame 1: start middle_frame_recovery
+2026-06-15T19:12:19.879523+00:00 frame 1: done middle_frame_recovery (0.000s)
+2026-06-15T19:12:19.879523+00:00 frame 1: start cumulative_traversed_prior
+2026-06-15T19:12:19.899051+00:00 frame 1: done cumulative_traversed_prior (0.020s)
+2026-06-15T19:12:19.900051+00:00 frame 1: start flicker_removal
+2026-06-15T19:12:19.946114+00:00 frame 1: done flicker_removal (0.046s)
+2026-06-15T19:12:19.946114+00:00 frame 1: start bridge_repair
+2026-06-15T19:12:19.948117+00:00 frame 1: start bridge_repair_skeletonize
+2026-06-15T19:12:19.954618+00:00 frame 1: done bridge_repair_skeletonize (0.007s)
+2026-06-15T19:12:19.956128+00:00 frame 1: endpoints=12 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:19.957128+00:00 frame 1: bridges_added=0 pair_checks=66
+2026-06-15T19:12:19.958128+00:00 frame 1: done bridge_repair (0.011s)
+2026-06-15T19:12:19.962127+00:00 frame 1: complete elapsed=0.099s recovered=1015 removed=122
+2026-06-15T19:12:19.963631+00:00 frame 2/47: begin
+2026-06-15T19:12:19.963631+00:00 frame 2: start load_mask
+2026-06-15T19:12:19.964515+00:00 frame 2: done load_mask (0.001s)
+2026-06-15T19:12:19.965150+00:00 frame 2: start intensity_maps
+2026-06-15T19:12:19.971150+00:00 frame 2: done intensity_maps (0.007s)
+2026-06-15T19:12:19.972151+00:00 frame 2: start nearby_persistent
+2026-06-15T19:12:19.978179+00:00 frame 2: done nearby_persistent (0.006s)
+2026-06-15T19:12:19.979180+00:00 frame 2: start middle_frame_recovery
+2026-06-15T19:12:19.986197+00:00 frame 2: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:19.986197+00:00 frame 2: start cumulative_traversed_prior
+2026-06-15T19:12:20.012187+00:00 frame 2: done cumulative_traversed_prior (0.026s)
+2026-06-15T19:12:20.012187+00:00 frame 2: start flicker_removal
+2026-06-15T19:12:20.066313+00:00 frame 2: done flicker_removal (0.054s)
+2026-06-15T19:12:20.067313+00:00 frame 2: start bridge_repair
+2026-06-15T19:12:20.068313+00:00 frame 2: start bridge_repair_skeletonize
+2026-06-15T19:12:20.074675+00:00 frame 2: done bridge_repair_skeletonize (0.006s)
+2026-06-15T19:12:20.077321+00:00 frame 2: endpoints=13 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:20.077321+00:00 frame 2: bridges_added=0 pair_checks=78
+2026-06-15T19:12:20.078322+00:00 frame 2: done bridge_repair (0.011s)
+2026-06-15T19:12:20.082321+00:00 frame 2: complete elapsed=0.118s recovered=1903 removed=0
+2026-06-15T19:12:20.082321+00:00 frame 3/47: begin
+2026-06-15T19:12:20.082321+00:00 frame 3: start load_mask
+2026-06-15T19:12:20.083825+00:00 frame 3: done load_mask (0.001s)
+2026-06-15T19:12:20.083825+00:00 frame 3: start intensity_maps
+2026-06-15T19:12:20.089842+00:00 frame 3: done intensity_maps (0.006s)
+2026-06-15T19:12:20.089842+00:00 frame 3: start nearby_persistent
+2026-06-15T19:12:20.096852+00:00 frame 3: done nearby_persistent (0.007s)
+2026-06-15T19:12:20.097854+00:00 frame 3: start middle_frame_recovery
+2026-06-15T19:12:20.104364+00:00 frame 3: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:20.104868+00:00 frame 3: start cumulative_traversed_prior
+2026-06-15T19:12:20.128731+00:00 frame 3: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:20.129731+00:00 frame 3: start flicker_removal
+2026-06-15T19:12:20.190314+00:00 frame 3: done flicker_removal (0.060s)
+2026-06-15T19:12:20.190314+00:00 frame 3: start bridge_repair
+2026-06-15T19:12:20.191316+00:00 frame 3: start bridge_repair_skeletonize
+2026-06-15T19:12:20.198325+00:00 frame 3: done bridge_repair_skeletonize (0.006s)
+2026-06-15T19:12:20.200326+00:00 frame 3: endpoints=13 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:20.201326+00:00 frame 3: bridges_added=0 pair_checks=78
+2026-06-15T19:12:20.201326+00:00 frame 3: done bridge_repair (0.011s)
+2026-06-15T19:12:20.205455+00:00 frame 3: complete elapsed=0.122s recovered=2658 removed=0
+2026-06-15T19:12:20.205455+00:00 frame 4/47: begin
+2026-06-15T19:12:20.205455+00:00 frame 4: start load_mask
+2026-06-15T19:12:20.206456+00:00 frame 4: done load_mask (0.001s)
+2026-06-15T19:12:20.206456+00:00 frame 4: start intensity_maps
+2026-06-15T19:12:20.213454+00:00 frame 4: done intensity_maps (0.006s)
+2026-06-15T19:12:20.213454+00:00 frame 4: start nearby_persistent
+2026-06-15T19:12:20.221468+00:00 frame 4: done nearby_persistent (0.008s)
+2026-06-15T19:12:20.222468+00:00 frame 4: start middle_frame_recovery
+2026-06-15T19:12:20.228488+00:00 frame 4: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:20.228488+00:00 frame 4: start cumulative_traversed_prior
+2026-06-15T19:12:20.251837+00:00 frame 4: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:20.253340+00:00 frame 4: start flicker_removal
+2026-06-15T19:12:20.315813+00:00 frame 4: done flicker_removal (0.063s)
+2026-06-15T19:12:20.316813+00:00 frame 4: start bridge_repair
+2026-06-15T19:12:20.317816+00:00 frame 4: start bridge_repair_skeletonize
+2026-06-15T19:12:20.324327+00:00 frame 4: done bridge_repair_skeletonize (0.007s)
+2026-06-15T19:12:20.326746+00:00 frame 4: endpoints=15 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:20.326746+00:00 frame 4: bridges_added=0 pair_checks=80
+2026-06-15T19:12:20.327748+00:00 frame 4: done bridge_repair (0.011s)
+2026-06-15T19:12:20.330746+00:00 frame 4: complete elapsed=0.124s recovered=5289 removed=0
+2026-06-15T19:12:20.331748+00:00 frame 5/47: begin
+2026-06-15T19:12:20.331748+00:00 frame 5: start load_mask
+2026-06-15T19:12:20.333253+00:00 frame 5: done load_mask (0.001s)
+2026-06-15T19:12:20.333253+00:00 frame 5: start intensity_maps
+2026-06-15T19:12:20.338591+00:00 frame 5: done intensity_maps (0.006s)
+2026-06-15T19:12:20.339593+00:00 frame 5: start nearby_persistent
+2026-06-15T19:12:20.346603+00:00 frame 5: done nearby_persistent (0.007s)
+2026-06-15T19:12:20.347604+00:00 frame 5: start middle_frame_recovery
+2026-06-15T19:12:20.354607+00:00 frame 5: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:20.355038+00:00 frame 5: start cumulative_traversed_prior
+2026-06-15T19:12:20.379063+00:00 frame 5: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:20.379063+00:00 frame 5: start flicker_removal
+2026-06-15T19:12:20.444480+00:00 frame 5: done flicker_removal (0.065s)
+2026-06-15T19:12:20.444981+00:00 frame 5: start bridge_repair
+2026-06-15T19:12:20.445984+00:00 frame 5: start bridge_repair_skeletonize
+2026-06-15T19:12:20.451985+00:00 frame 5: done bridge_repair_skeletonize (0.007s)
+2026-06-15T19:12:20.454489+00:00 frame 5: endpoints=17 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:20.455719+00:00 frame 5: bridges_added=0 pair_checks=80
+2026-06-15T19:12:20.455719+00:00 frame 5: done bridge_repair (0.011s)
+2026-06-15T19:12:20.459719+00:00 frame 5: complete elapsed=0.127s recovered=5321 removed=131
+2026-06-15T19:12:20.459719+00:00 frame 6/47: begin
+2026-06-15T19:12:20.459719+00:00 frame 6: start load_mask
+2026-06-15T19:12:20.460722+00:00 frame 6: done load_mask (0.001s)
+2026-06-15T19:12:20.460722+00:00 frame 6: start intensity_maps
+2026-06-15T19:12:20.467225+00:00 frame 6: done intensity_maps (0.007s)
+2026-06-15T19:12:20.468225+00:00 frame 6: start nearby_persistent
+2026-06-15T19:12:20.475602+00:00 frame 6: done nearby_persistent (0.008s)
+2026-06-15T19:12:20.476601+00:00 frame 6: start middle_frame_recovery
+2026-06-15T19:12:20.483602+00:00 frame 6: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:20.484106+00:00 frame 6: start cumulative_traversed_prior
+2026-06-15T19:12:20.507234+00:00 frame 6: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:20.508234+00:00 frame 6: start flicker_removal
+2026-06-15T19:12:20.573623+00:00 frame 6: done flicker_removal (0.065s)
+2026-06-15T19:12:20.574134+00:00 frame 6: start bridge_repair
+2026-06-15T19:12:20.575140+00:00 frame 6: start bridge_repair_skeletonize
+2026-06-15T19:12:20.582144+00:00 frame 6: done bridge_repair_skeletonize (0.007s)
+2026-06-15T19:12:20.584956+00:00 frame 6: endpoints=17 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:20.592467+00:00 frame 6: bridges_added=1 pair_checks=80
+2026-06-15T19:12:20.593467+00:00 frame 6: done bridge_repair (0.018s)
+2026-06-15T19:12:20.596829+00:00 frame 6: complete elapsed=0.136s recovered=1806 removed=0
+2026-06-15T19:12:20.596829+00:00 frame 7/47: begin
+2026-06-15T19:12:20.597831+00:00 frame 7: start load_mask
+2026-06-15T19:12:20.598831+00:00 frame 7: done load_mask (0.001s)
+2026-06-15T19:12:20.598831+00:00 frame 7: start intensity_maps
+2026-06-15T19:12:20.604843+00:00 frame 7: done intensity_maps (0.006s)
+2026-06-15T19:12:20.605852+00:00 frame 7: start nearby_persistent
+2026-06-15T19:12:20.613354+00:00 frame 7: done nearby_persistent (0.008s)
+2026-06-15T19:12:20.614358+00:00 frame 7: start middle_frame_recovery
+2026-06-15T19:12:20.620742+00:00 frame 7: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:20.620742+00:00 frame 7: start cumulative_traversed_prior
+2026-06-15T19:12:20.645776+00:00 frame 7: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:20.645776+00:00 frame 7: start flicker_removal
+2026-06-15T19:12:20.712335+00:00 frame 7: done flicker_removal (0.066s)
+2026-06-15T19:12:20.713337+00:00 frame 7: start bridge_repair
+2026-06-15T19:12:20.713844+00:00 frame 7: start bridge_repair_skeletonize
+2026-06-15T19:12:20.721202+00:00 frame 7: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:20.724216+00:00 frame 7: endpoints=15 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:20.725222+00:00 frame 7: bridges_added=0 pair_checks=80
+2026-06-15T19:12:20.725222+00:00 frame 7: done bridge_repair (0.013s)
+2026-06-15T19:12:20.729219+00:00 frame 7: complete elapsed=0.130s recovered=6272 removed=0
+2026-06-15T19:12:20.729219+00:00 frame 8/47: begin
+2026-06-15T19:12:20.729219+00:00 frame 8: start load_mask
+2026-06-15T19:12:20.730221+00:00 frame 8: done load_mask (0.001s)
+2026-06-15T19:12:20.730221+00:00 frame 8: start intensity_maps
+2026-06-15T19:12:20.736555+00:00 frame 8: done intensity_maps (0.006s)
+2026-06-15T19:12:20.737557+00:00 frame 8: start nearby_persistent
+2026-06-15T19:12:20.745564+00:00 frame 8: done nearby_persistent (0.008s)
+2026-06-15T19:12:20.746567+00:00 frame 8: start middle_frame_recovery
+2026-06-15T19:12:20.752568+00:00 frame 8: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:20.753568+00:00 frame 8: start cumulative_traversed_prior
+2026-06-15T19:12:20.778009+00:00 frame 8: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:20.779009+00:00 frame 8: start flicker_removal
+2026-06-15T19:12:20.844075+00:00 frame 8: done flicker_removal (0.065s)
+2026-06-15T19:12:20.844998+00:00 frame 8: start bridge_repair
+2026-06-15T19:12:20.846004+00:00 frame 8: start bridge_repair_skeletonize
+2026-06-15T19:12:20.853503+00:00 frame 8: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:20.855726+00:00 frame 8: endpoints=19 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:20.856726+00:00 frame 8: bridges_added=0 pair_checks=80
+2026-06-15T19:12:20.856726+00:00 frame 8: done bridge_repair (0.012s)
+2026-06-15T19:12:20.860726+00:00 frame 8: complete elapsed=0.130s recovered=10240 removed=0
+2026-06-15T19:12:20.860726+00:00 frame 9/47: begin
+2026-06-15T19:12:20.861727+00:00 frame 9: start load_mask
+2026-06-15T19:12:20.862727+00:00 frame 9: done load_mask (0.001s)
+2026-06-15T19:12:20.862727+00:00 frame 9: start intensity_maps
+2026-06-15T19:12:20.868234+00:00 frame 9: done intensity_maps (0.006s)
+2026-06-15T19:12:20.869236+00:00 frame 9: start nearby_persistent
+2026-06-15T19:12:20.876247+00:00 frame 9: done nearby_persistent (0.008s)
+2026-06-15T19:12:20.877247+00:00 frame 9: start middle_frame_recovery
+2026-06-15T19:12:20.884251+00:00 frame 9: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:20.884690+00:00 frame 9: start cumulative_traversed_prior
+2026-06-15T19:12:20.908672+00:00 frame 9: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:20.909672+00:00 frame 9: start flicker_removal
+2026-06-15T19:12:20.975053+00:00 frame 9: done flicker_removal (0.066s)
+2026-06-15T19:12:20.976058+00:00 frame 9: start bridge_repair
+2026-06-15T19:12:20.977059+00:00 frame 9: start bridge_repair_skeletonize
+2026-06-15T19:12:20.985073+00:00 frame 9: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:20.987581+00:00 frame 9: endpoints=17 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:20.987581+00:00 frame 9: bridges_added=0 pair_checks=80
+2026-06-15T19:12:20.988582+00:00 frame 9: done bridge_repair (0.012s)
+2026-06-15T19:12:20.991579+00:00 frame 9: complete elapsed=0.129s recovered=10042 removed=0
+2026-06-15T19:12:20.992581+00:00 frame 10/47: begin
+2026-06-15T19:12:20.992581+00:00 frame 10: start load_mask
+2026-06-15T19:12:20.993582+00:00 frame 10: done load_mask (0.001s)
+2026-06-15T19:12:20.993582+00:00 frame 10: start intensity_maps
+2026-06-15T19:12:20.999942+00:00 frame 10: done intensity_maps (0.006s)
+2026-06-15T19:12:20.999942+00:00 frame 10: start nearby_persistent
+2026-06-15T19:12:21.006954+00:00 frame 10: done nearby_persistent (0.007s)
+2026-06-15T19:12:21.008956+00:00 frame 10: start middle_frame_recovery
+2026-06-15T19:12:21.014962+00:00 frame 10: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:21.014962+00:00 frame 10: start cumulative_traversed_prior
+2026-06-15T19:12:21.038987+00:00 frame 10: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:21.038987+00:00 frame 10: start flicker_removal
+2026-06-15T19:12:21.104552+00:00 frame 10: done flicker_removal (0.065s)
+2026-06-15T19:12:21.104926+00:00 frame 10: start bridge_repair
+2026-06-15T19:12:21.105933+00:00 frame 10: start bridge_repair_skeletonize
+2026-06-15T19:12:21.113433+00:00 frame 10: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:21.116475+00:00 frame 10: endpoints=17 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:21.116475+00:00 frame 10: bridges_added=0 pair_checks=80
+2026-06-15T19:12:21.117477+00:00 frame 10: done bridge_repair (0.012s)
+2026-06-15T19:12:21.120475+00:00 frame 10: complete elapsed=0.127s recovered=9697 removed=0
+2026-06-15T19:12:21.121475+00:00 frame 11/47: begin
+2026-06-15T19:12:21.121475+00:00 frame 11: start load_mask
+2026-06-15T19:12:21.122477+00:00 frame 11: done load_mask (0.001s)
+2026-06-15T19:12:21.122477+00:00 frame 11: start intensity_maps
+2026-06-15T19:12:21.128914+00:00 frame 11: done intensity_maps (0.006s)
+2026-06-15T19:12:21.128914+00:00 frame 11: start nearby_persistent
+2026-06-15T19:12:21.137929+00:00 frame 11: done nearby_persistent (0.008s)
+2026-06-15T19:12:21.138929+00:00 frame 11: start middle_frame_recovery
+2026-06-15T19:12:21.144946+00:00 frame 11: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:21.145951+00:00 frame 11: start cumulative_traversed_prior
+2026-06-15T19:12:21.169539+00:00 frame 11: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:21.170539+00:00 frame 11: start flicker_removal
+2026-06-15T19:12:21.235275+00:00 frame 11: done flicker_removal (0.065s)
+2026-06-15T19:12:21.236270+00:00 frame 11: start bridge_repair
+2026-06-15T19:12:21.237270+00:00 frame 11: start bridge_repair_skeletonize
+2026-06-15T19:12:21.245630+00:00 frame 11: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:21.247629+00:00 frame 11: endpoints=19 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:21.248629+00:00 frame 11: bridges_added=0 pair_checks=80
+2026-06-15T19:12:21.249629+00:00 frame 11: done bridge_repair (0.013s)
+2026-06-15T19:12:21.253629+00:00 frame 11: complete elapsed=0.131s recovered=10115 removed=0
+2026-06-15T19:12:21.254132+00:00 frame 12/47: begin
+2026-06-15T19:12:21.254132+00:00 frame 12: start load_mask
+2026-06-15T19:12:21.255138+00:00 frame 12: done load_mask (0.001s)
+2026-06-15T19:12:21.255138+00:00 frame 12: start intensity_maps
+2026-06-15T19:12:21.261140+00:00 frame 12: done intensity_maps (0.006s)
+2026-06-15T19:12:21.262138+00:00 frame 12: start nearby_persistent
+2026-06-15T19:12:21.270157+00:00 frame 12: done nearby_persistent (0.008s)
+2026-06-15T19:12:21.271160+00:00 frame 12: start middle_frame_recovery
+2026-06-15T19:12:21.277176+00:00 frame 12: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:21.277176+00:00 frame 12: start cumulative_traversed_prior
+2026-06-15T19:12:21.301203+00:00 frame 12: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:21.302203+00:00 frame 12: start flicker_removal
+2026-06-15T19:12:21.369760+00:00 frame 12: done flicker_removal (0.068s)
+2026-06-15T19:12:21.370762+00:00 frame 12: start bridge_repair
+2026-06-15T19:12:21.371763+00:00 frame 12: start bridge_repair_skeletonize
+2026-06-15T19:12:21.379573+00:00 frame 12: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:21.381572+00:00 frame 12: endpoints=20 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:21.382572+00:00 frame 12: bridges_added=0 pair_checks=80
+2026-06-15T19:12:21.382572+00:00 frame 12: done bridge_repair (0.012s)
+2026-06-15T19:12:21.386615+00:00 frame 12: complete elapsed=0.132s recovered=10151 removed=0
+2026-06-15T19:12:21.387117+00:00 frame 13/47: begin
+2026-06-15T19:12:21.388121+00:00 frame 13: start load_mask
+2026-06-15T19:12:21.388121+00:00 frame 13: done load_mask (0.001s)
+2026-06-15T19:12:21.389120+00:00 frame 13: start intensity_maps
+2026-06-15T19:12:21.394495+00:00 frame 13: done intensity_maps (0.006s)
+2026-06-15T19:12:21.395143+00:00 frame 13: start nearby_persistent
+2026-06-15T19:12:21.403649+00:00 frame 13: done nearby_persistent (0.008s)
+2026-06-15T19:12:21.404222+00:00 frame 13: start middle_frame_recovery
+2026-06-15T19:12:21.411225+00:00 frame 13: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:21.412226+00:00 frame 13: start cumulative_traversed_prior
+2026-06-15T19:12:21.436254+00:00 frame 13: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:21.437257+00:00 frame 13: start flicker_removal
+2026-06-15T19:12:21.503671+00:00 frame 13: done flicker_removal (0.066s)
+2026-06-15T19:12:21.504500+00:00 frame 13: start bridge_repair
+2026-06-15T19:12:21.505177+00:00 frame 13: start bridge_repair_skeletonize
+2026-06-15T19:12:21.513684+00:00 frame 13: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:21.516192+00:00 frame 13: endpoints=18 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:21.516192+00:00 frame 13: bridges_added=0 pair_checks=80
+2026-06-15T19:12:21.517195+00:00 frame 13: done bridge_repair (0.013s)
+2026-06-15T19:12:21.521192+00:00 frame 13: complete elapsed=0.132s recovered=9660 removed=0
+2026-06-15T19:12:21.521192+00:00 frame 14/47: begin
+2026-06-15T19:12:21.521192+00:00 frame 14: start load_mask
+2026-06-15T19:12:21.522191+00:00 frame 14: done load_mask (0.001s)
+2026-06-15T19:12:21.522191+00:00 frame 14: start intensity_maps
+2026-06-15T19:12:21.529631+00:00 frame 14: done intensity_maps (0.007s)
+2026-06-15T19:12:21.529631+00:00 frame 14: start nearby_persistent
+2026-06-15T19:12:21.537137+00:00 frame 14: done nearby_persistent (0.008s)
+2026-06-15T19:12:21.539138+00:00 frame 14: start middle_frame_recovery
+2026-06-15T19:12:21.544613+00:00 frame 14: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:21.545158+00:00 frame 14: start cumulative_traversed_prior
+2026-06-15T19:12:21.569197+00:00 frame 14: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:21.570199+00:00 frame 14: start flicker_removal
+2026-06-15T19:12:21.635179+00:00 frame 14: done flicker_removal (0.065s)
+2026-06-15T19:12:21.636183+00:00 frame 14: start bridge_repair
+2026-06-15T19:12:21.636183+00:00 frame 14: start bridge_repair_skeletonize
+2026-06-15T19:12:21.644187+00:00 frame 14: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:21.647189+00:00 frame 14: endpoints=21 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:21.647189+00:00 frame 14: bridges_added=0 pair_checks=80
+2026-06-15T19:12:21.648190+00:00 frame 14: done bridge_repair (0.013s)
+2026-06-15T19:12:21.652188+00:00 frame 14: complete elapsed=0.130s recovered=9580 removed=0
+2026-06-15T19:12:21.653189+00:00 frame 15/47: begin
+2026-06-15T19:12:21.653691+00:00 frame 15: start load_mask
+2026-06-15T19:12:21.655197+00:00 frame 15: done load_mask (0.001s)
+2026-06-15T19:12:21.655197+00:00 frame 15: start intensity_maps
+2026-06-15T19:12:21.661197+00:00 frame 15: done intensity_maps (0.006s)
+2026-06-15T19:12:21.661197+00:00 frame 15: start nearby_persistent
+2026-06-15T19:12:21.669209+00:00 frame 15: done nearby_persistent (0.008s)
+2026-06-15T19:12:21.670210+00:00 frame 15: start middle_frame_recovery
+2026-06-15T19:12:21.677216+00:00 frame 15: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:21.677216+00:00 frame 15: start cumulative_traversed_prior
+2026-06-15T19:12:21.700928+00:00 frame 15: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:21.701928+00:00 frame 15: start flicker_removal
+2026-06-15T19:12:21.766005+00:00 frame 15: done flicker_removal (0.065s)
+2026-06-15T19:12:21.767006+00:00 frame 15: start bridge_repair
+2026-06-15T19:12:21.768006+00:00 frame 15: start bridge_repair_skeletonize
+2026-06-15T19:12:21.776015+00:00 frame 15: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:21.778014+00:00 frame 15: endpoints=21 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:21.779015+00:00 frame 15: bridges_added=0 pair_checks=80
+2026-06-15T19:12:21.779015+00:00 frame 15: done bridge_repair (0.012s)
+2026-06-15T19:12:21.782014+00:00 frame 15: complete elapsed=0.129s recovered=9460 removed=0
+2026-06-15T19:12:21.783516+00:00 frame 16/47: begin
+2026-06-15T19:12:21.783516+00:00 frame 16: start load_mask
+2026-06-15T19:12:21.785028+00:00 frame 16: done load_mask (0.001s)
+2026-06-15T19:12:21.785028+00:00 frame 16: start intensity_maps
+2026-06-15T19:12:21.790539+00:00 frame 16: done intensity_maps (0.006s)
+2026-06-15T19:12:21.791540+00:00 frame 16: start nearby_persistent
+2026-06-15T19:12:21.798547+00:00 frame 16: done nearby_persistent (0.008s)
+2026-06-15T19:12:21.799546+00:00 frame 16: start middle_frame_recovery
+2026-06-15T19:12:21.806556+00:00 frame 16: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:21.806556+00:00 frame 16: start cumulative_traversed_prior
+2026-06-15T19:12:21.830502+00:00 frame 16: done cumulative_traversed_prior (0.023s)
+2026-06-15T19:12:21.830502+00:00 frame 16: start flicker_removal
+2026-06-15T19:12:21.896064+00:00 frame 16: done flicker_removal (0.065s)
+2026-06-15T19:12:21.897065+00:00 frame 16: start bridge_repair
+2026-06-15T19:12:21.898069+00:00 frame 16: start bridge_repair_skeletonize
+2026-06-15T19:12:21.906076+00:00 frame 16: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:21.909076+00:00 frame 16: endpoints=23 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:21.909076+00:00 frame 16: bridges_added=0 pair_checks=80
+2026-06-15T19:12:21.910076+00:00 frame 16: done bridge_repair (0.013s)
+2026-06-15T19:12:21.913578+00:00 frame 16: complete elapsed=0.130s recovered=9144 removed=0
+2026-06-15T19:12:21.914583+00:00 frame 17/47: begin
+2026-06-15T19:12:21.914956+00:00 frame 17: start load_mask
+2026-06-15T19:12:21.915963+00:00 frame 17: done load_mask (0.001s)
+2026-06-15T19:12:21.915963+00:00 frame 17: start intensity_maps
+2026-06-15T19:12:21.921959+00:00 frame 17: done intensity_maps (0.007s)
+2026-06-15T19:12:21.921959+00:00 frame 17: start nearby_persistent
+2026-06-15T19:12:21.929969+00:00 frame 17: done nearby_persistent (0.007s)
+2026-06-15T19:12:21.930968+00:00 frame 17: start middle_frame_recovery
+2026-06-15T19:12:21.937981+00:00 frame 17: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:21.937981+00:00 frame 17: start cumulative_traversed_prior
+2026-06-15T19:12:21.962004+00:00 frame 17: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:21.962004+00:00 frame 17: start flicker_removal
+2026-06-15T19:12:22.030364+00:00 frame 17: done flicker_removal (0.067s)
+2026-06-15T19:12:22.031365+00:00 frame 17: start bridge_repair
+2026-06-15T19:12:22.032367+00:00 frame 17: start bridge_repair_skeletonize
+2026-06-15T19:12:22.040371+00:00 frame 17: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:22.042372+00:00 frame 17: endpoints=20 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:22.043374+00:00 frame 17: bridges_added=0 pair_checks=80
+2026-06-15T19:12:22.043878+00:00 frame 17: done bridge_repair (0.013s)
+2026-06-15T19:12:22.046385+00:00 frame 17: complete elapsed=0.131s recovered=9184 removed=0
+2026-06-15T19:12:22.047384+00:00 frame 18/47: begin
+2026-06-15T19:12:22.047384+00:00 frame 18: start load_mask
+2026-06-15T19:12:22.048386+00:00 frame 18: done load_mask (0.001s)
+2026-06-15T19:12:22.048386+00:00 frame 18: start intensity_maps
+2026-06-15T19:12:22.055761+00:00 frame 18: done intensity_maps (0.007s)
+2026-06-15T19:12:22.055761+00:00 frame 18: start nearby_persistent
+2026-06-15T19:12:22.063265+00:00 frame 18: done nearby_persistent (0.007s)
+2026-06-15T19:12:22.064267+00:00 frame 18: start middle_frame_recovery
+2026-06-15T19:12:22.070758+00:00 frame 18: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:22.070758+00:00 frame 18: start cumulative_traversed_prior
+2026-06-15T19:12:22.095473+00:00 frame 18: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:22.095473+00:00 frame 18: start flicker_removal
+2026-06-15T19:12:22.161519+00:00 frame 18: done flicker_removal (0.066s)
+2026-06-15T19:12:22.162521+00:00 frame 18: start bridge_repair
+2026-06-15T19:12:22.164024+00:00 frame 18: start bridge_repair_skeletonize
+2026-06-15T19:12:22.171532+00:00 frame 18: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:22.174538+00:00 frame 18: endpoints=20 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:22.174538+00:00 frame 18: bridges_added=0 pair_checks=80
+2026-06-15T19:12:22.175541+00:00 frame 18: done bridge_repair (0.013s)
+2026-06-15T19:12:22.179544+00:00 frame 18: complete elapsed=0.131s recovered=9666 removed=0
+2026-06-15T19:12:22.179544+00:00 frame 19/47: begin
+2026-06-15T19:12:22.179544+00:00 frame 19: start load_mask
+2026-06-15T19:12:22.180544+00:00 frame 19: done load_mask (0.001s)
+2026-06-15T19:12:22.181544+00:00 frame 19: start intensity_maps
+2026-06-15T19:12:22.187552+00:00 frame 19: done intensity_maps (0.006s)
+2026-06-15T19:12:22.188054+00:00 frame 19: start nearby_persistent
+2026-06-15T19:12:22.195066+00:00 frame 19: done nearby_persistent (0.008s)
+2026-06-15T19:12:22.196069+00:00 frame 19: start middle_frame_recovery
+2026-06-15T19:12:22.203572+00:00 frame 19: done middle_frame_recovery (0.008s)
+2026-06-15T19:12:22.204577+00:00 frame 19: start cumulative_traversed_prior
+2026-06-15T19:12:22.231109+00:00 frame 19: done cumulative_traversed_prior (0.027s)
+2026-06-15T19:12:22.232108+00:00 frame 19: start flicker_removal
+2026-06-15T19:12:22.299211+00:00 frame 19: done flicker_removal (0.067s)
+2026-06-15T19:12:22.300211+00:00 frame 19: start bridge_repair
+2026-06-15T19:12:22.301211+00:00 frame 19: start bridge_repair_skeletonize
+2026-06-15T19:12:22.309231+00:00 frame 19: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:22.311231+00:00 frame 19: endpoints=20 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:22.312232+00:00 frame 19: bridges_added=0 pair_checks=80
+2026-06-15T19:12:22.312232+00:00 frame 19: done bridge_repair (0.013s)
+2026-06-15T19:12:22.316248+00:00 frame 19: complete elapsed=0.135s recovered=9750 removed=0
+2026-06-15T19:12:22.317250+00:00 frame 20/47: begin
+2026-06-15T19:12:22.317250+00:00 frame 20: start load_mask
+2026-06-15T19:12:22.318248+00:00 frame 20: done load_mask (0.002s)
+2026-06-15T19:12:22.319250+00:00 frame 20: start intensity_maps
+2026-06-15T19:12:22.325267+00:00 frame 20: done intensity_maps (0.007s)
+2026-06-15T19:12:22.326269+00:00 frame 20: start nearby_persistent
+2026-06-15T19:12:22.334624+00:00 frame 20: done nearby_persistent (0.008s)
+2026-06-15T19:12:22.335279+00:00 frame 20: start middle_frame_recovery
+2026-06-15T19:12:22.341282+00:00 frame 20: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:22.342283+00:00 frame 20: start cumulative_traversed_prior
+2026-06-15T19:12:22.367314+00:00 frame 20: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:22.368315+00:00 frame 20: start flicker_removal
+2026-06-15T19:12:22.435896+00:00 frame 20: done flicker_removal (0.068s)
+2026-06-15T19:12:22.436896+00:00 frame 20: start bridge_repair
+2026-06-15T19:12:22.437896+00:00 frame 20: start bridge_repair_skeletonize
+2026-06-15T19:12:22.445907+00:00 frame 20: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:22.448907+00:00 frame 20: endpoints=22 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:22.448907+00:00 frame 20: bridges_added=0 pair_checks=80
+2026-06-15T19:12:22.449907+00:00 frame 20: done bridge_repair (0.013s)
+2026-06-15T19:12:22.453408+00:00 frame 20: complete elapsed=0.135s recovered=10207 removed=0
+2026-06-15T19:12:22.454412+00:00 frame 21/47: begin
+2026-06-15T19:12:22.454918+00:00 frame 21: start load_mask
+2026-06-15T19:12:22.455920+00:00 frame 21: done load_mask (0.001s)
+2026-06-15T19:12:22.455920+00:00 frame 21: start intensity_maps
+2026-06-15T19:12:22.461919+00:00 frame 21: done intensity_maps (0.007s)
+2026-06-15T19:12:22.463422+00:00 frame 21: start nearby_persistent
+2026-06-15T19:12:22.470934+00:00 frame 21: done nearby_persistent (0.007s)
+2026-06-15T19:12:22.471935+00:00 frame 21: start middle_frame_recovery
+2026-06-15T19:12:22.477948+00:00 frame 21: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:22.478949+00:00 frame 21: start cumulative_traversed_prior
+2026-06-15T19:12:22.503494+00:00 frame 21: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:22.504499+00:00 frame 21: start flicker_removal
+2026-06-15T19:12:22.573443+00:00 frame 21: done flicker_removal (0.069s)
+2026-06-15T19:12:22.573443+00:00 frame 21: start bridge_repair
+2026-06-15T19:12:22.574810+00:00 frame 21: start bridge_repair_skeletonize
+2026-06-15T19:12:22.582538+00:00 frame 21: done bridge_repair_skeletonize (0.008s)
+2026-06-15T19:12:22.585552+00:00 frame 21: endpoints=22 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:22.592057+00:00 frame 21: bridges_added=1 pair_checks=80
+2026-06-15T19:12:22.593563+00:00 frame 21: done bridge_repair (0.020s)
+2026-06-15T19:12:22.597076+00:00 frame 21: complete elapsed=0.142s recovered=9812 removed=0
+2026-06-15T19:12:22.598076+00:00 frame 22/47: begin
+2026-06-15T19:12:22.598076+00:00 frame 22: start load_mask
+2026-06-15T19:12:22.599076+00:00 frame 22: done load_mask (0.001s)
+2026-06-15T19:12:22.600080+00:00 frame 22: start intensity_maps
+2026-06-15T19:12:22.607093+00:00 frame 22: done intensity_maps (0.007s)
+2026-06-15T19:12:22.607093+00:00 frame 22: start nearby_persistent
+2026-06-15T19:12:22.616104+00:00 frame 22: done nearby_persistent (0.009s)
+2026-06-15T19:12:22.617105+00:00 frame 22: start middle_frame_recovery
+2026-06-15T19:12:22.625120+00:00 frame 22: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:22.625120+00:00 frame 22: start cumulative_traversed_prior
+2026-06-15T19:12:22.651159+00:00 frame 22: done cumulative_traversed_prior (0.026s)
+2026-06-15T19:12:22.651159+00:00 frame 22: start flicker_removal
+2026-06-15T19:12:22.717813+00:00 frame 22: done flicker_removal (0.066s)
+2026-06-15T19:12:22.718814+00:00 frame 22: start bridge_repair
+2026-06-15T19:12:22.719813+00:00 frame 22: start bridge_repair_skeletonize
+2026-06-15T19:12:22.728828+00:00 frame 22: done bridge_repair_skeletonize (0.010s)
+2026-06-15T19:12:22.730825+00:00 frame 22: endpoints=19 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:22.731826+00:00 frame 22: bridges_added=0 pair_checks=80
+2026-06-15T19:12:22.733329+00:00 frame 22: done bridge_repair (0.014s)
+2026-06-15T19:12:22.736385+00:00 frame 22: complete elapsed=0.137s recovered=15219 removed=0
+2026-06-15T19:12:22.736385+00:00 frame 23/47: begin
+2026-06-15T19:12:22.737387+00:00 frame 23: start load_mask
+2026-06-15T19:12:22.738385+00:00 frame 23: done load_mask (0.001s)
+2026-06-15T19:12:22.738385+00:00 frame 23: start intensity_maps
+2026-06-15T19:12:22.744732+00:00 frame 23: done intensity_maps (0.006s)
+2026-06-15T19:12:22.744732+00:00 frame 23: start nearby_persistent
+2026-06-15T19:12:22.752394+00:00 frame 23: done nearby_persistent (0.007s)
+2026-06-15T19:12:22.753396+00:00 frame 23: start middle_frame_recovery
+2026-06-15T19:12:22.760410+00:00 frame 23: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:22.760410+00:00 frame 23: start cumulative_traversed_prior
+2026-06-15T19:12:22.785725+00:00 frame 23: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:22.785725+00:00 frame 23: start flicker_removal
+2026-06-15T19:12:22.854336+00:00 frame 23: done flicker_removal (0.068s)
+2026-06-15T19:12:22.854840+00:00 frame 23: start bridge_repair
+2026-06-15T19:12:22.855842+00:00 frame 23: start bridge_repair_skeletonize
+2026-06-15T19:12:22.864855+00:00 frame 23: done bridge_repair_skeletonize (0.009s)
+2026-06-15T19:12:22.867857+00:00 frame 23: endpoints=26 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:22.874865+00:00 frame 23: bridges_added=1 pair_checks=80
+2026-06-15T19:12:22.875868+00:00 frame 23: done bridge_repair (0.021s)
+2026-06-15T19:12:22.878868+00:00 frame 23: complete elapsed=0.141s recovered=15600 removed=0
+2026-06-15T19:12:22.879868+00:00 frame 24/47: begin
+2026-06-15T19:12:22.879868+00:00 frame 24: start load_mask
+2026-06-15T19:12:22.880867+00:00 frame 24: done load_mask (0.001s)
+2026-06-15T19:12:22.880867+00:00 frame 24: start intensity_maps
+2026-06-15T19:12:22.886880+00:00 frame 24: done intensity_maps (0.006s)
+2026-06-15T19:12:22.886880+00:00 frame 24: start nearby_persistent
+2026-06-15T19:12:22.895390+00:00 frame 24: done nearby_persistent (0.007s)
+2026-06-15T19:12:22.896392+00:00 frame 24: start middle_frame_recovery
+2026-06-15T19:12:22.902393+00:00 frame 24: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:22.903392+00:00 frame 24: start cumulative_traversed_prior
+2026-06-15T19:12:22.928799+00:00 frame 24: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:22.928799+00:00 frame 24: start flicker_removal
+2026-06-15T19:12:22.993890+00:00 frame 24: done flicker_removal (0.065s)
+2026-06-15T19:12:22.994393+00:00 frame 24: start bridge_repair
+2026-06-15T19:12:22.995186+00:00 frame 24: start bridge_repair_skeletonize
+2026-06-15T19:12:23.005211+00:00 frame 24: done bridge_repair_skeletonize (0.010s)
+2026-06-15T19:12:23.008212+00:00 frame 24: endpoints=22 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:23.008212+00:00 frame 24: bridges_added=0 pair_checks=80
+2026-06-15T19:12:23.009214+00:00 frame 24: done bridge_repair (0.015s)
+2026-06-15T19:12:23.012214+00:00 frame 24: complete elapsed=0.132s recovered=20673 removed=0
+2026-06-15T19:12:23.012214+00:00 frame 25/47: begin
+2026-06-15T19:12:23.012214+00:00 frame 25: start load_mask
+2026-06-15T19:12:23.013716+00:00 frame 25: done load_mask (0.001s)
+2026-06-15T19:12:23.014227+00:00 frame 25: start intensity_maps
+2026-06-15T19:12:23.019230+00:00 frame 25: done intensity_maps (0.006s)
+2026-06-15T19:12:23.020231+00:00 frame 25: start nearby_persistent
+2026-06-15T19:12:23.027615+00:00 frame 25: done nearby_persistent (0.008s)
+2026-06-15T19:12:23.028614+00:00 frame 25: start middle_frame_recovery
+2026-06-15T19:12:23.035124+00:00 frame 25: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:23.035124+00:00 frame 25: start cumulative_traversed_prior
+2026-06-15T19:12:23.060163+00:00 frame 25: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:23.061162+00:00 frame 25: start flicker_removal
+2026-06-15T19:12:23.124941+00:00 frame 25: done flicker_removal (0.064s)
+2026-06-15T19:12:23.125612+00:00 frame 25: start bridge_repair
+2026-06-15T19:12:23.126614+00:00 frame 25: start bridge_repair_skeletonize
+2026-06-15T19:12:23.137123+00:00 frame 25: done bridge_repair_skeletonize (0.010s)
+2026-06-15T19:12:23.139125+00:00 frame 25: endpoints=21 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:23.140124+00:00 frame 25: bridges_added=0 pair_checks=80
+2026-06-15T19:12:23.140124+00:00 frame 25: done bridge_repair (0.015s)
+2026-06-15T19:12:23.144142+00:00 frame 25: complete elapsed=0.130s recovered=20022 removed=0
+2026-06-15T19:12:23.144498+00:00 frame 26/47: begin
+2026-06-15T19:12:23.144498+00:00 frame 26: start load_mask
+2026-06-15T19:12:23.145504+00:00 frame 26: done load_mask (0.001s)
+2026-06-15T19:12:23.145504+00:00 frame 26: start intensity_maps
+2026-06-15T19:12:23.151502+00:00 frame 26: done intensity_maps (0.006s)
+2026-06-15T19:12:23.152502+00:00 frame 26: start nearby_persistent
+2026-06-15T19:12:23.159660+00:00 frame 26: done nearby_persistent (0.007s)
+2026-06-15T19:12:23.160658+00:00 frame 26: start middle_frame_recovery
+2026-06-15T19:12:23.167166+00:00 frame 26: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:23.167166+00:00 frame 26: start cumulative_traversed_prior
+2026-06-15T19:12:23.192712+00:00 frame 26: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:23.192712+00:00 frame 26: start flicker_removal
+2026-06-15T19:12:23.260305+00:00 frame 26: done flicker_removal (0.067s)
+2026-06-15T19:12:23.260305+00:00 frame 26: start bridge_repair
+2026-06-15T19:12:23.261308+00:00 frame 26: start bridge_repair_skeletonize
+2026-06-15T19:12:23.271319+00:00 frame 26: done bridge_repair_skeletonize (0.010s)
+2026-06-15T19:12:23.274323+00:00 frame 26: endpoints=21 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:23.274626+00:00 frame 26: bridges_added=0 pair_checks=80
+2026-06-15T19:12:23.275327+00:00 frame 26: done bridge_repair (0.014s)
+2026-06-15T19:12:23.278326+00:00 frame 26: complete elapsed=0.133s recovered=20323 removed=0
+2026-06-15T19:12:23.278326+00:00 frame 27/47: begin
+2026-06-15T19:12:23.279327+00:00 frame 27: start load_mask
+2026-06-15T19:12:23.279327+00:00 frame 27: done load_mask (0.001s)
+2026-06-15T19:12:23.280328+00:00 frame 27: start intensity_maps
+2026-06-15T19:12:23.288859+00:00 frame 27: done intensity_maps (0.009s)
+2026-06-15T19:12:23.289862+00:00 frame 27: start nearby_persistent
+2026-06-15T19:12:23.296701+00:00 frame 27: done nearby_persistent (0.007s)
+2026-06-15T19:12:23.297701+00:00 frame 27: start middle_frame_recovery
+2026-06-15T19:12:23.304204+00:00 frame 27: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:23.305208+00:00 frame 27: start cumulative_traversed_prior
+2026-06-15T19:12:23.328502+00:00 frame 27: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:23.329502+00:00 frame 27: start flicker_removal
+2026-06-15T19:12:23.398179+00:00 frame 27: done flicker_removal (0.069s)
+2026-06-15T19:12:23.399178+00:00 frame 27: start bridge_repair
+2026-06-15T19:12:23.400181+00:00 frame 27: start bridge_repair_skeletonize
+2026-06-15T19:12:23.410205+00:00 frame 27: done bridge_repair_skeletonize (0.010s)
+2026-06-15T19:12:23.412205+00:00 frame 27: endpoints=24 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:23.413708+00:00 frame 27: bridges_added=0 pair_checks=80
+2026-06-15T19:12:23.414217+00:00 frame 27: done bridge_repair (0.014s)
+2026-06-15T19:12:23.417224+00:00 frame 27: complete elapsed=0.138s recovered=20588 removed=0
+2026-06-15T19:12:23.418223+00:00 frame 28/47: begin
+2026-06-15T19:12:23.418223+00:00 frame 28: start load_mask
+2026-06-15T19:12:23.419227+00:00 frame 28: done load_mask (0.001s)
+2026-06-15T19:12:23.419227+00:00 frame 28: start intensity_maps
+2026-06-15T19:12:23.425623+00:00 frame 28: done intensity_maps (0.006s)
+2026-06-15T19:12:23.426623+00:00 frame 28: start nearby_persistent
+2026-06-15T19:12:23.434127+00:00 frame 28: done nearby_persistent (0.008s)
+2026-06-15T19:12:23.435132+00:00 frame 28: start middle_frame_recovery
+2026-06-15T19:12:23.441981+00:00 frame 28: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:23.441981+00:00 frame 28: start cumulative_traversed_prior
+2026-06-15T19:12:23.466071+00:00 frame 28: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:23.467073+00:00 frame 28: start flicker_removal
+2026-06-15T19:12:23.533597+00:00 frame 28: done flicker_removal (0.067s)
+2026-06-15T19:12:23.534823+00:00 frame 28: start bridge_repair
+2026-06-15T19:12:23.535152+00:00 frame 28: start bridge_repair_skeletonize
+2026-06-15T19:12:23.546170+00:00 frame 28: done bridge_repair_skeletonize (0.010s)
+2026-06-15T19:12:23.548174+00:00 frame 28: endpoints=22 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:23.555188+00:00 frame 28: bridges_added=1 pair_checks=80
+2026-06-15T19:12:23.556190+00:00 frame 28: done bridge_repair (0.021s)
+2026-06-15T19:12:23.559189+00:00 frame 28: complete elapsed=0.140s recovered=20466 removed=0
+2026-06-15T19:12:23.559189+00:00 frame 29/47: begin
+2026-06-15T19:12:23.560190+00:00 frame 29: start load_mask
+2026-06-15T19:12:23.560190+00:00 frame 29: done load_mask (0.001s)
+2026-06-15T19:12:23.561193+00:00 frame 29: start intensity_maps
+2026-06-15T19:12:23.566206+00:00 frame 29: done intensity_maps (0.005s)
+2026-06-15T19:12:23.566206+00:00 frame 29: start nearby_persistent
+2026-06-15T19:12:23.575217+00:00 frame 29: done nearby_persistent (0.008s)
+2026-06-15T19:12:23.576220+00:00 frame 29: start middle_frame_recovery
+2026-06-15T19:12:23.582221+00:00 frame 29: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:23.583221+00:00 frame 29: start cumulative_traversed_prior
+2026-06-15T19:12:23.606815+00:00 frame 29: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:23.607817+00:00 frame 29: start flicker_removal
+2026-06-15T19:12:23.674237+00:00 frame 29: done flicker_removal (0.067s)
+2026-06-15T19:12:23.675240+00:00 frame 29: start bridge_repair
+2026-06-15T19:12:23.676243+00:00 frame 29: start bridge_repair_skeletonize
+2026-06-15T19:12:23.687249+00:00 frame 29: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:23.689753+00:00 frame 29: endpoints=22 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:23.690756+00:00 frame 29: bridges_added=0 pair_checks=80
+2026-06-15T19:12:23.691755+00:00 frame 29: done bridge_repair (0.016s)
+2026-06-15T19:12:23.695289+00:00 frame 29: complete elapsed=0.135s recovered=26158 removed=0
+2026-06-15T19:12:23.695289+00:00 frame 30/47: begin
+2026-06-15T19:12:23.695289+00:00 frame 30: start load_mask
+2026-06-15T19:12:23.696290+00:00 frame 30: done load_mask (0.001s)
+2026-06-15T19:12:23.697289+00:00 frame 30: start intensity_maps
+2026-06-15T19:12:23.703289+00:00 frame 30: done intensity_maps (0.006s)
+2026-06-15T19:12:23.703795+00:00 frame 30: start nearby_persistent
+2026-06-15T19:12:23.711715+00:00 frame 30: done nearby_persistent (0.008s)
+2026-06-15T19:12:23.711715+00:00 frame 30: start middle_frame_recovery
+2026-06-15T19:12:23.718510+00:00 frame 30: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:23.719514+00:00 frame 30: start cumulative_traversed_prior
+2026-06-15T19:12:23.742530+00:00 frame 30: done cumulative_traversed_prior (0.023s)
+2026-06-15T19:12:23.743530+00:00 frame 30: start flicker_removal
+2026-06-15T19:12:23.809050+00:00 frame 30: done flicker_removal (0.066s)
+2026-06-15T19:12:23.810050+00:00 frame 30: start bridge_repair
+2026-06-15T19:12:23.811050+00:00 frame 30: start bridge_repair_skeletonize
+2026-06-15T19:12:23.822013+00:00 frame 30: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:23.825022+00:00 frame 30: endpoints=29 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:23.825022+00:00 frame 30: bridges_added=0 pair_checks=80
+2026-06-15T19:12:23.826027+00:00 frame 30: done bridge_repair (0.015s)
+2026-06-15T19:12:23.829024+00:00 frame 30: complete elapsed=0.132s recovered=25717 removed=0
+2026-06-15T19:12:23.829024+00:00 frame 31/47: begin
+2026-06-15T19:12:23.830026+00:00 frame 31: start load_mask
+2026-06-15T19:12:23.831024+00:00 frame 31: done load_mask (0.001s)
+2026-06-15T19:12:23.831024+00:00 frame 31: start intensity_maps
+2026-06-15T19:12:23.837042+00:00 frame 31: done intensity_maps (0.006s)
+2026-06-15T19:12:23.838042+00:00 frame 31: start nearby_persistent
+2026-06-15T19:12:23.844549+00:00 frame 31: done nearby_persistent (0.007s)
+2026-06-15T19:12:23.845053+00:00 frame 31: start middle_frame_recovery
+2026-06-15T19:12:23.852055+00:00 frame 31: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:23.852055+00:00 frame 31: start cumulative_traversed_prior
+2026-06-15T19:12:23.877022+00:00 frame 31: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:23.878023+00:00 frame 31: start flicker_removal
+2026-06-15T19:12:23.944549+00:00 frame 31: done flicker_removal (0.066s)
+2026-06-15T19:12:23.945054+00:00 frame 31: start bridge_repair
+2026-06-15T19:12:23.946056+00:00 frame 31: start bridge_repair_skeletonize
+2026-06-15T19:12:23.958073+00:00 frame 31: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:23.960073+00:00 frame 31: endpoints=33 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:23.961072+00:00 frame 31: bridges_added=0 pair_checks=80
+2026-06-15T19:12:23.961072+00:00 frame 31: done bridge_repair (0.016s)
+2026-06-15T19:12:23.965086+00:00 frame 31: complete elapsed=0.134s recovered=26021 removed=0
+2026-06-15T19:12:23.965086+00:00 frame 32/47: begin
+2026-06-15T19:12:23.965086+00:00 frame 32: start load_mask
+2026-06-15T19:12:23.966089+00:00 frame 32: done load_mask (0.001s)
+2026-06-15T19:12:23.967088+00:00 frame 32: start intensity_maps
+2026-06-15T19:12:23.972088+00:00 frame 32: done intensity_maps (0.006s)
+2026-06-15T19:12:23.973594+00:00 frame 32: start nearby_persistent
+2026-06-15T19:12:23.980686+00:00 frame 32: done nearby_persistent (0.007s)
+2026-06-15T19:12:23.981692+00:00 frame 32: start middle_frame_recovery
+2026-06-15T19:12:23.987539+00:00 frame 32: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:23.988540+00:00 frame 32: start cumulative_traversed_prior
+2026-06-15T19:12:24.012372+00:00 frame 32: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:24.012372+00:00 frame 32: start flicker_removal
+2026-06-15T19:12:24.077856+00:00 frame 32: done flicker_removal (0.065s)
+2026-06-15T19:12:24.078854+00:00 frame 32: start bridge_repair
+2026-06-15T19:12:24.078854+00:00 frame 32: start bridge_repair_skeletonize
+2026-06-15T19:12:24.089375+00:00 frame 32: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:24.092377+00:00 frame 32: endpoints=32 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:24.093378+00:00 frame 32: bridges_added=0 pair_checks=80
+2026-06-15T19:12:24.093880+00:00 frame 32: done bridge_repair (0.015s)
+2026-06-15T19:12:24.097388+00:00 frame 32: complete elapsed=0.131s recovered=26418 removed=0
+2026-06-15T19:12:24.097388+00:00 frame 33/47: begin
+2026-06-15T19:12:24.098388+00:00 frame 33: start load_mask
+2026-06-15T19:12:24.098388+00:00 frame 33: done load_mask (0.001s)
+2026-06-15T19:12:24.099388+00:00 frame 33: start intensity_maps
+2026-06-15T19:12:24.105396+00:00 frame 33: done intensity_maps (0.006s)
+2026-06-15T19:12:24.105396+00:00 frame 33: start nearby_persistent
+2026-06-15T19:12:24.112397+00:00 frame 33: done nearby_persistent (0.007s)
+2026-06-15T19:12:24.113900+00:00 frame 33: start middle_frame_recovery
+2026-06-15T19:12:24.120405+00:00 frame 33: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:24.120405+00:00 frame 33: start cumulative_traversed_prior
+2026-06-15T19:12:24.145288+00:00 frame 33: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:24.146287+00:00 frame 33: start flicker_removal
+2026-06-15T19:12:24.214930+00:00 frame 33: done flicker_removal (0.069s)
+2026-06-15T19:12:24.215935+00:00 frame 33: start bridge_repair
+2026-06-15T19:12:24.216934+00:00 frame 33: start bridge_repair_skeletonize
+2026-06-15T19:12:24.227948+00:00 frame 33: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:24.230948+00:00 frame 33: endpoints=29 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:24.230948+00:00 frame 33: bridges_added=0 pair_checks=80
+2026-06-15T19:12:24.231948+00:00 frame 33: done bridge_repair (0.015s)
+2026-06-15T19:12:24.234959+00:00 frame 33: complete elapsed=0.137s recovered=26092 removed=0
+2026-06-15T19:12:24.235963+00:00 frame 34/47: begin
+2026-06-15T19:12:24.235963+00:00 frame 34: start load_mask
+2026-06-15T19:12:24.236962+00:00 frame 34: done load_mask (0.001s)
+2026-06-15T19:12:24.236962+00:00 frame 34: start intensity_maps
+2026-06-15T19:12:24.243463+00:00 frame 34: done intensity_maps (0.006s)
+2026-06-15T19:12:24.243463+00:00 frame 34: start nearby_persistent
+2026-06-15T19:12:24.250971+00:00 frame 34: done nearby_persistent (0.007s)
+2026-06-15T19:12:24.251970+00:00 frame 34: start middle_frame_recovery
+2026-06-15T19:12:24.257980+00:00 frame 34: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:24.257980+00:00 frame 34: start cumulative_traversed_prior
+2026-06-15T19:12:24.282564+00:00 frame 34: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:24.282564+00:00 frame 34: start flicker_removal
+2026-06-15T19:12:24.348289+00:00 frame 34: done flicker_removal (0.066s)
+2026-06-15T19:12:24.349290+00:00 frame 34: start bridge_repair
+2026-06-15T19:12:24.350290+00:00 frame 34: start bridge_repair_skeletonize
+2026-06-15T19:12:24.361298+00:00 frame 34: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:24.363801+00:00 frame 34: endpoints=33 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:24.364304+00:00 frame 34: bridges_added=0 pair_checks=80
+2026-06-15T19:12:24.364744+00:00 frame 34: done bridge_repair (0.015s)
+2026-06-15T19:12:24.367748+00:00 frame 34: complete elapsed=0.131s recovered=25425 removed=0
+2026-06-15T19:12:24.367748+00:00 frame 35/47: begin
+2026-06-15T19:12:24.367748+00:00 frame 35: start load_mask
+2026-06-15T19:12:24.368750+00:00 frame 35: done load_mask (0.001s)
+2026-06-15T19:12:24.369750+00:00 frame 35: start intensity_maps
+2026-06-15T19:12:24.375758+00:00 frame 35: done intensity_maps (0.006s)
+2026-06-15T19:12:24.375758+00:00 frame 35: start nearby_persistent
+2026-06-15T19:12:24.383262+00:00 frame 35: done nearby_persistent (0.007s)
+2026-06-15T19:12:24.384768+00:00 frame 35: start middle_frame_recovery
+2026-06-15T19:12:24.390274+00:00 frame 35: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:24.391275+00:00 frame 35: start cumulative_traversed_prior
+2026-06-15T19:12:24.415302+00:00 frame 35: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:24.415302+00:00 frame 35: start flicker_removal
+2026-06-15T19:12:24.480930+00:00 frame 35: done flicker_removal (0.065s)
+2026-06-15T19:12:24.481931+00:00 frame 35: start bridge_repair
+2026-06-15T19:12:24.481931+00:00 frame 35: start bridge_repair_skeletonize
+2026-06-15T19:12:24.493963+00:00 frame 35: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:24.496309+00:00 frame 35: endpoints=40 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:24.497313+00:00 frame 35: bridges_added=0 pair_checks=80
+2026-06-15T19:12:24.497313+00:00 frame 35: done bridge_repair (0.016s)
+2026-06-15T19:12:24.501314+00:00 frame 35: complete elapsed=0.132s recovered=25699 removed=0
+2026-06-15T19:12:24.501314+00:00 frame 36/47: begin
+2026-06-15T19:12:24.501314+00:00 frame 36: start load_mask
+2026-06-15T19:12:24.502316+00:00 frame 36: done load_mask (0.001s)
+2026-06-15T19:12:24.502316+00:00 frame 36: start intensity_maps
+2026-06-15T19:12:24.509319+00:00 frame 36: done intensity_maps (0.007s)
+2026-06-15T19:12:24.509319+00:00 frame 36: start nearby_persistent
+2026-06-15T19:12:24.516785+00:00 frame 36: done nearby_persistent (0.007s)
+2026-06-15T19:12:24.517291+00:00 frame 36: start middle_frame_recovery
+2026-06-15T19:12:24.524299+00:00 frame 36: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:24.524299+00:00 frame 36: start cumulative_traversed_prior
+2026-06-15T19:12:24.548215+00:00 frame 36: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:24.549214+00:00 frame 36: start flicker_removal
+2026-06-15T19:12:24.613448+00:00 frame 36: done flicker_removal (0.064s)
+2026-06-15T19:12:24.613448+00:00 frame 36: start bridge_repair
+2026-06-15T19:12:24.614454+00:00 frame 36: start bridge_repair_skeletonize
+2026-06-15T19:12:24.625757+00:00 frame 36: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:24.627759+00:00 frame 36: endpoints=46 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:24.628757+00:00 frame 36: skip bridge repair (too many endpoints)
+2026-06-15T19:12:24.628757+00:00 frame 36: done bridge_repair (0.015s)
+2026-06-15T19:12:24.633263+00:00 frame 36: complete elapsed=0.130s recovered=25522 removed=38
+2026-06-15T19:12:24.633263+00:00 frame 37/47: begin
+2026-06-15T19:12:24.634271+00:00 frame 37: start load_mask
+2026-06-15T19:12:24.634780+00:00 frame 37: done load_mask (0.001s)
+2026-06-15T19:12:24.634780+00:00 frame 37: start intensity_maps
+2026-06-15T19:12:24.641779+00:00 frame 37: done intensity_maps (0.006s)
+2026-06-15T19:12:24.641779+00:00 frame 37: start nearby_persistent
+2026-06-15T19:12:24.648787+00:00 frame 37: done nearby_persistent (0.007s)
+2026-06-15T19:12:24.649787+00:00 frame 37: start middle_frame_recovery
+2026-06-15T19:12:24.655795+00:00 frame 37: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:24.656795+00:00 frame 37: start cumulative_traversed_prior
+2026-06-15T19:12:24.680362+00:00 frame 37: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:24.681362+00:00 frame 37: start flicker_removal
+2026-06-15T19:12:24.746892+00:00 frame 37: done flicker_removal (0.065s)
+2026-06-15T19:12:24.747891+00:00 frame 37: start bridge_repair
+2026-06-15T19:12:24.747891+00:00 frame 37: start bridge_repair_skeletonize
+2026-06-15T19:12:24.759905+00:00 frame 37: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:24.761905+00:00 frame 37: endpoints=49 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:24.761905+00:00 frame 37: skip bridge repair (too many endpoints)
+2026-06-15T19:12:24.763407+00:00 frame 37: done bridge_repair (0.016s)
+2026-06-15T19:12:24.766915+00:00 frame 37: complete elapsed=0.132s recovered=25008 removed=0
+2026-06-15T19:12:24.766915+00:00 frame 38/47: begin
+2026-06-15T19:12:24.766915+00:00 frame 38: start load_mask
+2026-06-15T19:12:24.767915+00:00 frame 38: done load_mask (0.001s)
+2026-06-15T19:12:24.767915+00:00 frame 38: start intensity_maps
+2026-06-15T19:12:24.774423+00:00 frame 38: done intensity_maps (0.006s)
+2026-06-15T19:12:24.774423+00:00 frame 38: start nearby_persistent
+2026-06-15T19:12:24.781489+00:00 frame 38: done nearby_persistent (0.007s)
+2026-06-15T19:12:24.782490+00:00 frame 38: start middle_frame_recovery
+2026-06-15T19:12:24.788502+00:00 frame 38: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:24.788502+00:00 frame 38: start cumulative_traversed_prior
+2026-06-15T19:12:24.813538+00:00 frame 38: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:24.814542+00:00 frame 38: start flicker_removal
+2026-06-15T19:12:24.882106+00:00 frame 38: done flicker_removal (0.067s)
+2026-06-15T19:12:24.882106+00:00 frame 38: start bridge_repair
+2026-06-15T19:12:24.883609+00:00 frame 38: start bridge_repair_skeletonize
+2026-06-15T19:12:24.894278+00:00 frame 38: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:24.896084+00:00 frame 38: endpoints=53 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:24.896084+00:00 frame 38: skip bridge repair (too many endpoints)
+2026-06-15T19:12:24.897084+00:00 frame 38: done bridge_repair (0.015s)
+2026-06-15T19:12:24.900084+00:00 frame 38: complete elapsed=0.132s recovered=24920 removed=0
+2026-06-15T19:12:24.901083+00:00 frame 39/47: begin
+2026-06-15T19:12:24.901083+00:00 frame 39: start load_mask
+2026-06-15T19:12:24.902085+00:00 frame 39: done load_mask (0.001s)
+2026-06-15T19:12:24.902085+00:00 frame 39: start intensity_maps
+2026-06-15T19:12:24.909099+00:00 frame 39: done intensity_maps (0.006s)
+2026-06-15T19:12:24.909099+00:00 frame 39: start nearby_persistent
+2026-06-15T19:12:24.916541+00:00 frame 39: done nearby_persistent (0.007s)
+2026-06-15T19:12:24.917541+00:00 frame 39: start middle_frame_recovery
+2026-06-15T19:12:24.924546+00:00 frame 39: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:24.924546+00:00 frame 39: start cumulative_traversed_prior
+2026-06-15T19:12:24.947898+00:00 frame 39: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:24.948898+00:00 frame 39: start flicker_removal
+2026-06-15T19:12:25.016929+00:00 frame 39: done flicker_removal (0.068s)
+2026-06-15T19:12:25.017930+00:00 frame 39: start bridge_repair
+2026-06-15T19:12:25.018932+00:00 frame 39: start bridge_repair_skeletonize
+2026-06-15T19:12:25.029948+00:00 frame 39: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:25.031947+00:00 frame 39: endpoints=61 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:25.031947+00:00 frame 39: skip bridge repair (too many endpoints)
+2026-06-15T19:12:25.033452+00:00 frame 39: done bridge_repair (0.015s)
+2026-06-15T19:12:25.036493+00:00 frame 39: complete elapsed=0.134s recovered=25272 removed=0
+2026-06-15T19:12:25.036493+00:00 frame 40/47: begin
+2026-06-15T19:12:25.037495+00:00 frame 40: start load_mask
+2026-06-15T19:12:25.038496+00:00 frame 40: done load_mask (0.001s)
+2026-06-15T19:12:25.038496+00:00 frame 40: start intensity_maps
+2026-06-15T19:12:25.044499+00:00 frame 40: done intensity_maps (0.006s)
+2026-06-15T19:12:25.044923+00:00 frame 40: start nearby_persistent
+2026-06-15T19:12:25.052505+00:00 frame 40: done nearby_persistent (0.008s)
+2026-06-15T19:12:25.054538+00:00 frame 40: start middle_frame_recovery
+2026-06-15T19:12:25.060543+00:00 frame 40: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:25.060543+00:00 frame 40: start cumulative_traversed_prior
+2026-06-15T19:12:25.085077+00:00 frame 40: done cumulative_traversed_prior (0.024s)
+2026-06-15T19:12:25.085077+00:00 frame 40: start flicker_removal
+2026-06-15T19:12:25.153684+00:00 frame 40: done flicker_removal (0.068s)
+2026-06-15T19:12:25.154637+00:00 frame 40: start bridge_repair
+2026-06-15T19:12:25.154637+00:00 frame 40: start bridge_repair_skeletonize
+2026-06-15T19:12:25.166147+00:00 frame 40: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:25.169148+00:00 frame 40: endpoints=64 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:25.169148+00:00 frame 40: skip bridge repair (too many endpoints)
+2026-06-15T19:12:25.170151+00:00 frame 40: done bridge_repair (0.016s)
+2026-06-15T19:12:25.172151+00:00 frame 40: complete elapsed=0.135s recovered=25899 removed=0
+2026-06-15T19:12:25.173657+00:00 frame 41/47: begin
+2026-06-15T19:12:25.174171+00:00 frame 41: start load_mask
+2026-06-15T19:12:25.174532+00:00 frame 41: done load_mask (0.001s)
+2026-06-15T19:12:25.175177+00:00 frame 41: start intensity_maps
+2026-06-15T19:12:25.181176+00:00 frame 41: done intensity_maps (0.007s)
+2026-06-15T19:12:25.182178+00:00 frame 41: start nearby_persistent
+2026-06-15T19:12:25.189204+00:00 frame 41: done nearby_persistent (0.007s)
+2026-06-15T19:12:25.190206+00:00 frame 41: start middle_frame_recovery
+2026-06-15T19:12:25.196716+00:00 frame 41: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:25.197718+00:00 frame 41: start cumulative_traversed_prior
+2026-06-15T19:12:25.222242+00:00 frame 41: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:25.222242+00:00 frame 41: start flicker_removal
+2026-06-15T19:12:25.288605+00:00 frame 41: done flicker_removal (0.066s)
+2026-06-15T19:12:25.288605+00:00 frame 41: start bridge_repair
+2026-06-15T19:12:25.290110+00:00 frame 41: start bridge_repair_skeletonize
+2026-06-15T19:12:25.302137+00:00 frame 41: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:25.304459+00:00 frame 41: endpoints=77 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:25.304459+00:00 frame 41: skip bridge repair (too many endpoints)
+2026-06-15T19:12:25.304459+00:00 frame 41: done bridge_repair (0.015s)
+2026-06-15T19:12:25.308464+00:00 frame 41: complete elapsed=0.134s recovered=25663 removed=0
+2026-06-15T19:12:25.308464+00:00 frame 42/47: begin
+2026-06-15T19:12:25.308464+00:00 frame 42: start load_mask
+2026-06-15T19:12:25.309464+00:00 frame 42: done load_mask (0.001s)
+2026-06-15T19:12:25.309464+00:00 frame 42: start intensity_maps
+2026-06-15T19:12:25.316478+00:00 frame 42: done intensity_maps (0.007s)
+2026-06-15T19:12:25.316478+00:00 frame 42: start nearby_persistent
+2026-06-15T19:12:25.324839+00:00 frame 42: done nearby_persistent (0.008s)
+2026-06-15T19:12:25.325844+00:00 frame 42: start middle_frame_recovery
+2026-06-15T19:12:25.331844+00:00 frame 42: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:25.331844+00:00 frame 42: start cumulative_traversed_prior
+2026-06-15T19:12:25.357426+00:00 frame 42: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:25.357426+00:00 frame 42: start flicker_removal
+2026-06-15T19:12:25.424388+00:00 frame 42: done flicker_removal (0.067s)
+2026-06-15T19:12:25.425393+00:00 frame 42: start bridge_repair
+2026-06-15T19:12:25.426394+00:00 frame 42: start bridge_repair_skeletonize
+2026-06-15T19:12:25.437404+00:00 frame 42: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:25.440407+00:00 frame 42: endpoints=67 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:25.440407+00:00 frame 42: skip bridge repair (too many endpoints)
+2026-06-15T19:12:25.441404+00:00 frame 42: done bridge_repair (0.016s)
+2026-06-15T19:12:25.444412+00:00 frame 42: complete elapsed=0.135s recovered=18238 removed=0
+2026-06-15T19:12:25.444412+00:00 frame 43/47: begin
+2026-06-15T19:12:25.445418+00:00 frame 43: start load_mask
+2026-06-15T19:12:25.446417+00:00 frame 43: done load_mask (0.001s)
+2026-06-15T19:12:25.446417+00:00 frame 43: start intensity_maps
+2026-06-15T19:12:25.452417+00:00 frame 43: done intensity_maps (0.006s)
+2026-06-15T19:12:25.453418+00:00 frame 43: start nearby_persistent
+2026-06-15T19:12:25.460789+00:00 frame 43: done nearby_persistent (0.008s)
+2026-06-15T19:12:25.461790+00:00 frame 43: start middle_frame_recovery
+2026-06-15T19:12:25.468808+00:00 frame 43: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:25.469808+00:00 frame 43: start cumulative_traversed_prior
+2026-06-15T19:12:25.494957+00:00 frame 43: done cumulative_traversed_prior (0.026s)
+2026-06-15T19:12:25.495963+00:00 frame 43: start flicker_removal
+2026-06-15T19:12:25.560539+00:00 frame 43: done flicker_removal (0.065s)
+2026-06-15T19:12:25.561540+00:00 frame 43: start bridge_repair
+2026-06-15T19:12:25.562539+00:00 frame 43: start bridge_repair_skeletonize
+2026-06-15T19:12:25.573551+00:00 frame 43: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:25.575794+00:00 frame 43: endpoints=65 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:25.575794+00:00 frame 43: skip bridge repair (too many endpoints)
+2026-06-15T19:12:25.575794+00:00 frame 43: done bridge_repair (0.015s)
+2026-06-15T19:12:25.578795+00:00 frame 43: complete elapsed=0.133s recovered=18454 removed=0
+2026-06-15T19:12:25.579794+00:00 frame 44/47: begin
+2026-06-15T19:12:25.579794+00:00 frame 44: start load_mask
+2026-06-15T19:12:25.580794+00:00 frame 44: done load_mask (0.001s)
+2026-06-15T19:12:25.581794+00:00 frame 44: start intensity_maps
+2026-06-15T19:12:25.587806+00:00 frame 44: done intensity_maps (0.006s)
+2026-06-15T19:12:25.587806+00:00 frame 44: start nearby_persistent
+2026-06-15T19:12:25.595327+00:00 frame 44: done nearby_persistent (0.007s)
+2026-06-15T19:12:25.596326+00:00 frame 44: start middle_frame_recovery
+2026-06-15T19:12:25.602327+00:00 frame 44: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:25.603326+00:00 frame 44: start cumulative_traversed_prior
+2026-06-15T19:12:25.627848+00:00 frame 44: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:25.627848+00:00 frame 44: start flicker_removal
+2026-06-15T19:12:25.694444+00:00 frame 44: done flicker_removal (0.066s)
+2026-06-15T19:12:25.694444+00:00 frame 44: start bridge_repair
+2026-06-15T19:12:25.695447+00:00 frame 44: start bridge_repair_skeletonize
+2026-06-15T19:12:25.707457+00:00 frame 44: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:25.709959+00:00 frame 44: endpoints=69 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:25.709959+00:00 frame 44: skip bridge repair (too many endpoints)
+2026-06-15T19:12:25.710961+00:00 frame 44: done bridge_repair (0.016s)
+2026-06-15T19:12:25.713463+00:00 frame 44: complete elapsed=0.133s recovered=25239 removed=0
+2026-06-15T19:12:25.714466+00:00 frame 45/47: begin
+2026-06-15T19:12:25.714968+00:00 frame 45: start load_mask
+2026-06-15T19:12:25.714968+00:00 frame 45: done load_mask (0.001s)
+2026-06-15T19:12:25.715974+00:00 frame 45: start intensity_maps
+2026-06-15T19:12:25.721973+00:00 frame 45: done intensity_maps (0.006s)
+2026-06-15T19:12:25.721973+00:00 frame 45: start nearby_persistent
+2026-06-15T19:12:25.727988+00:00 frame 45: done nearby_persistent (0.006s)
+2026-06-15T19:12:25.728989+00:00 frame 45: start middle_frame_recovery
+2026-06-15T19:12:25.736008+00:00 frame 45: done middle_frame_recovery (0.007s)
+2026-06-15T19:12:25.737008+00:00 frame 45: start cumulative_traversed_prior
+2026-06-15T19:12:25.761035+00:00 frame 45: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:25.762035+00:00 frame 45: start flicker_removal
+2026-06-15T19:12:25.822117+00:00 frame 45: done flicker_removal (0.060s)
+2026-06-15T19:12:25.822117+00:00 frame 45: start bridge_repair
+2026-06-15T19:12:25.823622+00:00 frame 45: start bridge_repair_skeletonize
+2026-06-15T19:12:25.834459+00:00 frame 45: done bridge_repair_skeletonize (0.011s)
+2026-06-15T19:12:25.837464+00:00 frame 45: endpoints=73 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:25.837464+00:00 frame 45: skip bridge repair (too many endpoints)
+2026-06-15T19:12:25.837464+00:00 frame 45: done bridge_repair (0.015s)
+2026-06-15T19:12:25.841463+00:00 frame 45: complete elapsed=0.126s recovered=24827 removed=0
+2026-06-15T19:12:25.841463+00:00 frame 46/47: begin
+2026-06-15T19:12:25.841463+00:00 frame 46: start load_mask
+2026-06-15T19:12:25.842464+00:00 frame 46: done load_mask (0.001s)
+2026-06-15T19:12:25.842464+00:00 frame 46: start intensity_maps
+2026-06-15T19:12:25.849501+00:00 frame 46: done intensity_maps (0.006s)
+2026-06-15T19:12:25.849501+00:00 frame 46: start nearby_persistent
+2026-06-15T19:12:25.854964+00:00 frame 46: done nearby_persistent (0.005s)
+2026-06-15T19:12:25.855507+00:00 frame 46: start middle_frame_recovery
+2026-06-15T19:12:25.862509+00:00 frame 46: done middle_frame_recovery (0.006s)
+2026-06-15T19:12:25.862509+00:00 frame 46: start cumulative_traversed_prior
+2026-06-15T19:12:25.888011+00:00 frame 46: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:25.888011+00:00 frame 46: start flicker_removal
+2026-06-15T19:12:25.943542+00:00 frame 46: done flicker_removal (0.055s)
+2026-06-15T19:12:25.944548+00:00 frame 46: start bridge_repair
+2026-06-15T19:12:25.945051+00:00 frame 46: start bridge_repair_skeletonize
+2026-06-15T19:12:25.957060+00:00 frame 46: done bridge_repair_skeletonize (0.012s)
+2026-06-15T19:12:25.959061+00:00 frame 46: endpoints=70 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:25.960062+00:00 frame 46: skip bridge repair (too many endpoints)
+2026-06-15T19:12:25.960062+00:00 frame 46: done bridge_repair (0.016s)
+2026-06-15T19:12:25.963562+00:00 frame 46: complete elapsed=0.121s recovered=24783 removed=0
+2026-06-15T19:12:25.963562+00:00 frame 47/47: begin
+2026-06-15T19:12:25.963562+00:00 frame 47: start load_mask
+2026-06-15T19:12:25.965070+00:00 frame 47: done load_mask (0.001s)
+2026-06-15T19:12:25.965070+00:00 frame 47: start intensity_maps
+2026-06-15T19:12:25.971072+00:00 frame 47: done intensity_maps (0.006s)
+2026-06-15T19:12:25.971072+00:00 frame 47: start nearby_persistent
+2026-06-15T19:12:25.976089+00:00 frame 47: done nearby_persistent (0.004s)
+2026-06-15T19:12:25.976089+00:00 frame 47: start middle_frame_recovery
+2026-06-15T19:12:25.977091+00:00 frame 47: done middle_frame_recovery (0.000s)
+2026-06-15T19:12:25.977091+00:00 frame 47: start cumulative_traversed_prior
+2026-06-15T19:12:26.001269+00:00 frame 47: done cumulative_traversed_prior (0.025s)
+2026-06-15T19:12:26.002270+00:00 frame 47: start flicker_removal
+2026-06-15T19:12:26.049522+00:00 frame 47: done flicker_removal (0.047s)
+2026-06-15T19:12:26.050523+00:00 frame 47: start bridge_repair
+2026-06-15T19:12:26.051522+00:00 frame 47: start bridge_repair_skeletonize
+2026-06-15T19:12:26.063591+00:00 frame 47: done bridge_repair_skeletonize (0.012s)
+2026-06-15T19:12:26.065603+00:00 frame 47: endpoints=72 (cap=40, pair_checks_cap=80)
+2026-06-15T19:12:26.065603+00:00 frame 47: skip bridge repair (too many endpoints)
+2026-06-15T19:12:26.066604+00:00 frame 47: done bridge_repair (0.016s)
+2026-06-15T19:12:26.069602+00:00 frame 47: complete elapsed=0.105s recovered=24724 removed=299
+2026-06-15T19:12:26.090641+00:00 saving temporal masks and difference maps
+2026-06-15T19:12:26.090641+00:00 frame 1: start save_outputs
+2026-06-15T19:12:26.114094+00:00 frame 1: done save_outputs (0.023s)
+2026-06-15T19:12:26.114599+00:00 frame 2: start save_outputs
+2026-06-15T19:12:26.135005+00:00 frame 2: done save_outputs (0.021s)
+2026-06-15T19:12:26.136007+00:00 frame 3: start save_outputs
+2026-06-15T19:12:26.156039+00:00 frame 3: done save_outputs (0.020s)
+2026-06-15T19:12:26.156039+00:00 frame 4: start save_outputs
+2026-06-15T19:12:26.177066+00:00 frame 4: done save_outputs (0.021s)
+2026-06-15T19:12:26.177066+00:00 frame 5: start save_outputs
+2026-06-15T19:12:26.199593+00:00 frame 5: done save_outputs (0.022s)
+2026-06-15T19:12:26.199593+00:00 frame 6: start save_outputs
+2026-06-15T19:12:26.220613+00:00 frame 6: done save_outputs (0.021s)
+2026-06-15T19:12:26.220613+00:00 frame 7: start save_outputs
+2026-06-15T19:12:26.242010+00:00 frame 7: done save_outputs (0.021s)
+2026-06-15T19:12:26.242010+00:00 frame 8: start save_outputs
+2026-06-15T19:12:26.262045+00:00 frame 8: done save_outputs (0.020s)
+2026-06-15T19:12:26.262045+00:00 frame 9: start save_outputs
+2026-06-15T19:12:26.283583+00:00 frame 9: done save_outputs (0.021s)
+2026-06-15T19:12:26.283583+00:00 frame 10: start save_outputs
+2026-06-15T19:12:26.305006+00:00 frame 10: done save_outputs (0.021s)
+2026-06-15T19:12:26.305006+00:00 frame 11: start save_outputs
+2026-06-15T19:12:26.325708+00:00 frame 11: done save_outputs (0.020s)
+2026-06-15T19:12:26.325708+00:00 frame 12: start save_outputs
+2026-06-15T19:12:26.346731+00:00 frame 12: done save_outputs (0.021s)
+2026-06-15T19:12:26.347732+00:00 frame 13: start save_outputs
+2026-06-15T19:12:26.368295+00:00 frame 13: done save_outputs (0.021s)
+2026-06-15T19:12:26.368295+00:00 frame 14: start save_outputs
+2026-06-15T19:12:26.389327+00:00 frame 14: done save_outputs (0.020s)
+2026-06-15T19:12:26.389327+00:00 frame 15: start save_outputs
+2026-06-15T19:12:26.410227+00:00 frame 15: done save_outputs (0.021s)
+2026-06-15T19:12:26.411227+00:00 frame 16: start save_outputs
+2026-06-15T19:12:26.432606+00:00 frame 16: done save_outputs (0.021s)
+2026-06-15T19:12:26.432606+00:00 frame 17: start save_outputs
+2026-06-15T19:12:26.453478+00:00 frame 17: done save_outputs (0.021s)
+2026-06-15T19:12:26.454481+00:00 frame 18: start save_outputs
+2026-06-15T19:12:26.474885+00:00 frame 18: done save_outputs (0.021s)
+2026-06-15T19:12:26.475889+00:00 frame 19: start save_outputs
+2026-06-15T19:12:26.497553+00:00 frame 19: done save_outputs (0.022s)
+2026-06-15T19:12:26.497553+00:00 frame 20: start save_outputs
+2026-06-15T19:12:26.519077+00:00 frame 20: done save_outputs (0.021s)
+2026-06-15T19:12:26.519077+00:00 frame 21: start save_outputs
+2026-06-15T19:12:26.540095+00:00 frame 21: done save_outputs (0.021s)
+2026-06-15T19:12:26.541096+00:00 frame 22: start save_outputs
+2026-06-15T19:12:26.561148+00:00 frame 22: done save_outputs (0.020s)
+2026-06-15T19:12:26.561148+00:00 frame 23: start save_outputs
+2026-06-15T19:12:26.582184+00:00 frame 23: done save_outputs (0.021s)
+2026-06-15T19:12:26.582184+00:00 frame 24: start save_outputs
+2026-06-15T19:12:26.603564+00:00 frame 24: done save_outputs (0.021s)
+2026-06-15T19:12:26.604567+00:00 frame 25: start save_outputs
+2026-06-15T19:12:26.625637+00:00 frame 25: done save_outputs (0.021s)
+2026-06-15T19:12:26.625637+00:00 frame 26: start save_outputs
+2026-06-15T19:12:26.647577+00:00 frame 26: done save_outputs (0.022s)
+2026-06-15T19:12:26.647577+00:00 frame 27: start save_outputs
+2026-06-15T19:12:26.669179+00:00 frame 27: done save_outputs (0.021s)
+2026-06-15T19:12:26.670179+00:00 frame 28: start save_outputs
+2026-06-15T19:12:26.692529+00:00 frame 28: done save_outputs (0.022s)
+2026-06-15T19:12:26.692529+00:00 frame 29: start save_outputs
+2026-06-15T19:12:26.714829+00:00 frame 29: done save_outputs (0.023s)
+2026-06-15T19:12:26.715837+00:00 frame 30: start save_outputs
+2026-06-15T19:12:26.738867+00:00 frame 30: done save_outputs (0.023s)
+2026-06-15T19:12:26.738867+00:00 frame 31: start save_outputs
+2026-06-15T19:12:26.761890+00:00 frame 31: done save_outputs (0.023s)
+2026-06-15T19:12:26.761890+00:00 frame 32: start save_outputs
+2026-06-15T19:12:26.784273+00:00 frame 32: done save_outputs (0.023s)
+2026-06-15T19:12:26.785277+00:00 frame 33: start save_outputs
+2026-06-15T19:12:26.810213+00:00 frame 33: done save_outputs (0.025s)
+2026-06-15T19:12:26.810213+00:00 frame 34: start save_outputs
+2026-06-15T19:12:26.834648+00:00 frame 34: done save_outputs (0.024s)
+2026-06-15T19:12:26.834648+00:00 frame 35: start save_outputs
+2026-06-15T19:12:26.857379+00:00 frame 35: done save_outputs (0.023s)
+2026-06-15T19:12:26.858378+00:00 frame 36: start save_outputs
+2026-06-15T19:12:26.883400+00:00 frame 36: done save_outputs (0.025s)
+2026-06-15T19:12:26.883400+00:00 frame 37: start save_outputs
+2026-06-15T19:12:26.906614+00:00 frame 37: done save_outputs (0.023s)
+2026-06-15T19:12:26.906614+00:00 frame 38: start save_outputs
+2026-06-15T19:12:26.930136+00:00 frame 38: done save_outputs (0.023s)
+2026-06-15T19:12:26.930136+00:00 frame 39: start save_outputs
+2026-06-15T19:12:26.952176+00:00 frame 39: done save_outputs (0.023s)
+2026-06-15T19:12:26.952176+00:00 frame 40: start save_outputs
+2026-06-15T19:12:26.976156+00:00 frame 40: done save_outputs (0.023s)
+2026-06-15T19:12:26.976156+00:00 frame 41: start save_outputs
+2026-06-15T19:12:27.000193+00:00 frame 41: done save_outputs (0.024s)
+2026-06-15T19:12:27.000193+00:00 frame 42: start save_outputs
+2026-06-15T19:12:27.024239+00:00 frame 42: done save_outputs (0.024s)
+2026-06-15T19:12:27.024239+00:00 frame 43: start save_outputs
+2026-06-15T19:12:27.047275+00:00 frame 43: done save_outputs (0.023s)
+2026-06-15T19:12:27.047275+00:00 frame 44: start save_outputs
+2026-06-15T19:12:27.070295+00:00 frame 44: done save_outputs (0.023s)
+2026-06-15T19:12:27.071296+00:00 frame 45: start save_outputs
+2026-06-15T19:12:27.095337+00:00 frame 45: done save_outputs (0.024s)
+2026-06-15T19:12:27.095337+00:00 frame 46: start save_outputs
+2026-06-15T19:12:27.118359+00:00 frame 46: done save_outputs (0.023s)
+2026-06-15T19:12:27.118359+00:00 frame 47: start save_outputs
+2026-06-15T19:12:27.143379+00:00 frame 47: done save_outputs (0.024s)
+2026-06-15T19:12:27.144765+00:00 saved temporal outputs to C:\Users\MoAww\Desktop\Projects\fungi\backend\outputs\micro_fungi_clip_2026-06-15_20-07-33\temporal_masks and C:\Users\MoAww\Desktop\Projects\fungi\backend\outputs\micro_fungi_clip_2026-06-15_20-07-33\temporal_difference_maps
+2026-06-15T19:12:27.144765+00:00 temporal continuity completed successfully

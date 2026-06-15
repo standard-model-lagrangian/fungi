@@ -1,0 +1,36 @@
+=== temporal continuity log 2026-06-15T18:47:07.448968+00:00 ===
+2026-06-15T18:47:07.456980+00:00 loaded 47 masks for temporal pass
+2026-06-15T18:47:07.456980+00:00 loading static ignore mask
+2026-06-15T18:47:07.457982+00:00 processing 47 frames (repair=False)
+2026-06-15T18:47:07.458981+00:00 frame 1/47: begin
+2026-06-15T18:47:07.458981+00:00 frame 1: start load_mask
+2026-06-15T18:47:07.460483+00:00 frame 1: done load_mask (0.001s)
+2026-06-15T18:47:07.460483+00:00 frame 1: start intensity_maps
+2026-06-15T18:47:07.466023+00:00 frame 1: done intensity_maps (0.006s)
+2026-06-15T18:47:07.467345+00:00 frame 1: start nearby_persistent
+2026-06-15T18:47:07.472356+00:00 frame 1: done nearby_persistent (0.006s)
+2026-06-15T18:47:07.474356+00:00 frame 1: start middle_frame_recovery
+2026-06-15T18:47:07.474356+00:00 frame 1: done middle_frame_recovery (0.000s)
+2026-06-15T18:47:07.475358+00:00 frame 1: start cumulative_traversed_prior
+2026-06-15T18:47:07.494377+00:00 frame 1: done cumulative_traversed_prior (0.020s)
+2026-06-15T18:47:07.494377+00:00 frame 1: start flicker_removal
+2026-06-15T18:47:07.541271+00:00 frame 1: done flicker_removal (0.046s)
+2026-06-15T18:47:07.543272+00:00 frame 1: complete elapsed=0.083s recovered=1016 removed=122
+2026-06-15T18:47:07.544272+00:00 frame 2/47: begin
+2026-06-15T18:47:07.544272+00:00 frame 2: start load_mask
+2026-06-15T18:47:07.545274+00:00 frame 2: done load_mask (0.001s)
+2026-06-15T18:47:07.545274+00:00 frame 2: start intensity_maps
+2026-06-15T18:47:07.552287+00:00 frame 2: done intensity_maps (0.007s)
+2026-06-15T18:47:07.552287+00:00 frame 2: start nearby_persistent
+2026-06-15T18:47:07.558286+00:00 frame 2: done nearby_persistent (0.006s)
+2026-06-15T18:47:07.559794+00:00 frame 2: start middle_frame_recovery
+2026-06-15T18:47:07.565308+00:00 frame 2: error middle_frame_recovery (0.006s) Cannot cast ufunc 'bitwise_or' output from dtype('uint8') to dtype('bool') with casting rule 'same_kind'
+2026-06-15T18:47:07.566308+00:00 Temporal continuity failed: Cannot cast ufunc 'bitwise_or' output from dtype('uint8') to dtype('bool') with casting rule 'same_kind'
+2026-06-15T18:47:07.566308+00:00 Traceback (most recent call last):
+  File "C:\Users\MoAww\Desktop\Projects\fungi\backend\temporal_continuity.py", line 586, in run_temporal_continuity_pipeline
+    corrected, metadata, bridge_debug_list = apply_temporal_continuity_pass(
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MoAww\Desktop\Projects\fungi\backend\temporal_continuity.py", line 386, in apply_temporal_continuity_pass
+    recovered |= mid_recover
+numpy._core._exceptions._UFuncOutputCastingError: Cannot cast ufunc 'bitwise_or' output from dtype('uint8') to dtype('bool') with casting rule 'same_kind'
+

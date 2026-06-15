@@ -1,0 +1,23 @@
+{
+  "frame": 536,
+  "raw_junction_pixel_count": 11,
+  "normalized_branch_point_count": 4,
+  "normalized_nodes": [
+    [
+      149,
+      125
+    ],
+    [
+      154,
+      28
+    ],
+    [
+      564,
+      1145
+    ],
+    [
+      569,
+      1207
+    ]
+  ]
+}

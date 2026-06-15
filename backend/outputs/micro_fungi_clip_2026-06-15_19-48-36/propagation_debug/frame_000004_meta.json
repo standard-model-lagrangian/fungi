@@ -1,0 +1,12 @@
+{
+  "frame_index": 4,
+  "directly_annotated": true,
+  "source_keyframe": 4,
+  "propagation_distance": 0,
+  "influencing_keyframes": [
+    4
+  ],
+  "mode": "keyframe",
+  "tube_repair_applied": false,
+  "bridged_gaps": 0
+}

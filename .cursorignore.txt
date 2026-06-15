@@ -1,0 +1,17 @@
+.venv/
+node_modules/
+__pycache__/
+
+*.pt
+*.pth
+*.ckpt
+
+uploads/
+outputs/
+
+*.mp4
+*.avi
+*.mov
+
+*.tif
+*.tiff
