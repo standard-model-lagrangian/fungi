@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import shutil
 import os
 import uuid
+import numpy as np
 import pandas as pd
 from pathlib import Path
 from pydantic import BaseModel
@@ -126,28 +127,36 @@ async def get_metrics_csv():
 # --- Preference-based Tuning Endpoints ---
 
 def generate_session_overlays(session: TuningSession):
-    frame = session.frames[0]
-    raw_mask = session.raw_masks[0]
-    
     session_dir = BACKEND_DIR / "uploads" / "tuner_overlays" / session.session_id
     session_dir.mkdir(parents=True, exist_ok=True)
-    
+
     from sam2_pipeline import clean_mask, skeleton_and_branchpoints, make_overlay
     for idx, cand in enumerate(session.candidates):
-        cleaned = clean_mask(
-            raw_mask,
-            radius_px=cand["dilation_radius"],
-            nearby_margin_px=cand["nearby_margin_px"],
-            min_size=cand["min_object_size_px"]
-        )
-        skel, branches, _, _ = skeleton_and_branchpoints(
-            cleaned,
-            min_skan_branch_length_px=cand["min_skan_branch_length_px"]
-        )
-        overlay = make_overlay(frame, cleaned, skel, branches)
-        
+        frame_overlays = []
+        for fi in range(len(session.frames)):
+            frame = session.frames[fi]
+            raw_mask = session.raw_masks[fi]
+            cleaned = clean_mask(
+                raw_mask,
+                radius_px=cand["dilation_radius"],
+                nearby_margin_px=cand["nearby_margin_px"],
+                min_size=cand["min_object_size_px"]
+            )
+            skel, branches, _, _ = skeleton_and_branchpoints(
+                cleaned,
+                min_skan_branch_length_px=cand["min_skan_branch_length_px"]
+            )
+            overlay = make_overlay(frame, cleaned, skel, branches)
+            frame_overlays.append(overlay)
+
+            # Save individual frame overlay
+            per_frame_path = session_dir / f"cand_{idx}_frame_{fi}.png"
+            Image.fromarray(overlay).save(per_frame_path)
+
+        # Stack all frame overlays vertically into one composite image
+        composite = np.vstack(frame_overlays)
         out_path = session_dir / f"cand_{idx}.png"
-        Image.fromarray(overlay).save(out_path)
+        Image.fromarray(composite).save(out_path)
 
 @app.post("/api/tune/start")
 async def tune_start(
@@ -165,32 +174,39 @@ async def tune_start(
     try:
         from sam2_pipeline import load_video_or_tiff, CellSAMWrapper, zero_shot_fluorescence_mask
         frames = load_video_or_tiff(file_path)
-        frame = frames[0]
-        
+
+        # Select up to 5 evenly-spaced frames
+        indices = np.linspace(0, len(frames) - 1, min(len(frames), 5), dtype=int)
+        selected_frames = [frames[i] for i in indices]
+
         cellsam = CellSAMWrapper(deepcell_token)
-        if cellsam.available:
-            try:
-                import torch
-                device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-                raw_mask, _, _ = cellsam.segment_func(frame, device=device)
-            except Exception as e:
-                print(f"[Tuner] CellSAM failed, falling back: {e}")
+        selected_raw_masks = []
+        for frame in selected_frames:
+            if cellsam.available:
+                try:
+                    import torch
+                    device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
+                    raw_mask, _, _ = cellsam.segment_func(frame, device=device)
+                except Exception as e:
+                    print(f"[Tuner] CellSAM failed, falling back: {e}")
+                    raw_mask = zero_shot_fluorescence_mask(frame)
+            else:
                 raw_mask = zero_shot_fluorescence_mask(frame)
-        else:
-            raw_mask = zero_shot_fluorescence_mask(frame)
-            
-        session = TuningSession(session_id, [frame], [raw_mask])
+            selected_raw_masks.append(raw_mask)
+
+        session = TuningSession(session_id, selected_frames, selected_raw_masks)
         session.generate_initial_candidates()
-        
+
         generate_session_overlays(session)
-        
+
         tuning_sessions[session_id] = session
-        
+
         return {
             "session_id": session_id,
             "round": session.round,
             "candidates": session.candidates,
-            "max_rounds": session.max_rounds
+            "max_rounds": session.max_rounds,
+            "num_frames": len(selected_frames)
         }
     except Exception as e:
         import traceback

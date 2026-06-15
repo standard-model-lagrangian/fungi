@@ -45,6 +45,7 @@ function App() {
   const [tuningBestParams, setTuningBestParams] = useState<any>(null)
   const [tuningBestScore, setTuningBestScore] = useState(0)
   const [isTuningLoading, setIsTuningLoading] = useState(false)
+  const [numTuningFrames, setNumTuningFrames] = useState(1)
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -120,6 +121,7 @@ function App() {
       setTuningMaxRounds(data.max_rounds)
       setTuningCandidates(data.candidates)
       setTuningCompleted(false)
+      setNumTuningFrames(data.num_frames || 1)
     } catch (error) {
       console.error(error)
       alert("Failed to start parameter tuning session.")
@@ -178,6 +180,7 @@ function App() {
     setTuningCompleted(false)
     setTuningBestParams(null)
     setTuningBestScore(0)
+    setNumTuningFrames(1)
     setMode('standard')
   }
 
@@ -445,9 +448,9 @@ function App() {
             <div>
               {!tuningSessionId ? (
                 <div>
-                  <h3 style={{ marginBottom: 12 }}>1. Upload a Trial Frame</h3>
+                  <h3 style={{ marginBottom: 12 }}>1. Upload Trial Data</h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 20 }}>
-                    Select a representative frame (TIFF or PNG) to find the best segmentation parameters interactively.
+                    Upload a TIFF stack or video. We'll sample up to 5 frames (sparse, clumped, etc.) to evaluate each parameter config across diverse conditions.
                   </p>
                   
                   <div 
@@ -461,13 +464,13 @@ function App() {
                       type="file" 
                       id="fileInputTuning" 
                       style={{ display: 'none' }} 
-                      accept="image/*,.tif,.tiff"
+                      accept="video/*,.tif,.tiff,image/*"
                       onChange={handleFileChange}
                     />
                     <Upload className="upload-icon" />
-                    <h3>{file ? file.name : "Drag & drop a trial frame here"}</h3>
+                    <h3>{file ? file.name : "Drag & drop a video or TIFF stack"}</h3>
                     <p style={{ color: 'var(--text-secondary)', marginTop: 8 }}>
-                      or click to browse
+                      single frames also accepted
                     </p>
                   </div>
 
@@ -507,7 +510,7 @@ function App() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                     <h3>Round {tuningRound} of {tuningMaxRounds}</h3>
                     <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                      Select the best segmentation image
+                      {numTuningFrames > 1 ? `${numTuningFrames} frames · ` : ''}pick best
                     </span>
                   </div>
 
@@ -607,7 +610,7 @@ function App() {
                             <div style={{ fontWeight: 600, marginBottom: 8, color: 'var(--accent)', fontSize: '0.9rem' }}>
                               Option {String.fromCharCode(65 + idx)}
                             </div>
-                            <div style={{ aspectRatio: '4/3', overflow: 'hidden', borderRadius: 8, background: '#000' }}>
+                            <div style={{ aspectRatio: numTuningFrames > 1 ? '3/4' : '4/3', overflow: 'hidden', borderRadius: 2, background: '#000', maxHeight: 320 }}>
                               <img 
                                 src={`${API_URL}/tune/media/${tuningSessionId}/${idx}.png?t=${Date.now()}`}
                                 alt={`Option ${String.fromCharCode(65 + idx)}`}
