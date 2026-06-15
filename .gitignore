@@ -1,0 +1,19 @@
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+
+# Local dependencies & checkpoints
+backend/sam2/
+backend/sam2_checkpoints/
+backend/uploads/
+backend/fungal_sam2_demo_output/
+
+# Frontend dependencies & builds
+frontend/node_modules/
+frontend/dist/
+frontend/.eslintcache
+
+# OS-specific files
+.DS_Store
+Thumbs.db
