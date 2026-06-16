@@ -3,6 +3,7 @@ import sys
 import subprocess
 import importlib.util
 import re
+import traceback
 from contextlib import nullcontext
 from datetime import datetime
 from typing import List
@@ -10,6 +11,8 @@ from pathlib import Path
 import urllib.request
 import shutil
 import math
+
+os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 
 def pip_install(args):
     print(f"\n[INSTALL] pip install {args}\n")
@@ -224,7 +227,7 @@ class SAM2Wrapper:
             return
 
         try:
-            device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
+            device = "cuda" if torch.cuda.is_available() else "cpu"
             print(f"[SAM2] Loading on {device}")
             # Patch for Mac (mps) to load the config from the repo path if needed
             cfg_path = "sam2.1_hiera_l.yaml"
@@ -243,7 +246,7 @@ class SAM2Wrapper:
         labels_np = None if labels_ is None or len(labels_) == 0 else np.array(labels_, dtype=np.int32)
         box_np = None if box is None else np.array(box, dtype=np.float32)
 
-        device_type = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
+        device_type = "cuda" if torch.cuda.is_available() else "cpu"
         with torch.inference_mode():
             if device_type == "cuda":
                 with torch.autocast("cuda", dtype=torch.bfloat16):
@@ -413,7 +416,7 @@ def extract_frames_for_job(
 def _segment_frame(fr, cellsam, dilation_radius, min_object_size_px, hole_fill_area, segmentation_preset="fungal_hyphae"):
     if cellsam.available:
         try:
-            device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
+            device = "cuda" if torch.cuda.is_available() else "cpu"
             raw_mask, _, _ = cellsam.segment_func(fr, device=device)
             return clean_mask(
                 raw_mask,
@@ -424,6 +427,7 @@ def _segment_frame(fr, cellsam, dilation_radius, min_object_size_px, hole_fill_a
             )
         except Exception as e:
             print(f"[WARN] CellSAM failed, falling back to zero-shot: {e}")
+            traceback.print_exc()
     raw_mask = zero_shot_fluorescence_mask(fr)
     return clean_mask(
         raw_mask,
