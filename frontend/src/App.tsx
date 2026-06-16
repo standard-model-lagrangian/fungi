@@ -62,7 +62,7 @@ function App() {
   const [frameInterval, setFrameInterval] = useState('1.0')
   const [minObjectSize, setMinObjectSize] = useState('40')
   const [dilationRadius, setDilationRadius] = useState('8')
-  const [minBranchLength, setMinBranchLength] = useState('8')
+  const [minBranchLength, setMinBranchLength] = useState('10')
   const [deepcellToken, setDeepcellToken] = useState('')
   const [showSettings, setShowSettings] = useState(false)
 
@@ -396,7 +396,7 @@ function App() {
                     </label>
                     <input 
                       type="number" 
-                      step="1"
+                      step="1" 
                       min="1"
                       value={minObjectSize} 
                       onChange={(e) => setMinObjectSize(e.target.value)} 
@@ -425,7 +425,7 @@ function App() {
                     </label>
                     <input 
                       type="number" 
-                      step="1"
+                      step="1" 
                       min="1"
                       value={minBranchLength} 
                       onChange={(e) => setMinBranchLength(e.target.value)} 

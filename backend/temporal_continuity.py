@@ -32,6 +32,7 @@ def default_temporal_config():
         "min_temporal_component_persistence": 2,
         "allow_tip_growth": True,
         "repair_disconnected_tubes": False,
+        "enable_traversed_persistence": True,
         "max_bridge_gap_px": 15,
         "max_bridge_angle_degrees": 45,
         "min_bridge_intensity_percentile": 60,
@@ -318,6 +319,16 @@ def apply_temporal_continuity_pass(
     if not config["use_temporal_continuity"] or len(masks) == 0:
         return list(masks), [], []
 
+    from segmentation_config import temporal_min_size
+
+    min_obj = max(1, int(config.get("min_object_size_px", 40)))
+    t_mid = temporal_min_size(20, min_obj)
+    t_loss = temporal_min_size(16, min_obj)
+    t_path = temporal_min_size(12, min_obj)
+    t_support = temporal_min_size(18, min_obj)
+    t_noise = max(min_obj, temporal_min_size(28, min_obj))
+    t_candidate = max(1, min_obj)
+
     if logger:
         logger.log("loading static ignore mask")
     static_ignore = build_static_ignore_mask({}, static_ann, frames[0].shape)
@@ -415,7 +426,7 @@ def apply_temporal_continuity_pass(
                 if config["recover_missing_middle_frames"] and prev_m is not None and next_m is not None:
                     mid_recover = prev_m & next_m & ~result & intensity_support & ~static_ignore
                     mid_recover = _as_bool_mask(
-                        remove_small_objects(mid_recover, min_size=20)
+                        remove_small_objects(mid_recover, min_size=t_mid)
                     )
                     if np.any(mid_recover):
                         middle_applied = True
@@ -424,32 +435,33 @@ def apply_temporal_continuity_pass(
 
         if not _frame_timed_out(frame_start, frame_budget):
             with (step_logger.timed_step(t, "cumulative_traversed_prior") if step_logger else _null_context()):
-                if persistence_w > 0 and prev_m is not None:
-                    sudden_loss = prev_m & ~result & ~static_ignore
-                    keep_loss = sudden_loss & (intensity_support | cumulative_traversed) & ~low_intensity
-                    keep_loss = _as_bool_mask(
-                        remove_small_objects(keep_loss, min_size=16)
-                    )
-                    recovered |= keep_loss & ~curr
-                    if persistence_w >= 0.5:
-                        result |= keep_loss
-                    else:
-                        result |= keep_loss & persistent
+                if config.get("enable_traversed_persistence", True):
+                    if persistence_w > 0 and prev_m is not None:
+                        sudden_loss = prev_m & ~result & ~static_ignore
+                        keep_loss = sudden_loss & (intensity_support | cumulative_traversed) & ~low_intensity
+                        keep_loss = _as_bool_mask(
+                            remove_small_objects(keep_loss, min_size=t_loss)
+                        )
+                        recovered |= keep_loss & ~curr
+                        if persistence_w >= 0.5:
+                            result |= keep_loss
+                        else:
+                            result |= keep_loss & persistent
 
-                path_keep = cumulative_traversed & ~result & ~static_ignore & intensity_support
-                path_keep = _as_bool_mask(
-                    remove_small_objects(path_keep, min_size=12)
-                )
-                recovered |= path_keep & ~curr
-                result |= path_keep
-
-                if nearby:
-                    support = persistent & intensity_support & ~static_ignore
-                    support = _as_bool_mask(
-                        remove_small_objects(support, min_size=18)
+                    path_keep = cumulative_traversed & ~result & ~static_ignore & intensity_support
+                    path_keep = _as_bool_mask(
+                        remove_small_objects(path_keep, min_size=t_path)
                     )
-                    recovered |= support & ~result
-                    result |= support & binary_dilation(result, disk(2))
+                    recovered |= path_keep & ~curr
+                    result |= path_keep
+
+                    if nearby:
+                        support = persistent & intensity_support & ~static_ignore
+                        support = _as_bool_mask(
+                            remove_small_objects(support, min_size=t_support)
+                        )
+                        recovered |= support & ~result
+                        result |= support & binary_dilation(result, disk(2))
 
         if not _frame_timed_out(frame_start, frame_budget):
             with (step_logger.timed_step(t, "flicker_removal") if step_logger else _null_context()):
@@ -459,7 +471,7 @@ def apply_temporal_continuity_pass(
                         isolated &= ~binary_dilation(nb, disk(2))
                     noise = isolated & ~static_ignore
                     noise = _as_bool_mask(
-                        remove_small_objects(noise, min_size=28)
+                        remove_small_objects(noise, min_size=t_noise)
                     )
                     if config["allow_tip_growth"]:
                         tips = _tip_boundary_mask_fast(result)
@@ -474,7 +486,7 @@ def apply_temporal_continuity_pass(
             if before_area > 0 and (before_area - after_area) / before_area > max_drop and prev_m is not None:
                 candidates = prev_m & ~result & intensity_support & ~static_ignore
                 candidates = _as_bool_mask(
-                    remove_small_objects(candidates, min_size=8)
+                    remove_small_objects(candidates, min_size=t_candidate)
                 )
                 if np.any(candidates):
                     recovered |= candidates
@@ -518,7 +530,7 @@ def apply_temporal_continuity_pass(
             result = _as_bool_mask(
                 enforce_full_guided_mask(result.astype(np.uint8), ann_masks, correction_masks)
             )
-        cumulative_traversed |= result
+        cumulative_traversed |= result if config.get("enable_traversed_persistence", True) else np.zeros_like(result)
 
         elapsed = time.perf_counter() - frame_start
         meta = {

@@ -48,6 +48,22 @@ from pre_segmentation_setup import (
     save_setup_mask,
     preview_frame_indices,
 )
+from segmentation_config import (
+    list_presets_for_api,
+    preset_values,
+    small_object_warning,
+    validate_segmentation_params,
+    get_workflow_config,
+    workflow_flags,
+    normalize_preset_name,
+    PRESET_BACTERIA,
+    PRESET_MIXED,
+)
+from bacterial_tracking import (
+    get_bacterial_tracking_dir,
+    load_bacterial_tracking_metadata,
+    merge_bacterial_tracking_config,
+)
 from corrections import (
     load_correction_masks,
     load_frame_correction_masks,
@@ -159,13 +175,30 @@ class TemporalContinuitySettingsModel(BaseModel):
 
 
 class SegmentationParamsModel(BaseModel):
-    pixel_size_um: float = 1.0
-    frame_interval_min: float = 1.0
-    min_object_size_px: int = 40
-    dilation_radius: int = 8
-    hole_fill_area: int = 200
-    min_branch_length_px: int = 8
+    pixel_size_um: float = Field(1.0, ge=0.001)
+    frame_interval_min: float = Field(1.0, ge=0.001)
+    min_object_size_px: int = Field(40, ge=1)
+    dilation_radius: int = Field(8, ge=0)
+    hole_fill_area: int = Field(200, ge=0)
+    min_branch_length_px: int = Field(10, ge=1)
     deepcell_token: Optional[str] = None
+    target_object_type: str = "fungal_hyphae"
+    segmentation_preset: str = "fungal_hyphae"
+    skeletonization_mode: str = "hyphae_only"
+    skeleton_min_object_area_px: Optional[int] = Field(None, ge=1)
+    hyphae_min_length_px: int = Field(12, ge=1)
+    hyphae_min_aspect_ratio: float = Field(2.5, ge=1.0)
+    bacteria_max_length_px: int = Field(15, ge=1)
+    bacteria_max_area_px2: int = Field(200, ge=1)
+    max_component_count_threshold: int = Field(5000, ge=100)
+    enable_bacterial_tracking: bool = True
+    max_bacteria_displacement_px: int = Field(20, ge=1)
+    max_track_gap_frames: int = Field(2, ge=0)
+    min_track_length_frames: int = Field(2, ge=1)
+    trajectory_tail_frames: int = Field(20, ge=1)
+    generate_trajectory_overlay_video: bool = True
+    generate_heatmaps: bool = True
+    max_objects_per_frame_for_tracking: int = Field(5000, ge=100)
 
 
 class StaticBackgroundModel(BaseModel):
@@ -245,6 +278,12 @@ def _build_frame_asset_entry(job_id, frame_index, output_dir):
     correction_diff_path = correction_debug_dir / "difference_map.png"
     corrections_dir = output_dir / "corrections"
     correction_add = corrections_dir / f"frame_{frame_index:06d}_add.png"
+    trajectory_overlay_path = (
+        output_dir
+        / "bacteria_tracking"
+        / "bacterial_trajectory_overlay_frames"
+        / f"overlay_{frame_index:04d}.png"
+    )
     skeleton_tif = output_dir / "skeletons" / f"skeleton_{frame_index:04d}.tif"
     skeleton_png = output_dir / "skeletons" / f"skeleton_{frame_index:04d}.png"
     frame_path = output_dir / "frames" / f"frame_{frame_index:04d}.jpg"
@@ -303,6 +342,9 @@ def _build_frame_asset_entry(job_id, frame_index, output_dir):
         "correction_add_mask_url": f"{prefix}/corrections/{frame_index}/add"
         if correction_add.exists()
         else None,
+        "bacterial_trajectory_overlay_url": f"{prefix}/bacterial-tracking/trajectory/{frame_index}"
+        if trajectory_overlay_path.exists()
+        else None,
         "final_guided_overlay_url": f"{prefix}/guided_overlays/{frame_index}"
         if guided_overlay_path.exists()
         else (
@@ -355,15 +397,30 @@ async def upload_video(
         "total_frames": 0,
         "current_frame_preview_url": None,
         "progress_percent": 0,
-        "params": {
-            "pixel_size_um": pixel_size_um,
-            "frame_interval_min": frame_interval_min,
-            "min_object_size_px": min_object_size_px,
-            "dilation_radius": dilation_radius,
-            "hole_fill_area": hole_fill_area,
-            "min_branch_length_px": min_branch_length_px,
-            "deepcell_token": deepcell_token,
-        },
+        "params": validate_segmentation_params(
+            {
+                "pixel_size_um": pixel_size_um,
+                "frame_interval_min": frame_interval_min,
+                "min_object_size_px": min_object_size_px,
+                "dilation_radius": dilation_radius,
+                "hole_fill_area": hole_fill_area,
+                "min_branch_length_px": min_branch_length_px,
+                "deepcell_token": deepcell_token,
+                "segmentation_preset": "fungal_hyphae",
+                "target_object_type": "fungal_hyphae",
+                "hyphae_min_length_px": preset_values("fungal_hyphae")["hyphae_min_length_px"],
+                "hyphae_min_aspect_ratio": preset_values("fungal_hyphae")["hyphae_min_aspect_ratio"],
+                "bacteria_max_length_px": preset_values("fungal_hyphae")["bacteria_max_length_px"],
+                "bacteria_max_area_px2": preset_values("fungal_hyphae")["bacteria_max_area_px2"],
+                "max_component_count_threshold": preset_values("fungal_hyphae")[
+                    "max_component_count_threshold"
+                ],
+                "skeletonization_mode": "hyphae_only",
+                "skeleton_min_object_area_px": preset_values("fungal_hyphae")[
+                    "skeleton_min_object_area_px"
+                ],
+            }
+        ),
     }
 
     def upload_pipeline_task(jid, path, job_output_dir):
@@ -404,7 +461,37 @@ async def upload_video(
 
 
 def _job_params(job):
-    return job["params"]
+    return validate_segmentation_params(job.get("params", {}))
+
+
+def _sync_job_params_to_config(job_id, params):
+    ann_dir = get_annotations_dir(jobs[job_id]["output_dir"])
+    config = load_job_config(ann_dir)
+    config.update(
+        {
+            "target_object_type": params["target_object_type"],
+            "segmentation_preset": params["segmentation_preset"],
+            "skeletonization_mode": params["skeletonization_mode"],
+            "skeleton_min_object_area_px": params["skeleton_min_object_area_px"],
+            "min_object_size_px": params["min_object_size_px"],
+            "hyphae_min_length_px": params["hyphae_min_length_px"],
+            "hyphae_min_aspect_ratio": params["hyphae_min_aspect_ratio"],
+            "bacteria_max_length_px": params["bacteria_max_length_px"],
+            "bacteria_max_area_px2": params["bacteria_max_area_px2"],
+            "max_component_count_threshold": params["max_component_count_threshold"],
+            "enable_bacterial_tracking": params.get("enable_bacterial_tracking", True),
+            "max_bacteria_displacement_px": params.get("max_bacteria_displacement_px", 20),
+            "max_track_gap_frames": params.get("max_track_gap_frames", 2),
+            "min_track_length_frames": params.get("min_track_length_frames", 2),
+            "trajectory_tail_frames": params.get("trajectory_tail_frames", 20),
+            "generate_trajectory_overlay_video": params.get("generate_trajectory_overlay_video", True),
+            "generate_heatmaps": params.get("generate_heatmaps", True),
+            "max_objects_per_frame_for_tracking": params.get(
+                "max_objects_per_frame_for_tracking", 5000
+            ),
+        }
+    )
+    save_job_config(ann_dir, config)
 
 
 def _run_segmentation(jid, guided=False, review_on_complete=True):
@@ -448,6 +535,9 @@ def _run_segmentation(jid, guided=False, review_on_complete=True):
                 output_dir=Path(job["output_dir"]),
                 progress_callback=update_progress,
                 frames_preloaded=True,
+                segmentation_preset=params["segmentation_preset"],
+                skeletonization_mode=params["skeletonization_mode"],
+                skeleton_min_object_area_px=params["skeleton_min_object_area_px"],
             )
     except Exception as e:
         jobs[jid]["status"] = "failed"
@@ -532,12 +622,23 @@ async def put_temporal_settings(job_id: str, body: TemporalContinuitySettingsMod
     return merge_temporal_config(config)
 
 
+@app.get("/api/segmentation-presets")
+async def get_segmentation_presets():
+    return list_presets_for_api()
+
+
 @app.get("/api/jobs/{job_id}/params")
 async def get_segmentation_params(job_id: str):
     job = _get_job(job_id)
     if job is None:
         return JSONResponse({"error": "Job not found"}, status_code=404)
-    return job.get("params", {})
+    params = _job_params(job)
+    workflow = get_workflow_config(params)
+    return {
+        **params,
+        "workflow": workflow_flags(params["target_object_type"]),
+        "small_object_warning": small_object_warning(params["min_object_size_px"]),
+    }
 
 
 @app.put("/api/jobs/{job_id}/params")
@@ -545,9 +646,33 @@ async def put_segmentation_params(job_id: str, body: SegmentationParamsModel):
     job = _get_job(job_id)
     if job is None:
         return JSONResponse({"error": "Job not found"}, status_code=404)
-    params = body.model_dump() if hasattr(body, "model_dump") else body.dict()
-    jobs[job_id]["params"].update(params)
-    return jobs[job_id]["params"]
+    raw = body.model_dump() if hasattr(body, "model_dump") else body.dict()
+    if raw.get("target_object_type"):
+        raw["segmentation_preset"] = raw["target_object_type"]
+    elif raw.get("segmentation_preset"):
+        raw["target_object_type"] = raw["segmentation_preset"]
+    if raw.get("skeleton_min_object_area_px") is None:
+        raw["skeleton_min_object_area_px"] = preset_values(raw.get("target_object_type"))[
+            "skeleton_min_object_area_px"
+        ]
+    params = validate_segmentation_params({**jobs[job_id].get("params", {}), **raw})
+    preset_cfg = preset_values(params["target_object_type"])
+    for key in (
+        "hyphae_min_length_px",
+        "hyphae_min_aspect_ratio",
+        "bacteria_max_length_px",
+        "bacteria_max_area_px2",
+        "max_component_count_threshold",
+    ):
+        if key not in raw:
+            params[key] = preset_cfg[key]
+    jobs[job_id]["params"] = params
+    _sync_job_params_to_config(job_id, params)
+    return {
+        **params,
+        "workflow": workflow_flags(params["target_object_type"]),
+        "small_object_warning": small_object_warning(params["min_object_size_px"]),
+    }
 
 
 @app.get("/api/jobs/{job_id}/setup/info")
@@ -573,7 +698,8 @@ async def get_setup_info(job_id: str):
     metadata["image_width"] = image_width
     metadata["image_height"] = image_height
     metadata["total_frames"] = total
-    metadata["params"] = job.get("params", {})
+    metadata["params"] = _job_params(job)
+    metadata["small_object_warning"] = small_object_warning(metadata["params"]["min_object_size_px"])
 
     prefix = f"/api/jobs/{job_id}"
     metadata["preview_frames"] = {
@@ -1580,6 +1706,145 @@ async def get_skeleton_frame(
     skel_dir.mkdir(parents=True, exist_ok=True)
     Image.fromarray(img).save(png_path)
     return FileResponse(png_path, media_type="image/png")
+
+
+def _bacterial_tracking_allowed(job) -> bool:
+    params = _job_params(job)
+    target = normalize_preset_name(params.get("target_object_type"))
+    return target in (PRESET_BACTERIA, PRESET_MIXED)
+
+
+@app.get("/api/jobs/{job_id}/bacterial-tracking/info")
+async def get_bacterial_tracking_info(job_id: str):
+    job = _get_job(job_id)
+    if job is None:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    if not _bacterial_tracking_allowed(job):
+        return {"available": False, "reason": "not_bacterial_workflow"}
+
+    output_dir = Path(job["output_dir"])
+    metadata = load_bacterial_tracking_metadata(output_dir)
+    if not metadata:
+        return {"available": False, "reason": "not_generated"}
+
+    prefix = f"/api/jobs/{job_id}/bacterial-tracking"
+    tracking_dir = get_bacterial_tracking_dir(output_dir)
+    downloads = {}
+    for key, filename in {
+        "detections": "bacterial_detections.csv",
+        "tracks": "bacterial_tracks.csv",
+        "track_summary": "bacterial_track_summary.csv",
+        "frame_metrics": "bacterial_frame_metrics.csv",
+    }.items():
+        if (tracking_dir / filename).exists():
+            downloads[key] = f"{prefix}/csv/{key}"
+
+    heatmaps = {}
+    for key, filename in {
+        "occupancy": "bacterial_occupancy_heatmap.png",
+        "trajectory_density": "bacterial_trajectory_density_heatmap.png",
+        "speed": "bacterial_speed_heatmap.png",
+        "direction": "bacterial_direction_heatmap.png",
+    }.items():
+        if (tracking_dir / filename).exists():
+            heatmaps[key] = f"{prefix}/heatmaps/{key}"
+
+    video_url = None
+    if (tracking_dir / "bacterial_trajectory_overlay.mp4").exists():
+        video_url = f"{prefix}/video"
+
+    return {
+        "available": True,
+        "metadata": metadata,
+        "downloads": downloads,
+        "heatmaps": heatmaps,
+        "video_url": video_url,
+        "trajectory_frame_url_template": f"{prefix}/trajectory/{{frame_index}}",
+    }
+
+
+@app.get("/api/jobs/{job_id}/bacterial-tracking/trajectory/{frame_index}")
+async def get_bacterial_trajectory_overlay(job_id: str, frame_index: int):
+    job = _get_job(job_id)
+    if job is None:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    path = (
+        get_bacterial_tracking_dir(Path(job["output_dir"]))
+        / "bacterial_trajectory_overlay_frames"
+        / f"overlay_{frame_index:04d}.png"
+    )
+    if not path.exists():
+        return JSONResponse({"error": "Trajectory overlay not found"}, status_code=404)
+    return FileResponse(path, media_type="image/png")
+
+
+@app.get("/api/jobs/{job_id}/bacterial-tracking/heatmaps/{heatmap_name}")
+async def get_bacterial_heatmap(job_id: str, heatmap_name: str):
+    job = _get_job(job_id)
+    if job is None:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    names = {
+        "occupancy": "bacterial_occupancy_heatmap.png",
+        "trajectory_density": "bacterial_trajectory_density_heatmap.png",
+        "speed": "bacterial_speed_heatmap.png",
+        "direction": "bacterial_direction_heatmap.png",
+    }
+    if heatmap_name not in names:
+        return JSONResponse({"error": "Unknown heatmap"}, status_code=404)
+    path = get_bacterial_tracking_dir(Path(job["output_dir"])) / names[heatmap_name]
+    if not path.exists():
+        return JSONResponse({"error": "Heatmap not found"}, status_code=404)
+    return FileResponse(path, media_type="image/png")
+
+
+@app.get("/api/jobs/{job_id}/bacterial-tracking/csv/{csv_name}")
+async def get_bacterial_tracking_csv(job_id: str, csv_name: str):
+    job = _get_job(job_id)
+    if job is None:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    names = {
+        "detections": "bacterial_detections.csv",
+        "tracks": "bacterial_tracks.csv",
+        "track_summary": "bacterial_track_summary.csv",
+        "frame_metrics": "bacterial_frame_metrics.csv",
+    }
+    if csv_name not in names:
+        return JSONResponse({"error": "Unknown CSV"}, status_code=404)
+    path = get_bacterial_tracking_dir(Path(job["output_dir"])) / names[csv_name]
+    if not path.exists():
+        return JSONResponse({"error": "CSV not found"}, status_code=404)
+    return FileResponse(path, media_type="text/csv", filename=names[csv_name])
+
+
+@app.get("/api/jobs/{job_id}/bacterial-tracking/video")
+async def get_bacterial_tracking_video(job_id: str):
+    job = _get_job(job_id)
+    if job is None:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    path = get_bacterial_tracking_dir(Path(job["output_dir"])) / "bacterial_trajectory_overlay.mp4"
+    if not path.exists():
+        return JSONResponse({"error": "Video not found"}, status_code=404)
+    return FileResponse(path, media_type="video/mp4")
+
+
+@app.get("/api/jobs/{job_id}/bacterial-tracking-settings")
+async def get_bacterial_tracking_settings(job_id: str):
+    job = _get_job(job_id)
+    if job is None:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    params = _job_params(job)
+    return merge_bacterial_tracking_config(params)
+
+
+@app.put("/api/jobs/{job_id}/bacterial-tracking-settings")
+async def put_bacterial_tracking_settings(job_id: str, body: dict = Body(...)):
+    job = _get_job(job_id)
+    if job is None:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    params = validate_segmentation_params({**jobs[job_id].get("params", {}), **body})
+    jobs[job_id]["params"] = params
+    _sync_job_params_to_config(job_id, params)
+    return merge_bacterial_tracking_config(params)
 
 
 @app.get("/api/jobs/{job_id}/media/video")

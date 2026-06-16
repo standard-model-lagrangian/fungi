@@ -14,6 +14,7 @@ import {
   Redo2,
   Plus,
   Minus,
+  ScanEye,
 } from 'lucide-react'
 
 const API_URL = 'http://localhost:8000/api'
@@ -28,6 +29,15 @@ export interface FrameAsset {
   auto_overlay_url: string | null
   auto_mask_url: string | null
   skeleton_frame_url: string | null
+}
+
+interface SegmentationPreviewResult {
+  frame_index: number
+  auto_overlay_url?: string
+  guided_overlay_url?: string
+  difference_map_url?: string
+  auto_metrics?: Record<string, number | string>
+  guided_metrics?: Record<string, number | string>
 }
 
 export interface FrameAnnotation {
@@ -357,6 +367,8 @@ export default function AnnotationView({
     max_bridge_angle_degrees: 45,
     min_bridge_intensity_percentile: 60,
   })
+  const [segmentationPreview, setSegmentationPreview] = useState<SegmentationPreviewResult | null>(null)
+  const [previewLoading, setPreviewLoading] = useState(false)
 
   const cacheSuffix = videoVersion > 0 ? `?v=${videoVersion}` : ''
   const videoUrl = `${BACKEND_ORIGIN}/api/jobs/${jobId}/media/video${cacheSuffix}`
@@ -425,6 +437,12 @@ export default function AnnotationView({
     const res = await fetch(`${API_URL}/jobs/${jobId}/temporal/${index}`)
     if (res.ok) setTemporalMeta(await res.json())
   }, [jobId])
+
+  const previewImageUrl = useCallback((path: string | undefined) => {
+    if (!path) return null
+    const base = path.startsWith('http') ? path : `${BACKEND_ORIGIN}${path}`
+    return `${base}${base.includes('?') ? '&' : '?'}t=${Date.now()}`
+  }, [])
 
   const persistCorrections = useCallback(async (targetFrameIndex?: number) => {
     const saveIndex = targetFrameIndex ?? activeCorrectionFrameRef.current ?? frameIndexRef.current
@@ -692,6 +710,32 @@ export default function AnnotationView({
     onRunGuided()
   }
 
+  const handlePreviewSegmentation = async () => {
+    registerUserInteraction()
+    if (!annotation) return
+    if (correctionDirtyRef.current) await persistCorrections()
+    setPreviewLoading(true)
+    setStatusMsg('')
+    try {
+      const res = await fetch(`${API_URL}/jobs/${jobId}/frames/${frameIndex}/preview-guided`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(annotation),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setStatusMsg(typeof data.error === 'string' ? data.error : 'Preview failed')
+        return
+      }
+      setSegmentationPreview(data as SegmentationPreviewResult)
+      setStatusMsg('Preview ready')
+    } catch {
+      setStatusMsg('Preview failed')
+    } finally {
+      setPreviewLoading(false)
+    }
+  }
+
   const toggleKeyframe = async () => {
     registerUserInteraction()
     if (!annotation) return
@@ -715,6 +759,10 @@ export default function AnnotationView({
       if (r.ok) setTemporalSettings(await r.json())
     })
   }, [jobId, loadFrameAssets, loadKeyframes, videoVersion])
+
+  useEffect(() => {
+    setSegmentationPreview(null)
+  }, [frameIndex])
 
   useEffect(() => {
     loadPropagationMeta(frameIndex)
@@ -903,6 +951,14 @@ export default function AnnotationView({
 
           <div className="annotation-toolbar-group annotation-toolbar-actions">
             <button type="button" className="btn btn-compact" onClick={handleRunGuided}><Play size={16} /> Run Guided Segmentation</button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-compact"
+              disabled={previewLoading || !annotation}
+              onClick={() => void handlePreviewSegmentation()}
+            >
+              <ScanEye size={16} /> {previewLoading ? 'Previewing…' : 'Preview Segmentation'}
+            </button>
             {onViewResults && <button type="button" className="btn btn-secondary btn-compact" onClick={onViewResults}><BarChart3 size={16} /> Metrics</button>}
             {saveStatus === 'saved' && <span className="save-indicator">Saved</span>}
             {saveStatus === 'saving' && <span className="save-indicator saving">Saving…</span>}
@@ -975,6 +1031,60 @@ export default function AnnotationView({
           <p className="annotation-settings-hint correction-color-legend">
             Auto: green · Add: cyan · Remove: magenta · Static: blue
           </p>
+
+          {segmentationPreview && (
+            <div className="annotation-side-section preview-panel">
+              <h3>Segmentation Preview</h3>
+              <div className="preview-grid">
+                <div className="preview-item">
+                  <span>Auto segmentation</span>
+                  {previewImageUrl(segmentationPreview.auto_overlay_url) && (
+                    <img src={previewImageUrl(segmentationPreview.auto_overlay_url)!} alt="Auto segmentation preview" />
+                  )}
+                </div>
+                <div className="preview-item">
+                  <span>With corrections</span>
+                  {previewImageUrl(segmentationPreview.guided_overlay_url) && (
+                    <img src={previewImageUrl(segmentationPreview.guided_overlay_url)!} alt="Corrected segmentation preview" />
+                  )}
+                </div>
+              </div>
+              {previewImageUrl(segmentationPreview.difference_map_url) && (
+                <div className="preview-item" style={{ marginTop: 12 }}>
+                  <span>Difference map</span>
+                  <img src={previewImageUrl(segmentationPreview.difference_map_url)!} alt="Segmentation difference map" />
+                </div>
+              )}
+              {(segmentationPreview.auto_metrics || segmentationPreview.guided_metrics) && (
+                <div className="preview-metrics-row">
+                  {segmentationPreview.auto_metrics && (
+                    <div className="preview-metrics-card">
+                      <h4>Auto</h4>
+                      {Object.entries(segmentationPreview.auto_metrics).slice(0, 4).map(([key, value]) => (
+                        <p key={key}>{key}: {String(value)}</p>
+                      ))}
+                    </div>
+                  )}
+                  {segmentationPreview.guided_metrics && (
+                    <div className="preview-metrics-card">
+                      <h4>Corrected</h4>
+                      {Object.entries(segmentationPreview.guided_metrics).slice(0, 4).map(([key, value]) => (
+                        <p key={key}>{key}: {String(value)}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              <button
+                type="button"
+                className="btn btn-secondary btn-compact"
+                style={{ marginTop: 12 }}
+                onClick={() => setSegmentationPreview(null)}
+              >
+                Close Preview
+              </button>
+            </div>
+          )}
 
           <div className="annotation-side-section">
             <h3>Keyframes</h3>

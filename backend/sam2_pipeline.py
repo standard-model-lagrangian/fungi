@@ -3,7 +3,9 @@ import sys
 import subprocess
 import importlib.util
 import re
+from contextlib import nullcontext
 from datetime import datetime
+from typing import List
 from pathlib import Path
 import urllib.request
 import shutil
@@ -172,6 +174,11 @@ def ensure_job_subdirs(output_dir):
         "corrections",
         "skeleton_debug",
         "setup",
+        "fungi_masks",
+        "bacteria_masks",
+        "fungi_overlays",
+        "bacteria_overlays",
+        "bacteria_tracking",
     ]:
         path = Path(output_dir) / name
         path.mkdir(parents=True, exist_ok=True)
@@ -403,7 +410,7 @@ def extract_frames_for_job(
         report("extracting_frames", total_frames - 1, total_frames)
     return total_frames
 
-def _segment_frame(fr, cellsam, dilation_radius, min_object_size_px, hole_fill_area):
+def _segment_frame(fr, cellsam, dilation_radius, min_object_size_px, hole_fill_area, segmentation_preset="fungal_hyphae"):
     if cellsam.available:
         try:
             device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
@@ -413,6 +420,7 @@ def _segment_frame(fr, cellsam, dilation_radius, min_object_size_px, hole_fill_a
                 radius_px=dilation_radius,
                 min_size=min_object_size_px,
                 hole_fill_area=hole_fill_area,
+                segmentation_preset=segmentation_preset,
             )
         except Exception as e:
             print(f"[WARN] CellSAM failed, falling back to zero-shot: {e}")
@@ -422,6 +430,7 @@ def _segment_frame(fr, cellsam, dilation_radius, min_object_size_px, hole_fill_a
         radius_px=dilation_radius,
         min_size=min_object_size_px,
         hole_fill_area=hole_fill_area,
+        segmentation_preset=segmentation_preset,
     )
 
 
@@ -432,11 +441,14 @@ def _segment_frame_with_setup(
     min_object_size_px,
     hole_fill_area,
     setup_context=None,
+    segmentation_preset="fungal_hyphae",
 ):
     from pre_segmentation_setup import apply_pre_segmentation_mask, crop_image, embed_crop_mask
 
     if setup_context is None:
-        return _segment_frame(fr, cellsam, dilation_radius, min_object_size_px, hole_fill_area)
+        return _segment_frame(
+            fr, cellsam, dilation_radius, min_object_size_px, hole_fill_area, segmentation_preset
+        )
 
     bbox = setup_context.get("roi_bbox")
     allowed_mask = setup_context["allowed_mask"]
@@ -444,11 +456,18 @@ def _segment_frame_with_setup(
     if bbox is not None:
         crop = crop_image(fr, bbox)
         mask_crop = _segment_frame(
-            crop, cellsam, dilation_radius, min_object_size_px, hole_fill_area
+            crop,
+            cellsam,
+            dilation_radius,
+            min_object_size_px,
+            hole_fill_area,
+            segmentation_preset,
         )
         mask = embed_crop_mask(mask_crop, bbox, fr.shape[:2])
     else:
-        mask = _segment_frame(fr, cellsam, dilation_radius, min_object_size_px, hole_fill_area)
+        mask = _segment_frame(
+            fr, cellsam, dilation_radius, min_object_size_px, hole_fill_area, segmentation_preset
+        )
 
     return apply_pre_segmentation_mask(mask, allowed_mask)
 
@@ -495,6 +514,7 @@ def _save_overlays_with_progress(
     job_id=None,
     progress_callback=None,
     progress_stage="temporal",
+    enable_skeletonization=True,
 ):
     overlays_dir = Path(output_dir) / overlays_subdir
     overlays_dir.mkdir(parents=True, exist_ok=True)
@@ -509,9 +529,109 @@ def _save_overlays_with_progress(
                 current_frame_preview_url=f"/api/jobs/{job_id}/preview/{i}" if job_id else None,
                 progress_percent=calc_progress_percent(progress_stage, i, total_frames),
             )
-        skel, branches, _, _, _ = skeleton_and_branchpoints(mask)
-        overlay = make_overlay(img, mask, skel, branches)
+        if enable_skeletonization:
+            skel, branches, _, _, _ = skeleton_and_branchpoints(mask, enable_analysis=True)
+            overlay = make_overlay(img, mask, skel, branches)
+        else:
+            overlay = make_overlay(img, mask, skel=None, branches=None)
         Image.fromarray(overlay).save(overlays_dir / f"overlay_{i:04d}.png")
+
+
+def _empty_branch_meta(mask_shape):
+    skel_bool = np.zeros(mask_shape, dtype=bool)
+    return {
+        "raw_junction_pixel_count": 0,
+        "normalized_branch_point_count": 0,
+        "normalized_nodes": None,
+        "raw_branch": skel_bool,
+        "cluster_labels": np.zeros(mask_shape, dtype=np.int32),
+        "skel_bool": skel_bool,
+    }
+
+
+def _empty_skel_outputs(mask):
+    empty = np.zeros_like(mask, dtype=np.uint8)
+    return empty, empty, empty, pd.DataFrame(), _empty_branch_meta(mask.shape)
+
+
+def bacterial_frame_metrics(mask, frame_idx, pixel_size_um=1.0, frame_interval_min=1.0):
+    mask_bool = np.asarray(mask).astype(bool)
+    labeled = label(mask_bool)
+    regions = [r for r in regionprops(labeled) if r.area > 0]
+    areas = [int(r.area) for r in regions]
+    count = len(areas)
+    total_area = int(sum(areas))
+    mean_area = float(total_area / count) if count else 0.0
+    h, w = mask_bool.shape
+    density = float(count / (h * w)) if h * w else 0.0
+    px_um2 = pixel_size_um * pixel_size_um
+    return {
+        "frame": frame_idx,
+        "time_min": frame_idx * frame_interval_min,
+        "object_count": count,
+        "mean_area_px": mean_area,
+        "total_area_px": total_area,
+        "object_density_per_px2": density,
+        "mean_area_um2": mean_area * px_um2,
+        "total_area_um2": total_area * px_um2,
+    }
+
+
+def bacterial_object_props(mask, frame_idx, min_object_size_px=1):
+    return object_props(mask, frame_idx, min_object_size_px=max(1, int(min_object_size_px)))
+
+
+def bacterial_growth_rates(metrics_df):
+    if len(metrics_df) < 2:
+        metrics_df["object_count_growth_per_min"] = np.nan
+        metrics_df["total_area_growth_um2_per_min"] = np.nan
+        return metrics_df
+    metrics_df = metrics_df.sort_values("frame").copy()
+    dt = metrics_df["time_min"].diff()
+    metrics_df["object_count_growth_per_min"] = metrics_df["object_count"].diff() / dt
+    metrics_df["total_area_growth_um2_per_min"] = metrics_df["total_area_um2"].diff() / dt
+    return metrics_df
+
+
+def _empty_fungal_metrics(frame_idx, frame_interval_min):
+    return {
+        "frame": frame_idx,
+        "time_min": frame_idx * frame_interval_min,
+        "hyphal_area_px": 0,
+        "hyphal_area_um2": 0.0,
+        "hyphal_length_px": 0.0,
+        "hyphal_length_um": 0.0,
+        "branch_points": 0,
+        "raw_junction_pixel_count": 0,
+        "normalized_branch_point_count": 0,
+        "tip_count": 0,
+        "skan_graph_branches": np.nan,
+        "skan_terminal_branches": np.nan,
+        "skan_junction_to_junction_branches": np.nan,
+        "small_object_count": 0,
+        "small_object_area_px": 0,
+        "hyphal_object_count": 0,
+        "hyphal_mask_area_px": 0,
+    }
+
+
+def make_workflow_overlay(image, fungi_mask, bacteria_mask, fungi_skel, fungi_branches, workflow):
+    from annotations import render_simple_mask_overlay
+
+    overlay = image.copy()
+    fungi_mask = np.asarray(fungi_mask).astype(bool)
+    bacteria_mask = np.asarray(bacteria_mask).astype(bool)
+    if workflow.get("enable_fungal_processing") and fungi_mask.any():
+        skel = fungi_skel if workflow.get("enable_skeletonization") else None
+        branches = fungi_branches if workflow.get("enable_branch_detection") else None
+        overlay = make_overlay(overlay, fungi_mask, skel, branches)
+    if workflow.get("enable_bacterial_processing") and bacteria_mask.any():
+        overlay = render_simple_mask_overlay(overlay, bacteria_mask, color=(0, 255, 255), alpha=0.45)
+    if not fungi_mask.any() and not bacteria_mask.any():
+        combined = fungi_mask | bacteria_mask
+        if combined.any():
+            overlay = make_overlay(overlay, combined, None, None)
+    return overlay
 
 
 def _finalize_job_outputs(
@@ -529,6 +649,7 @@ def _finalize_job_outputs(
     save_annotation_previews=False,
     masks_subdir="masks",
     overlays_subdir="overlays",
+    perf_logger=None,
 ):
     from annotations import (
         load_frame_annotation,
@@ -536,6 +657,10 @@ def _finalize_job_outputs(
         get_annotations_dir,
         load_job_config,
     )
+    from object_classification import classify_mask_layers
+    from performance_logger import PerformanceLogger
+    from segmentation_config import get_workflow_config, PRESET_BACTERIA, PRESET_FUNGAL_HYPHAE
+    from skeleton_branch_nodes import render_skeleton_overlay, save_skeleton_debug
 
     output_dir = Path(output_dir)
     dirs = ensure_job_subdirs(output_dir)
@@ -546,6 +671,10 @@ def _finalize_job_outputs(
     skeletons_dir = dirs["skeletons"]
     experimental_dir = dirs["experimental"]
     results_dir = dirs["results"]
+    fungi_masks_dir = dirs["fungi_masks"]
+    bacteria_masks_dir = dirs["bacteria_masks"]
+    fungi_overlays_dir = dirs["fungi_overlays"]
+    bacteria_overlays_dir = dirs["bacteria_overlays"]
     total_frames = len(frames)
 
     if annotations_dir is None:
@@ -566,105 +695,284 @@ def _finalize_job_outputs(
             progress_percent=calc_progress_percent(stage, current_frame_index, total),
         )
 
-    from skeleton_branch_nodes import render_skeleton_overlay, save_skeleton_debug
-
     job_cfg = load_job_config(annotations_dir)
+    workflow = get_workflow_config(job_cfg)
+    classification_cfg = workflow["classification"]
+    target_type = workflow["target_object_type"]
+
     branch_merge_radius = int(job_cfg.get("branch_node_merge_radius_px", 6))
     branch_temporal_smoothing = bool(job_cfg.get("branch_node_temporal_smoothing", True))
     branch_max_track = int(job_cfg.get("branch_node_max_tracking_distance_px", 10))
+    skeletonization_mode = job_cfg.get("skeletonization_mode", "hyphae_only")
+    skeleton_min_object_area_px = int(job_cfg.get("skeleton_min_object_area_px", 40))
 
-    metrics = []
-    props = []
+    perf = perf_logger or PerformanceLogger(output_dir)
+    perf.log(
+        f"[workflow] target_object_type={target_type} "
+        f"skeleton={workflow['enable_skeletonization']} "
+        f"branch={workflow['enable_branch_detection']} "
+        f"temporal_traversed={workflow['enable_traversed_persistence']}"
+    )
+
+    fungi_metrics = []
+    bacteria_metrics = []
+    fungi_props = []
+    bacteria_props = []
+    legacy_metrics = []
+    legacy_props = []
     overlay_frames = []
+    bacteria_masks_per_frame: List[np.ndarray] = []
     prev_normalized_nodes = None
+    summary_counts = {
+        "total_objects": 0,
+        "fungal_objects": 0,
+        "bacterial_objects": 0,
+        "skeletonized_objects": 0,
+    }
 
     for i, (img, mask) in enumerate(zip(frames, masks)):
         report("tracking", i, total_frames)
-        met, skel, branches, branch_meta = frame_metrics(
-            mask,
+        mask_bool = np.asarray(mask).astype(bool)
+
+        with perf.timed("object_classification"):
+            fungi_mask, bacteria_mask, cls_stats = classify_mask_layers(
+                mask_bool, target_type, classification_cfg
+            )
+
+        summary_counts["total_objects"] += cls_stats["total_objects"]
+        summary_counts["fungal_objects"] += cls_stats["fungal_objects"]
+        summary_counts["bacterial_objects"] += cls_stats["bacterial_objects"]
+        summary_counts["skeletonized_objects"] += cls_stats["skeletonized_objects"]
+        perf.log_counts(
             i,
-            pixel_size_um=pixel_size_um,
-            frame_interval_min=frame_interval_min,
-            min_skan_branch_length_px=min_branch_length_px,
-            prev_normalized_nodes=prev_normalized_nodes,
-            merge_radius_px=branch_merge_radius,
-            temporal_smoothing=branch_temporal_smoothing,
-            max_tracking_distance_px=branch_max_track,
-        )
-        prev_normalized_nodes = branch_meta["normalized_nodes"]
-        metrics.append(met)
-        props.extend(object_props(mask, i, min_object_size_px=min_object_size_px))
-
-        tifffile.imwrite(str(masks_dir / f"mask_{i:04d}.tif"), mask.astype(np.uint8) * 255)
-        Image.fromarray((mask.astype(np.uint8) * 255)).save(masks_dir / f"mask_{i:04d}.png")
-        tifffile.imwrite(str(skeletons_dir / f"skeleton_{i:04d}.tif"), skel.astype(np.uint8) * 255)
-        tifffile.imwrite(
-            str(experimental_dir / f"branches_{i:04d}.tif"),
-            branches.astype(np.uint8) * 255,
+            cls_stats["total_objects"],
+            cls_stats["fungal_objects"],
+            cls_stats["bacterial_objects"],
+            cls_stats["skeletonized_objects"],
         )
 
-        skel_bool = branch_meta["skel_bool"]
-        skeleton_overlay = render_skeleton_overlay(
-            skel_bool,
-            branch_meta["normalized_nodes"],
-            raw_branch=branch_meta["raw_branch"],
-            debug_raw_junctions=False,
-        )
-        Image.fromarray(skeleton_overlay).save(skeletons_dir / f"skeleton_{i:04d}.png")
-        save_skeleton_debug(
-            output_dir,
-            i,
-            skel_bool,
-            branch_meta["raw_branch"],
-            branch_meta["cluster_labels"],
-            branch_meta["normalized_nodes"],
-            skeleton_overlay,
+        skel = np.zeros_like(mask, dtype=np.uint8)
+        branches = np.zeros_like(mask, dtype=np.uint8)
+        branch_meta = _empty_branch_meta(mask.shape)
+        fungi_skel = skel
+        fungi_branches = branches
+
+        run_skeleton = (
+            workflow["enable_skeletonization"]
+            and workflow["enable_fungal_processing"]
+            and fungi_mask.any()
+            and not cls_stats.get("force_disable_skeleton", False)
         )
 
-        overlay = make_overlay(img, mask, skel, branches)
+        if workflow["enable_fungal_processing"]:
+            if fungi_mask.any():
+                if run_skeleton:
+                    with perf.timed("skeletonization"):
+                        met, skel, branches, branch_meta = frame_metrics(
+                            fungi_mask,
+                            i,
+                            pixel_size_um=pixel_size_um,
+                            frame_interval_min=frame_interval_min,
+                            min_skan_branch_length_px=min_branch_length_px,
+                            prev_normalized_nodes=prev_normalized_nodes,
+                            merge_radius_px=branch_merge_radius,
+                            temporal_smoothing=branch_temporal_smoothing,
+                            max_tracking_distance_px=branch_max_track,
+                            skeletonization_mode=skeletonization_mode,
+                            skeleton_min_object_area_px=skeleton_min_object_area_px,
+                            enable_skeletonization=True,
+                            enable_branch_detection=workflow["enable_branch_detection"],
+                            enable_tip_detection=workflow["enable_tip_detection"],
+                        )
+                    if workflow["enable_branch_detection"]:
+                        with perf.timed("branch_detection"):
+                            prev_normalized_nodes = branch_meta["normalized_nodes"]
+                    fungi_skel, fungi_branches = skel, branches
+                else:
+                    met = _empty_fungal_metrics(i, frame_interval_min)
+                    met["hyphal_area_px"] = int(fungi_mask.sum())
+                    met["hyphal_area_um2"] = met["hyphal_area_px"] * pixel_size_um * pixel_size_um
+                    met["hyphal_mask_area_px"] = met["hyphal_area_px"]
+                    met["hyphal_object_count"] = cls_stats["fungal_objects"]
+                fungi_metrics.append(met)
+                fungi_props.extend(object_props(fungi_mask, i, min_object_size_px=min_object_size_px))
+                if target_type == PRESET_FUNGAL_HYPHAE:
+                    legacy_metrics.append(met)
+                    legacy_props.extend(object_props(fungi_mask, i, min_object_size_px=min_object_size_px))
+            else:
+                met = _empty_fungal_metrics(i, frame_interval_min)
+                fungi_metrics.append(met)
+                if target_type == PRESET_FUNGAL_HYPHAE:
+                    legacy_metrics.append(met)
+
+        if workflow["enable_bacterial_processing"]:
+            if bacteria_mask.any():
+                bmet = bacterial_frame_metrics(
+                    bacteria_mask, i, pixel_size_um=pixel_size_um, frame_interval_min=frame_interval_min
+                )
+                bacteria_metrics.append(bmet)
+                bacteria_props.extend(bacterial_object_props(bacteria_mask, i, min_object_size_px=1))
+            elif target_type == PRESET_BACTERIA:
+                bacteria_metrics.append(
+                    bacterial_frame_metrics(
+                        mask_bool, i, pixel_size_um=pixel_size_um, frame_interval_min=frame_interval_min
+                    )
+                )
+            elif target_type != PRESET_FUNGAL_HYPHAE:
+                bacteria_metrics.append(
+                    bacterial_frame_metrics(
+                        bacteria_mask, i, pixel_size_um=pixel_size_um, frame_interval_min=frame_interval_min
+                    )
+                )
+
+        if workflow["enable_bacterial_processing"]:
+            bacteria_masks_per_frame.append(bacteria_mask.copy())
+
+        tifffile.imwrite(str(masks_dir / f"mask_{i:04d}.tif"), mask_bool.astype(np.uint8) * 255)
+        Image.fromarray((mask_bool.astype(np.uint8) * 255)).save(masks_dir / f"mask_{i:04d}.png")
+
+        if workflow["enable_fungal_processing"]:
+            fungi_u8 = (fungi_mask.astype(np.uint8) * 255)
+            tifffile.imwrite(str(fungi_masks_dir / f"mask_{i:04d}.tif"), fungi_u8)
+            Image.fromarray(fungi_u8).save(fungi_masks_dir / f"mask_{i:04d}.png")
+        if workflow["enable_bacterial_processing"]:
+            bacteria_u8 = (bacteria_mask.astype(np.uint8) * 255)
+            tifffile.imwrite(str(bacteria_masks_dir / f"mask_{i:04d}.tif"), bacteria_u8)
+            Image.fromarray(bacteria_u8).save(bacteria_masks_dir / f"mask_{i:04d}.png")
+
+        if run_skeleton:
+            tifffile.imwrite(str(skeletons_dir / f"skeleton_{i:04d}.tif"), skel.astype(np.uint8) * 255)
+            tifffile.imwrite(
+                str(experimental_dir / f"branches_{i:04d}.tif"),
+                branches.astype(np.uint8) * 255,
+            )
+            skel_bool = branch_meta["skel_bool"]
+            skeleton_overlay = render_skeleton_overlay(
+                skel_bool,
+                branch_meta["normalized_nodes"],
+                raw_branch=branch_meta["raw_branch"],
+                debug_raw_junctions=False,
+            )
+            Image.fromarray(skeleton_overlay).save(skeletons_dir / f"skeleton_{i:04d}.png")
+            save_skeleton_debug(
+                output_dir,
+                i,
+                skel_bool,
+                branch_meta["raw_branch"],
+                branch_meta["cluster_labels"],
+                branch_meta["normalized_nodes"],
+                skeleton_overlay,
+            )
+
+        overlay = make_workflow_overlay(
+            img, fungi_mask, bacteria_mask, fungi_skel, fungi_branches, workflow
+        )
         Image.fromarray(overlay).save(overlays_dir / f"overlay_{i:04d}.png")
         overlay_frames.append(overlay)
 
-        if save_annotation_previews:
-            frame_ann = load_frame_annotation(
-                annotations_dir, i, img.shape[1], img.shape[0]
+        if workflow["enable_fungal_processing"] and fungi_mask.any():
+            fungi_overlay = make_workflow_overlay(
+                img, fungi_mask, np.zeros_like(fungi_mask), fungi_skel, fungi_branches, workflow
             )
+            Image.fromarray(fungi_overlay).save(fungi_overlays_dir / f"overlay_{i:04d}.png")
+        if workflow["enable_bacterial_processing"] and bacteria_mask.any():
+            from annotations import render_simple_mask_overlay
+            bacteria_overlay = render_simple_mask_overlay(img, bacteria_mask, color=(0, 255, 255), alpha=0.45)
+            Image.fromarray(bacteria_overlay).save(bacteria_overlays_dir / f"overlay_{i:04d}.png")
+
+        if save_annotation_previews:
+            frame_ann = load_frame_annotation(annotations_dir, i, img.shape[1], img.shape[0])
             save_annotation_preview(annotations_dir, i, img, frame_ann, static_ann)
 
-    metrics_df = growth_rates(pd.DataFrame(metrics))
-    tracks = track_objects(props)
-    tracks_df = pd.DataFrame(tracks)
-
-    metrics_csv_path = results_dir / "hyphal_metrics.csv"
-    tracks_csv_path = results_dir / "object_tracks.csv"
-    metrics_json_path = results_dir / "hyphal_metrics.json"
-
-    metrics_df.to_csv(metrics_csv_path, index=False)
-    tracks_df.to_csv(tracks_csv_path, index=False)
-    metrics_df.to_json(metrics_json_path, orient="records", indent=2)
-
-    h, w = overlay_frames[0].shape[:2]
-    video_path = results_dir / "segmentation_overlay.mp4"
-
-    writer = cv2.VideoWriter(
-        str(video_path),
-        cv2.VideoWriter_fourcc(*"avc1"),
-        max(1, int(60 / max(frame_interval_min, 1))),
-        (w, h),
+    perf.log_counts(
+        None,
+        summary_counts["total_objects"],
+        summary_counts["fungal_objects"],
+        summary_counts["bacterial_objects"],
+        summary_counts["skeletonized_objects"],
+        extra="job_total",
     )
-    for fr in overlay_frames:
-        writer.write(cv2.cvtColor(fr, cv2.COLOR_RGB2BGR))
-    writer.release()
 
+    result_paths = {"output_dir": str(output_dir)}
+
+    if workflow["enable_fungal_processing"] and fungi_metrics:
+        fungi_df = growth_rates(pd.DataFrame(fungi_metrics))
+        with perf.timed("tracking"):
+            fungi_tracks = track_objects(fungi_props)
+        fungi_metrics_csv = Path(output_dir) / "fungi_metrics.csv"
+        fungi_tracks_csv = results_dir / "fungi_object_tracks.csv"
+        fungi_df.to_csv(fungi_metrics_csv, index=False)
+        pd.DataFrame(fungi_tracks).to_csv(fungi_tracks_csv, index=False)
+        result_paths["fungi_metrics_csv"] = str(fungi_metrics_csv)
+        result_paths["fungi_tracks_csv"] = str(fungi_tracks_csv)
+        if target_type == PRESET_FUNGAL_HYPHAE:
+            legacy_df = fungi_df
+            legacy_tracks = fungi_tracks
+            metrics_csv_path = results_dir / "hyphal_metrics.csv"
+            tracks_csv_path = results_dir / "object_tracks.csv"
+            metrics_json_path = results_dir / "hyphal_metrics.json"
+            legacy_df.to_csv(metrics_csv_path, index=False)
+            pd.DataFrame(legacy_tracks).to_csv(tracks_csv_path, index=False)
+            legacy_df.to_json(metrics_json_path, orient="records", indent=2)
+            result_paths["metrics_csv"] = str(metrics_csv_path)
+            result_paths["tracks_csv"] = str(tracks_csv_path)
+            result_paths["metrics_json"] = str(metrics_json_path)
+
+    if workflow["enable_bacterial_processing"] and bacteria_metrics:
+        bacteria_df = bacterial_growth_rates(pd.DataFrame(bacteria_metrics))
+        bacteria_metrics_csv = Path(output_dir) / "bacteria_metrics.csv"
+        bacteria_df.to_csv(bacteria_metrics_csv, index=False)
+        result_paths["bacteria_metrics_csv"] = str(bacteria_metrics_csv)
+        if target_type == PRESET_BACTERIA:
+            result_paths["metrics_csv"] = str(bacteria_metrics_csv)
+
+        from bacterial_tracking import merge_bacterial_tracking_config, run_bacterial_tracking_pipeline
+
+        tracking_cfg = merge_bacterial_tracking_config(job_cfg)
+        if tracking_cfg.get("enable_bacterial_tracking", True) and bacteria_masks_per_frame:
+            tracking_paths = run_bacterial_tracking_pipeline(
+                frames,
+                bacteria_masks_per_frame,
+                output_dir,
+                pixel_size_um=pixel_size_um,
+                frame_interval_min=frame_interval_min,
+                config=tracking_cfg,
+                perf_logger=perf,
+                base_overlays=overlay_frames if overlay_frames else None,
+            )
+            result_paths.update(tracking_paths)
+            if tracking_paths.get("bacterial_tracks_csv"):
+                result_paths["bacteria_tracks_csv"] = tracking_paths["bacterial_tracks_csv"]
+                if target_type == PRESET_BACTERIA:
+                    result_paths["tracks_csv"] = tracking_paths["bacterial_tracks_csv"]
+        else:
+            with perf.timed("tracking"):
+                bacteria_tracks = track_objects(bacteria_props, max_dist=40)
+            bacteria_tracks_csv = results_dir / "bacteria_object_tracks.csv"
+            pd.DataFrame(bacteria_tracks).to_csv(bacteria_tracks_csv, index=False)
+            result_paths["bacteria_tracks_csv"] = str(bacteria_tracks_csv)
+            if target_type == PRESET_BACTERIA:
+                result_paths["tracks_csv"] = str(bacteria_tracks_csv)
+
+    if overlay_frames:
+        with perf.timed("video_generation"):
+            h, w = overlay_frames[0].shape[:2]
+            video_path = results_dir / "segmentation_overlay.mp4"
+            writer = cv2.VideoWriter(
+                str(video_path),
+                cv2.VideoWriter_fourcc(*"avc1"),
+                max(1, int(60 / max(frame_interval_min, 1))),
+                (w, h),
+            )
+            for fr in overlay_frames:
+                writer.write(cv2.cvtColor(fr, cv2.COLOR_RGB2BGR))
+            writer.release()
+            result_paths["video"] = str(video_path)
+
+    perf.finish()
+    result_paths["performance_log"] = str(perf.path)
     report("finished", total_frames - 1, total_frames)
-
-    return {
-        "metrics_csv": str(metrics_csv_path),
-        "tracks_csv": str(tracks_csv_path),
-        "metrics_json": str(metrics_json_path),
-        "video": str(video_path),
-        "output_dir": str(output_dir),
-    }
+    return result_paths
 
 def zero_shot_fluorescence_mask(image_rgb):
     gray = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2GRAY)
@@ -678,27 +986,66 @@ def zero_shot_fluorescence_mask(image_rgb):
 
 def reconstruct_hypha_tube(mask, radius_px=6, nearby_margin_px=10, min_size=40, hole_fill_area=200):
     mask = np.asarray(mask).astype(bool)
+    min_size = max(1, int(min_size))
     working = binary_dilation(mask, disk(2))
     working = binary_closing(working, disk(3))
-    working = remove_small_holes(working, area_threshold=hole_fill_area)
+    if hole_fill_area > 0:
+        working = remove_small_holes(working, area_threshold=hole_fill_area)
     skel = skeletonize(working)
     skel = binary_dilation(skel, disk(1))
     skel = binary_closing(skel, disk(3))
     skel = skeletonize(skel)
-    tube = binary_dilation(skel, disk(radius_px))
-    nearby = binary_dilation(working, disk(nearby_margin_px))
+    tube = binary_dilation(skel, disk(max(1, int(radius_px))))
+    nearby = binary_dilation(working, disk(max(1, int(nearby_margin_px))))
     tube = tube & nearby
     tube = binary_closing(tube, disk(2))
-    tube = remove_small_holes(tube, area_threshold=max(hole_fill_area, int(hole_fill_area * 2.5)))
+    if hole_fill_area > 0:
+        tube = remove_small_holes(
+            tube, area_threshold=max(hole_fill_area, int(hole_fill_area * 2.5))
+        )
     tube = remove_small_objects(tube, min_size=min_size)
     return tube.astype(np.uint8)
 
-def clean_mask(mask, radius_px=8, nearby_margin_px=10, min_size=40, hole_fill_area=200):
+
+def clean_mask(
+    mask,
+    radius_px=8,
+    nearby_margin_px=10,
+    min_size=40,
+    hole_fill_area=200,
+    segmentation_preset="fungal_hyphae",
+):
+    from segmentation_config import cleanup_profile
+
+    min_size = max(1, int(min_size))
+    profile = cleanup_profile(segmentation_preset)
     mask = np.asarray(mask).astype(bool)
     mask = remove_small_objects(mask, min_size=min_size)
+
+    if profile == "bacterial":
+        if hole_fill_area > 0:
+            mask = remove_small_holes(mask, area_threshold=hole_fill_area)
+        if radius_px > 0:
+            mask = binary_closing(mask, disk(max(1, int(radius_px))))
+        return mask.astype(np.uint8)
+
+    if profile == "mixed":
+        mask = binary_dilation(mask, disk(max(1, min(2, int(radius_px)))))
+        mask = binary_closing(mask, disk(max(1, min(3, int(radius_px)))))
+        if hole_fill_area > 0:
+            mask = remove_small_holes(mask, area_threshold=hole_fill_area)
+        return reconstruct_hypha_tube(
+            mask,
+            radius_px=max(1, min(int(radius_px), 4)),
+            nearby_margin_px=max(4, int(nearby_margin_px) // 2),
+            min_size=min_size,
+            hole_fill_area=hole_fill_area,
+        )
+
     mask = binary_dilation(mask, disk(2))
     mask = binary_closing(mask, disk(3))
-    mask = remove_small_holes(mask, area_threshold=hole_fill_area)
+    if hole_fill_area > 0:
+        mask = remove_small_holes(mask, area_threshold=hole_fill_area)
     mask = reconstruct_hypha_tube(
         mask,
         radius_px=radius_px,
@@ -707,6 +1054,59 @@ def clean_mask(mask, radius_px=8, nearby_margin_px=10, min_size=40, hole_fill_ar
         hole_fill_area=hole_fill_area,
     )
     return mask.astype(np.uint8)
+
+
+def _is_hyphal_component(region, min_hyphal_area=40):
+    if region.area < max(1, int(min_hyphal_area)):
+        return False
+    eccentricity = float(getattr(region, "eccentricity", 0.0))
+    major = float(getattr(region, "major_axis_length", 0.0))
+    minor = max(float(getattr(region, "minor_axis_length", 1.0)), 1.0)
+    aspect = major / minor
+    return eccentricity >= 0.7 or aspect >= 2.5 or major >= 12.0
+
+
+def classify_mask_objects(mask_bool, min_hyphal_area=40):
+    """Separate small/isolated objects from hyphal-like structures."""
+    labeled = label(mask_bool.astype(bool))
+    small_object_count = 0
+    small_object_area_px = 0
+    hyphal_object_count = 0
+    hyphal_mask_area_px = 0
+    for region in regionprops(labeled):
+        if _is_hyphal_component(region, min_hyphal_area=min_hyphal_area):
+            hyphal_object_count += 1
+            hyphal_mask_area_px += int(region.area)
+        else:
+            small_object_count += 1
+            small_object_area_px += int(region.area)
+    return {
+        "small_object_count": small_object_count,
+        "small_object_area_px": small_object_area_px,
+        "hyphal_object_count": hyphal_object_count,
+        "hyphal_mask_area_px": hyphal_mask_area_px,
+    }
+
+
+def skeleton_target_mask(
+    mask_bool,
+    skeletonization_mode="hyphae_only",
+    skeleton_min_object_area_px=40,
+):
+    from segmentation_config import SKELETON_MODE_ALL_OBJECTS
+
+    mask_bool = mask_bool.astype(bool)
+    if skeletonization_mode == SKELETON_MODE_ALL_OBJECTS:
+        return mask_bool
+
+    labeled = label(mask_bool)
+    target = np.zeros_like(mask_bool, dtype=bool)
+    for region in regionprops(labeled):
+        if region.area < max(1, int(skeleton_min_object_area_px)):
+            continue
+        if _is_hyphal_component(region, min_hyphal_area=skeleton_min_object_area_px):
+            target[labeled == region.label] = True
+    return target
 
 def _neighbor_count(skel_bool):
     skel_u8 = skel_bool.astype(np.uint8)
@@ -755,6 +1155,11 @@ def skeleton_and_branchpoints(
     merge_radius_px=None,
     temporal_smoothing=None,
     max_tracking_distance_px=None,
+    skeletonization_mode="hyphae_only",
+    skeleton_min_object_area_px=40,
+    enable_analysis=True,
+    enable_branch_detection=True,
+    enable_tip_detection=True,
 ):
     from skeleton_branch_nodes import (
         BRANCH_NODE_MAX_TRACKING_DISTANCE_PX,
@@ -763,6 +1168,10 @@ def skeleton_and_branchpoints(
         normalize_branch_nodes,
     )
 
+    mask_bool = np.asarray(mask).astype(bool)
+    if not enable_analysis or not mask_bool.any():
+        return _empty_skel_outputs(mask_bool)
+
     if merge_radius_px is None:
         merge_radius_px = BRANCH_NODE_MERGE_RADIUS_PX
     if temporal_smoothing is None:
@@ -770,8 +1179,12 @@ def skeleton_and_branchpoints(
     if max_tracking_distance_px is None:
         max_tracking_distance_px = BRANCH_NODE_MAX_TRACKING_DISTANCE_PX
 
-    mask_bool = mask.astype(bool)
-    skel_bool = skeletonize(mask_bool)
+    skel_target = skeleton_target_mask(
+        mask_bool,
+        skeletonization_mode=skeletonization_mode,
+        skeleton_min_object_area_px=skeleton_min_object_area_px,
+    )
+    skel_bool = skeletonize(skel_target) if np.any(skel_target) else np.zeros_like(mask_bool, dtype=bool)
     skel_bool = _remove_short_skeleton_spurs_with_skan(skel_bool, min_branch_length_px=min_skan_branch_length_px)
     skel_u8 = skel_bool.astype(np.uint8)
 
@@ -782,6 +1195,18 @@ def skeleton_and_branchpoints(
             skan_summary_df = summarize(sk)
         except Exception:
             pass
+
+    if not enable_branch_detection:
+        endpoints_u8 = np.zeros_like(skel_u8, dtype=np.uint8)
+        branch_meta = {
+            "raw_junction_pixel_count": 0,
+            "normalized_branch_point_count": 0,
+            "normalized_nodes": prev_normalized_nodes,
+            "raw_branch": np.zeros_like(mask_bool, dtype=bool),
+            "cluster_labels": np.zeros(mask_bool.shape, dtype=np.int32),
+            "skel_bool": skel_bool,
+        }
+        return skel_u8, np.zeros_like(skel_u8), endpoints_u8, skan_summary_df, branch_meta
 
     neigh = _neighbor_count(skel_bool)
     raw_branch = skel_bool & (neigh >= 3)
@@ -795,8 +1220,11 @@ def skeleton_and_branchpoints(
     )
     branches_u8 = branch_info["branches_mask"].astype(np.uint8)
 
-    raw_endpoints = skel_bool & (neigh == 1)
-    endpoints_u8, _ = _cluster_tip_pixels(raw_endpoints)
+    if enable_tip_detection:
+        raw_endpoints = skel_bool & (neigh == 1)
+        endpoints_u8, _ = _cluster_tip_pixels(raw_endpoints)
+    else:
+        endpoints_u8 = np.zeros_like(skel_u8, dtype=np.uint8)
 
     branch_meta = {
         "raw_junction_pixel_count": branch_info["raw_junction_pixel_count"],
@@ -819,6 +1247,11 @@ def frame_metrics(
     merge_radius_px=None,
     temporal_smoothing=None,
     max_tracking_distance_px=None,
+    skeletonization_mode="hyphae_only",
+    skeleton_min_object_area_px=40,
+    enable_skeletonization=True,
+    enable_branch_detection=True,
+    enable_tip_detection=True,
 ):
     skel, branches, endpoints, skan_df, branch_meta = skeleton_and_branchpoints(
         mask,
@@ -827,8 +1260,17 @@ def frame_metrics(
         merge_radius_px=merge_radius_px,
         temporal_smoothing=temporal_smoothing,
         max_tracking_distance_px=max_tracking_distance_px,
+        skeletonization_mode=skeletonization_mode,
+        skeleton_min_object_area_px=skeleton_min_object_area_px,
+        enable_analysis=enable_skeletonization,
+        enable_branch_detection=enable_branch_detection,
+        enable_tip_detection=enable_tip_detection,
     )
     area_px = int(mask.sum())
+    object_stats = classify_mask_objects(
+        mask.astype(bool),
+        min_hyphal_area=skeleton_min_object_area_px,
+    )
 
     if SKAN_AVAILABLE and skan_df is not None and len(skan_df) > 0 and "branch-distance" in skan_df.columns:
         length_px = float(skan_df["branch-distance"].sum())
@@ -858,6 +1300,10 @@ def frame_metrics(
         "skan_graph_branches": skan_branch_count,
         "skan_terminal_branches": terminal_branch_count,
         "skan_junction_to_junction_branches": junction_to_junction_count,
+        "small_object_count": int(object_stats["small_object_count"]),
+        "small_object_area_px": int(object_stats["small_object_area_px"]),
+        "hyphal_object_count": int(object_stats["hyphal_object_count"]),
+        "hyphal_mask_area_px": int(object_stats["hyphal_mask_area_px"]),
     }, skel, branches, branch_meta
 
 def object_props(mask, frame_idx, min_object_size_px=40):
@@ -976,6 +1422,9 @@ def process_file(
     output_dir: Path = None,
     progress_callback=None,
     frames_preloaded: bool = False,
+    segmentation_preset: str = "fungal_hyphae",
+    skeletonization_mode: str = "hyphae_only",
+    skeleton_min_object_area_px: int = 40,
 ):
     """
     Main entrypoint for the API.
@@ -1023,34 +1472,59 @@ def process_file(
     cellsam = CellSAMWrapper(deepcell_token)
 
     from pre_segmentation_setup import apply_pre_segmentation_mask, load_setup_context
+    from performance_logger import PerformanceLogger
 
     setup_context = load_setup_context(output_dir, frames[0].shape) if output_dir is not None else None
+    seg_perf = PerformanceLogger(output_dir) if output_dir is not None else None
 
-    for i, fr in enumerate(frames):
-        report_progress("segmenting", i, total_frames)
-        if cellsam.available:
-            print(f"[CellSAM] Segmenting frame {i + 1}/{len(frames)}")
-        else:
-            print(f"[Zero-shot] Segmenting frame {i + 1}/{len(frames)}")
-        masks[i] = _segment_frame_with_setup(
-            fr,
-            cellsam,
-            dilation_radius,
-            min_object_size_px,
-            hole_fill_area,
-            setup_context=setup_context,
-        )
+    with (seg_perf.timed("segmentation") if seg_perf else nullcontext()):
+        for i, fr in enumerate(frames):
+            report_progress("segmenting", i, total_frames)
+            if cellsam.available:
+                print(f"[CellSAM] Segmenting frame {i + 1}/{len(frames)}")
+            else:
+                print(f"[Zero-shot] Segmenting frame {i + 1}/{len(frames)}")
+            masks[i] = _segment_frame_with_setup(
+                fr,
+                cellsam,
+                dilation_radius,
+                min_object_size_px,
+                hole_fill_area,
+                setup_context=setup_context,
+                segmentation_preset=segmentation_preset,
+            )
 
     if setup_context is not None:
         allowed_mask = setup_context["allowed_mask"]
         masks = [apply_pre_segmentation_mask(m, allowed_mask) for m in masks]
 
-    from annotations import get_annotations_dir, load_job_config, load_static_background
+    from annotations import get_annotations_dir, load_job_config, load_static_background, save_job_config
     from temporal_continuity import merge_temporal_config, run_temporal_continuity_pipeline
+    from performance_logger import PerformanceLogger
+    from segmentation_config import get_workflow_config, preset_values, normalize_preset_name
 
     annotations_dir = get_annotations_dir(output_dir)
     static_ann = load_static_background(annotations_dir, frames[0].shape[1], frames[0].shape[0])
-    temporal_config = merge_temporal_config(load_job_config(annotations_dir))
+    job_cfg = load_job_config(annotations_dir)
+    preset = normalize_preset_name(segmentation_preset or job_cfg.get("target_object_type"))
+    job_cfg["target_object_type"] = preset
+    job_cfg["segmentation_preset"] = preset
+    job_cfg["skeletonization_mode"] = skeletonization_mode
+    job_cfg["skeleton_min_object_area_px"] = skeleton_min_object_area_px
+    job_cfg["min_object_size_px"] = min_object_size_px
+    save_job_config(annotations_dir, job_cfg)
+    workflow = get_workflow_config(job_cfg)
+    perf = PerformanceLogger(output_dir)
+
+    temporal_config = merge_temporal_config(job_cfg)
+    temporal_config["min_object_size_px"] = min_object_size_px
+    temporal_config["repair_disconnected_tubes"] = (
+        bool(temporal_config.get("repair_disconnected_tubes"))
+        and workflow["enable_tube_repair"]
+    )
+    temporal_config["enable_traversed_persistence"] = workflow["enable_traversed_persistence"]
+    if not workflow["enable_fungal_processing"]:
+        temporal_config["allow_tip_growth"] = False
 
     working_masks = masks
     masks_subdir = "masks"
@@ -1067,15 +1541,16 @@ def process_file(
             job_id=job_id,
             progress_callback=progress_callback,
         )
-        working_masks, temporal_info = run_temporal_continuity_pipeline(
-            frames,
-            masks,
-            output_dir,
-            static_ann,
-            temporal_config,
-            job_id=job_id,
-            progress_callback=progress_callback,
-        )
+        with perf.timed("temporal_continuity"):
+            working_masks, temporal_info = run_temporal_continuity_pipeline(
+                frames,
+                masks,
+                output_dir,
+                static_ann,
+                temporal_config,
+                job_id=job_id,
+                progress_callback=progress_callback,
+            )
         if temporal_info.get("fallback"):
             temporal_warning = temporal_info.get("warning")
             working_masks = masks
@@ -1099,6 +1574,7 @@ def process_file(
         static_ann=static_ann,
         masks_subdir=masks_subdir,
         overlays_subdir=overlays_subdir,
+        perf_logger=perf,
     )
     if temporal_warning:
         results["temporal_warning"] = temporal_warning
@@ -1150,6 +1626,11 @@ def process_file_guided(
 
     setup_context = load_setup_context(output_dir, frames[0].shape)
 
+    from annotations import load_job_config
+
+    job_cfg = load_job_config(annotations_dir)
+    segmentation_preset = job_cfg.get("segmentation_preset", "fungal_hyphae")
+
     auto_masks = []
     cellsam = None
     for i, fr in enumerate(frames):
@@ -1167,6 +1648,7 @@ def process_file_guided(
                     min_object_size_px,
                     hole_fill_area,
                     setup_context=setup_context,
+                    segmentation_preset=segmentation_preset,
                 )
             )
 
@@ -1187,26 +1669,40 @@ def process_file_guided(
 
     from annotations import load_job_config
     from temporal_continuity import merge_temporal_config, run_temporal_continuity_pipeline
+    from performance_logger import PerformanceLogger
+    from segmentation_config import get_workflow_config
 
-    temporal_config = merge_temporal_config(load_job_config(annotations_dir))
+    job_cfg = load_job_config(annotations_dir)
+    workflow = get_workflow_config(job_cfg)
+    perf = PerformanceLogger(output_dir)
+
+    temporal_config = merge_temporal_config(job_cfg)
+    temporal_config["min_object_size_px"] = min_object_size_px
+    temporal_config["repair_disconnected_tubes"] = (
+        bool(temporal_config.get("repair_disconnected_tubes")) and workflow["enable_tube_repair"]
+    )
+    temporal_config["enable_traversed_persistence"] = workflow["enable_traversed_persistence"]
+    if not workflow["enable_fungal_processing"]:
+        temporal_config["allow_tip_growth"] = False
     working_masks = guided_masks
     masks_subdir = "guided_masks"
     overlays_subdir = "guided_overlays"
     temporal_warning = None
 
     if temporal_config["use_temporal_continuity"]:
-        working_masks, temporal_info = run_temporal_continuity_pipeline(
-            frames,
-            guided_masks,
-            output_dir,
-            static_ann,
-            temporal_config,
-            job_id=job_id,
-            progress_callback=progress_callback,
-            annotations_dir=annotations_dir,
-            image_width=image_w,
-            image_height=image_h,
-        )
+        with perf.timed("temporal_continuity"):
+            working_masks, temporal_info = run_temporal_continuity_pipeline(
+                frames,
+                guided_masks,
+                output_dir,
+                static_ann,
+                temporal_config,
+                job_id=job_id,
+                progress_callback=progress_callback,
+                annotations_dir=annotations_dir,
+                image_width=image_w,
+                image_height=image_h,
+            )
         if temporal_info.get("fallback"):
             temporal_warning = temporal_info.get("warning")
             working_masks = guided_masks
@@ -1243,6 +1739,7 @@ def process_file_guided(
         save_annotation_previews=True,
         masks_subdir=masks_subdir,
         overlays_subdir=overlays_subdir,
+        perf_logger=perf,
     )
     if temporal_warning:
         results["temporal_warning"] = temporal_warning
@@ -1299,6 +1796,12 @@ def preview_frame_segmentation(
         frame_ann = load_frame_annotation(annotations_dir, frame_index, w, h)
 
     static_ann = load_static_background(annotations_dir, w, h)
+    from annotations import load_job_config
+
+    job_cfg = load_job_config(annotations_dir)
+    segmentation_preset = job_cfg.get("segmentation_preset", "fungal_hyphae")
+    skeletonization_mode = job_cfg.get("skeletonization_mode", "hyphae_only")
+    skeleton_min_object_area_px = int(job_cfg.get("skeleton_min_object_area_px", 40))
     from corrections import load_correction_masks
 
     mask_path = dirs["masks"] / f"mask_{frame_index:04d}.png"
@@ -1306,7 +1809,9 @@ def preview_frame_segmentation(
         auto_mask = (np.array(Image.open(mask_path)) > 127).astype(np.uint8)
     else:
         cellsam = CellSAMWrapper(deepcell_token)
-        auto_mask = _segment_frame(fr, cellsam, dilation_radius, min_object_size_px, hole_fill_area)
+        auto_mask = _segment_frame(
+            fr, cellsam, dilation_radius, min_object_size_px, hole_fill_area, segmentation_preset
+        )
 
     correction_masks = load_correction_masks(output_dir, frame_index, fr.shape)
     guided_mask = apply_guided_postprocess(
@@ -1326,10 +1831,22 @@ def preview_frame_segmentation(
     Image.fromarray(diff_overlay).save(diff_path)
 
     auto_metrics, _, _, _ = frame_metrics(
-        auto_mask, frame_index, pixel_size_um, frame_interval_min, min_branch_length_px
+        auto_mask,
+        frame_index,
+        pixel_size_um,
+        frame_interval_min,
+        min_branch_length_px,
+        skeletonization_mode=skeletonization_mode,
+        skeleton_min_object_area_px=skeleton_min_object_area_px,
     )
     guided_metrics, _, _, _ = frame_metrics(
-        guided_mask, frame_index, pixel_size_um, frame_interval_min, min_branch_length_px
+        guided_mask,
+        frame_index,
+        pixel_size_um,
+        frame_interval_min,
+        min_branch_length_px,
+        skeletonization_mode=skeletonization_mode,
+        skeleton_min_object_area_px=skeleton_min_object_area_px,
     )
 
     frame_ann["preview_status"] = "pending"

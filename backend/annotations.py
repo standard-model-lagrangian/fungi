@@ -51,6 +51,10 @@ def load_job_config(annotations_dir, default_mode="keyframes"):
         "branch_node_merge_radius_px": 6,
         "branch_node_temporal_smoothing": True,
         "branch_node_max_tracking_distance_px": 10,
+        "segmentation_preset": "fungal_hyphae",
+        "skeletonization_mode": "hyphae_only",
+        "skeleton_min_object_area_px": 40,
+        "min_object_size_px": 40,
     }
     return load_json_annotation(path, lambda: default)
 
@@ -632,4 +636,6 @@ def mask_metrics_summary(metrics_dict):
         "normalized_branch_point_count": int(
             metrics_dict.get("normalized_branch_point_count", metrics_dict.get("branch_points", 0))
         ),
+        "small_object_count": int(metrics_dict.get("small_object_count", 0)),
+        "hyphal_object_count": int(metrics_dict.get("hyphal_object_count", 0)),
     }
