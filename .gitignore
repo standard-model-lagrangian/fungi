@@ -8,6 +8,9 @@ backend/sam2/
 backend/sam2_checkpoints/
 backend/uploads/
 backend/fungal_sam2_demo_output/
+backend/outputs/
+backend/jobs/
+
 
 # Frontend dependencies & builds
 frontend/node_modules/
