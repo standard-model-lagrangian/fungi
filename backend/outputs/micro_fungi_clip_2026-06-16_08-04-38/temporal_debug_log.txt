@@ -1,0 +1,759 @@
+=== temporal continuity log 2026-06-16T07:05:21.928045+00:00 ===
+2026-06-16T07:05:21.932047+00:00 loaded 47 masks for temporal pass
+2026-06-16T07:05:21.933047+00:00 loading static ignore mask
+2026-06-16T07:05:21.937047+00:00 processing 47 frames (repair=False)
+2026-06-16T07:05:21.937047+00:00 frame 1/47: begin
+2026-06-16T07:05:21.938045+00:00 frame 1: start load_mask
+2026-06-16T07:05:21.939047+00:00 frame 1: done load_mask (0.001s)
+2026-06-16T07:05:21.939047+00:00 frame 1: start intensity_maps
+2026-06-16T07:05:21.946043+00:00 frame 1: done intensity_maps (0.007s)
+2026-06-16T07:05:21.946043+00:00 frame 1: start nearby_persistent
+2026-06-16T07:05:21.952046+00:00 frame 1: done nearby_persistent (0.005s)
+2026-06-16T07:05:21.953045+00:00 frame 1: start middle_frame_recovery
+2026-06-16T07:05:21.954047+00:00 frame 1: done middle_frame_recovery (0.000s)
+2026-06-16T07:05:21.954047+00:00 frame 1: start cumulative_traversed_prior
+2026-06-16T07:05:21.978044+00:00 frame 1: done cumulative_traversed_prior (0.024s)
+2026-06-16T07:05:21.979045+00:00 frame 1: start flicker_removal
+2026-06-16T07:05:22.034553+00:00 frame 1: done flicker_removal (0.056s)
+2026-06-16T07:05:22.036554+00:00 frame 1: complete elapsed=0.098s recovered=0 removed=0
+2026-06-16T07:05:22.037553+00:00 frame 2/47: begin
+2026-06-16T07:05:22.037553+00:00 frame 2: start load_mask
+2026-06-16T07:05:22.038556+00:00 frame 2: done load_mask (0.001s)
+2026-06-16T07:05:22.038556+00:00 frame 2: start intensity_maps
+2026-06-16T07:05:22.044553+00:00 frame 2: done intensity_maps (0.006s)
+2026-06-16T07:05:22.044553+00:00 frame 2: start nearby_persistent
+2026-06-16T07:05:22.051554+00:00 frame 2: done nearby_persistent (0.007s)
+2026-06-16T07:05:22.052553+00:00 frame 2: start middle_frame_recovery
+2026-06-16T07:05:22.058555+00:00 frame 2: done middle_frame_recovery (0.005s)
+2026-06-16T07:05:22.058555+00:00 frame 2: start cumulative_traversed_prior
+2026-06-16T07:05:22.081553+00:00 frame 2: done cumulative_traversed_prior (0.023s)
+2026-06-16T07:05:22.082554+00:00 frame 2: start flicker_removal
+2026-06-16T07:05:22.141812+00:00 frame 2: done flicker_removal (0.059s)
+2026-06-16T07:05:22.143812+00:00 frame 2: complete elapsed=0.106s recovered=0 removed=0
+2026-06-16T07:05:22.144813+00:00 frame 3/47: begin
+2026-06-16T07:05:22.144813+00:00 frame 3: start load_mask
+2026-06-16T07:05:22.145812+00:00 frame 3: done load_mask (0.001s)
+2026-06-16T07:05:22.145812+00:00 frame 3: start intensity_maps
+2026-06-16T07:05:22.152812+00:00 frame 3: done intensity_maps (0.007s)
+2026-06-16T07:05:22.153811+00:00 frame 3: start nearby_persistent
+2026-06-16T07:05:22.160811+00:00 frame 3: done nearby_persistent (0.008s)
+2026-06-16T07:05:22.162811+00:00 frame 3: start middle_frame_recovery
+2026-06-16T07:05:22.171810+00:00 frame 3: done middle_frame_recovery (0.009s)
+2026-06-16T07:05:22.171810+00:00 frame 3: start cumulative_traversed_prior
+2026-06-16T07:05:22.207813+00:00 frame 3: done cumulative_traversed_prior (0.036s)
+2026-06-16T07:05:22.208812+00:00 frame 3: start flicker_removal
+2026-06-16T07:05:22.302831+00:00 frame 3: done flicker_removal (0.094s)
+2026-06-16T07:05:22.306831+00:00 frame 3: complete elapsed=0.160s recovered=0 removed=0
+2026-06-16T07:05:22.306831+00:00 frame 4/47: begin
+2026-06-16T07:05:22.307832+00:00 frame 4: start load_mask
+2026-06-16T07:05:22.308831+00:00 frame 4: done load_mask (0.001s)
+2026-06-16T07:05:22.308831+00:00 frame 4: start intensity_maps
+2026-06-16T07:05:22.316337+00:00 frame 4: done intensity_maps (0.007s)
+2026-06-16T07:05:22.317338+00:00 frame 4: start nearby_persistent
+2026-06-16T07:05:22.325339+00:00 frame 4: done nearby_persistent (0.009s)
+2026-06-16T07:05:22.327340+00:00 frame 4: start middle_frame_recovery
+2026-06-16T07:05:22.333338+00:00 frame 4: done middle_frame_recovery (0.007s)
+2026-06-16T07:05:22.334338+00:00 frame 4: start cumulative_traversed_prior
+2026-06-16T07:05:22.359339+00:00 frame 4: done cumulative_traversed_prior (0.025s)
+2026-06-16T07:05:22.359339+00:00 frame 4: start flicker_removal
+2026-06-16T07:05:22.445857+00:00 frame 4: done flicker_removal (0.086s)
+2026-06-16T07:05:22.447852+00:00 frame 4: complete elapsed=0.140s recovered=0 removed=0
+2026-06-16T07:05:22.448852+00:00 frame 5/47: begin
+2026-06-16T07:05:22.448852+00:00 frame 5: start load_mask
+2026-06-16T07:05:22.449853+00:00 frame 5: done load_mask (0.001s)
+2026-06-16T07:05:22.450854+00:00 frame 5: start intensity_maps
+2026-06-16T07:05:22.456851+00:00 frame 5: done intensity_maps (0.006s)
+2026-06-16T07:05:22.456851+00:00 frame 5: start nearby_persistent
+2026-06-16T07:05:22.464854+00:00 frame 5: done nearby_persistent (0.008s)
+2026-06-16T07:05:22.466854+00:00 frame 5: start middle_frame_recovery
+2026-06-16T07:05:22.474854+00:00 frame 5: done middle_frame_recovery (0.009s)
+2026-06-16T07:05:22.475854+00:00 frame 5: start cumulative_traversed_prior
+2026-06-16T07:05:22.499900+00:00 frame 5: done cumulative_traversed_prior (0.024s)
+2026-06-16T07:05:22.500900+00:00 frame 5: start flicker_removal
+2026-06-16T07:05:22.577922+00:00 frame 5: done flicker_removal (0.078s)
+2026-06-16T07:05:22.581922+00:00 frame 5: complete elapsed=0.131s recovered=0 removed=0
+2026-06-16T07:05:22.581922+00:00 frame 6/47: begin
+2026-06-16T07:05:22.582921+00:00 frame 6: start load_mask
+2026-06-16T07:05:22.583921+00:00 frame 6: done load_mask (0.001s)
+2026-06-16T07:05:22.583921+00:00 frame 6: start intensity_maps
+2026-06-16T07:05:22.592920+00:00 frame 6: done intensity_maps (0.009s)
+2026-06-16T07:05:22.592920+00:00 frame 6: start nearby_persistent
+2026-06-16T07:05:22.600924+00:00 frame 6: done nearby_persistent (0.008s)
+2026-06-16T07:05:22.601924+00:00 frame 6: start middle_frame_recovery
+2026-06-16T07:05:22.608925+00:00 frame 6: done middle_frame_recovery (0.007s)
+2026-06-16T07:05:22.609924+00:00 frame 6: start cumulative_traversed_prior
+2026-06-16T07:05:22.639236+00:00 frame 6: done cumulative_traversed_prior (0.029s)
+2026-06-16T07:05:22.639236+00:00 frame 6: start flicker_removal
+2026-06-16T07:05:22.709754+00:00 frame 6: done flicker_removal (0.071s)
+2026-06-16T07:05:22.712753+00:00 frame 6: complete elapsed=0.129s recovered=0 removed=0
+2026-06-16T07:05:22.712753+00:00 frame 7/47: begin
+2026-06-16T07:05:22.712753+00:00 frame 7: start load_mask
+2026-06-16T07:05:22.714910+00:00 frame 7: done load_mask (0.001s)
+2026-06-16T07:05:22.714910+00:00 frame 7: start intensity_maps
+2026-06-16T07:05:22.723418+00:00 frame 7: done intensity_maps (0.009s)
+2026-06-16T07:05:22.724419+00:00 frame 7: start nearby_persistent
+2026-06-16T07:05:22.733418+00:00 frame 7: done nearby_persistent (0.010s)
+2026-06-16T07:05:22.734418+00:00 frame 7: start middle_frame_recovery
+2026-06-16T07:05:22.740418+00:00 frame 7: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:22.741418+00:00 frame 7: start cumulative_traversed_prior
+2026-06-16T07:05:22.764423+00:00 frame 7: done cumulative_traversed_prior (0.024s)
+2026-06-16T07:05:22.765419+00:00 frame 7: start flicker_removal
+2026-06-16T07:05:22.834929+00:00 frame 7: done flicker_removal (0.069s)
+2026-06-16T07:05:22.836997+00:00 frame 7: complete elapsed=0.123s recovered=0 removed=0
+2026-06-16T07:05:22.837929+00:00 frame 8/47: begin
+2026-06-16T07:05:22.837929+00:00 frame 8: start load_mask
+2026-06-16T07:05:22.838930+00:00 frame 8: done load_mask (0.001s)
+2026-06-16T07:05:22.838930+00:00 frame 8: start intensity_maps
+2026-06-16T07:05:22.844930+00:00 frame 8: done intensity_maps (0.006s)
+2026-06-16T07:05:22.844930+00:00 frame 8: start nearby_persistent
+2026-06-16T07:05:22.855929+00:00 frame 8: done nearby_persistent (0.010s)
+2026-06-16T07:05:22.856929+00:00 frame 8: start middle_frame_recovery
+2026-06-16T07:05:22.862931+00:00 frame 8: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:22.862931+00:00 frame 8: start cumulative_traversed_prior
+2026-06-16T07:05:22.886928+00:00 frame 8: done cumulative_traversed_prior (0.023s)
+2026-06-16T07:05:22.886928+00:00 frame 8: start flicker_removal
+2026-06-16T07:05:22.952444+00:00 frame 8: done flicker_removal (0.065s)
+2026-06-16T07:05:22.954444+00:00 frame 8: complete elapsed=0.116s recovered=0 removed=0
+2026-06-16T07:05:22.955444+00:00 frame 9/47: begin
+2026-06-16T07:05:22.955444+00:00 frame 9: start load_mask
+2026-06-16T07:05:22.956443+00:00 frame 9: done load_mask (0.001s)
+2026-06-16T07:05:22.956443+00:00 frame 9: start intensity_maps
+2026-06-16T07:05:22.963443+00:00 frame 9: done intensity_maps (0.007s)
+2026-06-16T07:05:22.964448+00:00 frame 9: start nearby_persistent
+2026-06-16T07:05:22.974444+00:00 frame 9: done nearby_persistent (0.010s)
+2026-06-16T07:05:22.975443+00:00 frame 9: start middle_frame_recovery
+2026-06-16T07:05:22.982446+00:00 frame 9: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:22.982446+00:00 frame 9: start cumulative_traversed_prior
+2026-06-16T07:05:23.014960+00:00 frame 9: done cumulative_traversed_prior (0.032s)
+2026-06-16T07:05:23.014960+00:00 frame 9: start flicker_removal
+2026-06-16T07:05:23.072956+00:00 frame 9: done flicker_removal (0.058s)
+2026-06-16T07:05:23.075956+00:00 frame 9: complete elapsed=0.119s recovered=0 removed=0
+2026-06-16T07:05:23.075956+00:00 frame 10/47: begin
+2026-06-16T07:05:23.076958+00:00 frame 10: start load_mask
+2026-06-16T07:05:23.077956+00:00 frame 10: done load_mask (0.001s)
+2026-06-16T07:05:23.077956+00:00 frame 10: start intensity_maps
+2026-06-16T07:05:23.084955+00:00 frame 10: done intensity_maps (0.007s)
+2026-06-16T07:05:23.084955+00:00 frame 10: start nearby_persistent
+2026-06-16T07:05:23.095956+00:00 frame 10: done nearby_persistent (0.010s)
+2026-06-16T07:05:23.096957+00:00 frame 10: start middle_frame_recovery
+2026-06-16T07:05:23.104959+00:00 frame 10: done middle_frame_recovery (0.008s)
+2026-06-16T07:05:23.105959+00:00 frame 10: start cumulative_traversed_prior
+2026-06-16T07:05:23.128470+00:00 frame 10: done cumulative_traversed_prior (0.023s)
+2026-06-16T07:05:23.128470+00:00 frame 10: start flicker_removal
+2026-06-16T07:05:23.192465+00:00 frame 10: done flicker_removal (0.063s)
+2026-06-16T07:05:23.194465+00:00 frame 10: complete elapsed=0.117s recovered=0 removed=0
+2026-06-16T07:05:23.194465+00:00 frame 11/47: begin
+2026-06-16T07:05:23.195466+00:00 frame 11: start load_mask
+2026-06-16T07:05:23.196465+00:00 frame 11: done load_mask (0.001s)
+2026-06-16T07:05:23.196465+00:00 frame 11: start intensity_maps
+2026-06-16T07:05:23.204471+00:00 frame 11: done intensity_maps (0.008s)
+2026-06-16T07:05:23.204471+00:00 frame 11: start nearby_persistent
+2026-06-16T07:05:23.211474+00:00 frame 11: done nearby_persistent (0.008s)
+2026-06-16T07:05:23.212976+00:00 frame 11: start middle_frame_recovery
+2026-06-16T07:05:23.219981+00:00 frame 11: done middle_frame_recovery (0.007s)
+2026-06-16T07:05:23.219981+00:00 frame 11: start cumulative_traversed_prior
+2026-06-16T07:05:23.241979+00:00 frame 11: done cumulative_traversed_prior (0.022s)
+2026-06-16T07:05:23.241979+00:00 frame 11: start flicker_removal
+2026-06-16T07:05:23.331495+00:00 frame 11: done flicker_removal (0.090s)
+2026-06-16T07:05:23.335493+00:00 frame 11: complete elapsed=0.138s recovered=0 removed=0
+2026-06-16T07:05:23.335493+00:00 frame 12/47: begin
+2026-06-16T07:05:23.335493+00:00 frame 12: start load_mask
+2026-06-16T07:05:23.337496+00:00 frame 12: done load_mask (0.002s)
+2026-06-16T07:05:23.337496+00:00 frame 12: start intensity_maps
+2026-06-16T07:05:23.342493+00:00 frame 12: done intensity_maps (0.005s)
+2026-06-16T07:05:23.343494+00:00 frame 12: start nearby_persistent
+2026-06-16T07:05:23.351493+00:00 frame 12: done nearby_persistent (0.008s)
+2026-06-16T07:05:23.352497+00:00 frame 12: start middle_frame_recovery
+2026-06-16T07:05:23.360495+00:00 frame 12: done middle_frame_recovery (0.008s)
+2026-06-16T07:05:23.361496+00:00 frame 12: start cumulative_traversed_prior
+2026-06-16T07:05:23.384492+00:00 frame 12: done cumulative_traversed_prior (0.023s)
+2026-06-16T07:05:23.384492+00:00 frame 12: start flicker_removal
+2026-06-16T07:05:23.455005+00:00 frame 12: done flicker_removal (0.071s)
+2026-06-16T07:05:23.458006+00:00 frame 12: complete elapsed=0.121s recovered=0 removed=0
+2026-06-16T07:05:23.458006+00:00 frame 13/47: begin
+2026-06-16T07:05:23.459004+00:00 frame 13: start load_mask
+2026-06-16T07:05:23.460005+00:00 frame 13: done load_mask (0.001s)
+2026-06-16T07:05:23.460005+00:00 frame 13: start intensity_maps
+2026-06-16T07:05:23.465005+00:00 frame 13: done intensity_maps (0.006s)
+2026-06-16T07:05:23.466003+00:00 frame 13: start nearby_persistent
+2026-06-16T07:05:23.476003+00:00 frame 13: done nearby_persistent (0.010s)
+2026-06-16T07:05:23.477005+00:00 frame 13: start middle_frame_recovery
+2026-06-16T07:05:23.484011+00:00 frame 13: done middle_frame_recovery (0.007s)
+2026-06-16T07:05:23.485013+00:00 frame 13: start cumulative_traversed_prior
+2026-06-16T07:05:23.513028+00:00 frame 13: done cumulative_traversed_prior (0.028s)
+2026-06-16T07:05:23.514033+00:00 frame 13: start flicker_removal
+2026-06-16T07:05:23.590369+00:00 frame 13: done flicker_removal (0.077s)
+2026-06-16T07:05:23.594369+00:00 frame 13: complete elapsed=0.134s recovered=0 removed=0
+2026-06-16T07:05:23.594369+00:00 frame 14/47: begin
+2026-06-16T07:05:23.595370+00:00 frame 14: start load_mask
+2026-06-16T07:05:23.596368+00:00 frame 14: done load_mask (0.001s)
+2026-06-16T07:05:23.596368+00:00 frame 14: start intensity_maps
+2026-06-16T07:05:23.602376+00:00 frame 14: done intensity_maps (0.006s)
+2026-06-16T07:05:23.603377+00:00 frame 14: start nearby_persistent
+2026-06-16T07:05:23.612875+00:00 frame 14: done nearby_persistent (0.009s)
+2026-06-16T07:05:23.612875+00:00 frame 14: start middle_frame_recovery
+2026-06-16T07:05:23.621879+00:00 frame 14: done middle_frame_recovery (0.008s)
+2026-06-16T07:05:23.621879+00:00 frame 14: start cumulative_traversed_prior
+2026-06-16T07:05:23.645879+00:00 frame 14: done cumulative_traversed_prior (0.024s)
+2026-06-16T07:05:23.646878+00:00 frame 14: start flicker_removal
+2026-06-16T07:05:23.737410+00:00 frame 14: done flicker_removal (0.091s)
+2026-06-16T07:05:23.739406+00:00 frame 14: complete elapsed=0.144s recovered=0 removed=0
+2026-06-16T07:05:23.739406+00:00 frame 15/47: begin
+2026-06-16T07:05:23.740409+00:00 frame 15: start load_mask
+2026-06-16T07:05:23.741407+00:00 frame 15: done load_mask (0.001s)
+2026-06-16T07:05:23.741407+00:00 frame 15: start intensity_maps
+2026-06-16T07:05:23.748407+00:00 frame 15: done intensity_maps (0.007s)
+2026-06-16T07:05:23.748407+00:00 frame 15: start nearby_persistent
+2026-06-16T07:05:23.758408+00:00 frame 15: done nearby_persistent (0.010s)
+2026-06-16T07:05:23.759409+00:00 frame 15: start middle_frame_recovery
+2026-06-16T07:05:23.765410+00:00 frame 15: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:23.765410+00:00 frame 15: start cumulative_traversed_prior
+2026-06-16T07:05:23.788408+00:00 frame 15: done cumulative_traversed_prior (0.023s)
+2026-06-16T07:05:23.789406+00:00 frame 15: start flicker_removal
+2026-06-16T07:05:23.847916+00:00 frame 15: done flicker_removal (0.059s)
+2026-06-16T07:05:23.851916+00:00 frame 15: complete elapsed=0.110s recovered=0 removed=0
+2026-06-16T07:05:23.851916+00:00 frame 16/47: begin
+2026-06-16T07:05:23.851916+00:00 frame 16: start load_mask
+2026-06-16T07:05:23.852918+00:00 frame 16: done load_mask (0.001s)
+2026-06-16T07:05:23.852918+00:00 frame 16: start intensity_maps
+2026-06-16T07:05:23.859917+00:00 frame 16: done intensity_maps (0.006s)
+2026-06-16T07:05:23.859917+00:00 frame 16: start nearby_persistent
+2026-06-16T07:05:23.868918+00:00 frame 16: done nearby_persistent (0.010s)
+2026-06-16T07:05:23.869916+00:00 frame 16: start middle_frame_recovery
+2026-06-16T07:05:23.875917+00:00 frame 16: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:23.876915+00:00 frame 16: start cumulative_traversed_prior
+2026-06-16T07:05:23.909924+00:00 frame 16: done cumulative_traversed_prior (0.033s)
+2026-06-16T07:05:23.909924+00:00 frame 16: start flicker_removal
+2026-06-16T07:05:23.983430+00:00 frame 16: done flicker_removal (0.073s)
+2026-06-16T07:05:23.985432+00:00 frame 16: complete elapsed=0.132s recovered=0 removed=0
+2026-06-16T07:05:23.985432+00:00 frame 17/47: begin
+2026-06-16T07:05:23.986432+00:00 frame 17: start load_mask
+2026-06-16T07:05:23.987432+00:00 frame 17: done load_mask (0.001s)
+2026-06-16T07:05:23.987432+00:00 frame 17: start intensity_maps
+2026-06-16T07:05:23.994430+00:00 frame 17: done intensity_maps (0.007s)
+2026-06-16T07:05:23.994430+00:00 frame 17: start nearby_persistent
+2026-06-16T07:05:24.001434+00:00 frame 17: done nearby_persistent (0.007s)
+2026-06-16T07:05:24.002432+00:00 frame 17: start middle_frame_recovery
+2026-06-16T07:05:24.008434+00:00 frame 17: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:24.008434+00:00 frame 17: start cumulative_traversed_prior
+2026-06-16T07:05:24.035940+00:00 frame 17: done cumulative_traversed_prior (0.027s)
+2026-06-16T07:05:24.035940+00:00 frame 17: start flicker_removal
+2026-06-16T07:05:24.092939+00:00 frame 17: done flicker_removal (0.057s)
+2026-06-16T07:05:24.094939+00:00 frame 17: complete elapsed=0.108s recovered=0 removed=0
+2026-06-16T07:05:24.094939+00:00 frame 18/47: begin
+2026-06-16T07:05:24.095941+00:00 frame 18: start load_mask
+2026-06-16T07:05:24.096940+00:00 frame 18: done load_mask (0.001s)
+2026-06-16T07:05:24.096940+00:00 frame 18: start intensity_maps
+2026-06-16T07:05:24.102944+00:00 frame 18: done intensity_maps (0.006s)
+2026-06-16T07:05:24.102944+00:00 frame 18: start nearby_persistent
+2026-06-16T07:05:24.110947+00:00 frame 18: done nearby_persistent (0.008s)
+2026-06-16T07:05:24.111947+00:00 frame 18: start middle_frame_recovery
+2026-06-16T07:05:24.119090+00:00 frame 18: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:24.119090+00:00 frame 18: start cumulative_traversed_prior
+2026-06-16T07:05:24.144089+00:00 frame 18: done cumulative_traversed_prior (0.025s)
+2026-06-16T07:05:24.144089+00:00 frame 18: start flicker_removal
+2026-06-16T07:05:24.211095+00:00 frame 18: done flicker_removal (0.067s)
+2026-06-16T07:05:24.213096+00:00 frame 18: complete elapsed=0.117s recovered=0 removed=0
+2026-06-16T07:05:24.213096+00:00 frame 19/47: begin
+2026-06-16T07:05:24.214533+00:00 frame 19: start load_mask
+2026-06-16T07:05:24.215532+00:00 frame 19: done load_mask (0.001s)
+2026-06-16T07:05:24.215532+00:00 frame 19: start intensity_maps
+2026-06-16T07:05:24.223532+00:00 frame 19: done intensity_maps (0.008s)
+2026-06-16T07:05:24.223532+00:00 frame 19: start nearby_persistent
+2026-06-16T07:05:24.230535+00:00 frame 19: done nearby_persistent (0.007s)
+2026-06-16T07:05:24.231535+00:00 frame 19: start middle_frame_recovery
+2026-06-16T07:05:24.237536+00:00 frame 19: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:24.237536+00:00 frame 19: start cumulative_traversed_prior
+2026-06-16T07:05:24.271044+00:00 frame 19: done cumulative_traversed_prior (0.033s)
+2026-06-16T07:05:24.272042+00:00 frame 19: start flicker_removal
+2026-06-16T07:05:24.330556+00:00 frame 19: done flicker_removal (0.059s)
+2026-06-16T07:05:24.332552+00:00 frame 19: complete elapsed=0.118s recovered=0 removed=0
+2026-06-16T07:05:24.333553+00:00 frame 20/47: begin
+2026-06-16T07:05:24.333553+00:00 frame 20: start load_mask
+2026-06-16T07:05:24.335552+00:00 frame 20: done load_mask (0.002s)
+2026-06-16T07:05:24.335552+00:00 frame 20: start intensity_maps
+2026-06-16T07:05:24.342552+00:00 frame 20: done intensity_maps (0.007s)
+2026-06-16T07:05:24.342552+00:00 frame 20: start nearby_persistent
+2026-06-16T07:05:24.351552+00:00 frame 20: done nearby_persistent (0.009s)
+2026-06-16T07:05:24.352552+00:00 frame 20: start middle_frame_recovery
+2026-06-16T07:05:24.358554+00:00 frame 20: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:24.359554+00:00 frame 20: start cumulative_traversed_prior
+2026-06-16T07:05:24.387552+00:00 frame 20: done cumulative_traversed_prior (0.029s)
+2026-06-16T07:05:24.388552+00:00 frame 20: start flicker_removal
+2026-06-16T07:05:24.470070+00:00 frame 20: done flicker_removal (0.082s)
+2026-06-16T07:05:24.473066+00:00 frame 20: complete elapsed=0.138s recovered=0 removed=0
+2026-06-16T07:05:24.473066+00:00 frame 21/47: begin
+2026-06-16T07:05:24.473066+00:00 frame 21: start load_mask
+2026-06-16T07:05:24.474071+00:00 frame 21: done load_mask (0.001s)
+2026-06-16T07:05:24.475069+00:00 frame 21: start intensity_maps
+2026-06-16T07:05:24.481067+00:00 frame 21: done intensity_maps (0.006s)
+2026-06-16T07:05:24.481067+00:00 frame 21: start nearby_persistent
+2026-06-16T07:05:24.488071+00:00 frame 21: done nearby_persistent (0.006s)
+2026-06-16T07:05:24.489070+00:00 frame 21: start middle_frame_recovery
+2026-06-16T07:05:24.495070+00:00 frame 21: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:24.495070+00:00 frame 21: start cumulative_traversed_prior
+2026-06-16T07:05:24.526302+00:00 frame 21: done cumulative_traversed_prior (0.032s)
+2026-06-16T07:05:24.527304+00:00 frame 21: start flicker_removal
+2026-06-16T07:05:24.598304+00:00 frame 21: done flicker_removal (0.071s)
+2026-06-16T07:05:24.600307+00:00 frame 21: complete elapsed=0.126s recovered=0 removed=0
+2026-06-16T07:05:24.600307+00:00 frame 22/47: begin
+2026-06-16T07:05:24.600307+00:00 frame 22: start load_mask
+2026-06-16T07:05:24.601308+00:00 frame 22: done load_mask (0.001s)
+2026-06-16T07:05:24.602307+00:00 frame 22: start intensity_maps
+2026-06-16T07:05:24.609308+00:00 frame 22: done intensity_maps (0.007s)
+2026-06-16T07:05:24.609308+00:00 frame 22: start nearby_persistent
+2026-06-16T07:05:24.616815+00:00 frame 22: done nearby_persistent (0.008s)
+2026-06-16T07:05:24.617814+00:00 frame 22: start middle_frame_recovery
+2026-06-16T07:05:24.623814+00:00 frame 22: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:24.623814+00:00 frame 22: start cumulative_traversed_prior
+2026-06-16T07:05:24.652814+00:00 frame 22: done cumulative_traversed_prior (0.029s)
+2026-06-16T07:05:24.653814+00:00 frame 22: start flicker_removal
+2026-06-16T07:05:24.747334+00:00 frame 22: done flicker_removal (0.093s)
+2026-06-16T07:05:24.749336+00:00 frame 22: complete elapsed=0.148s recovered=0 removed=0
+2026-06-16T07:05:24.749336+00:00 frame 23/47: begin
+2026-06-16T07:05:24.749336+00:00 frame 23: start load_mask
+2026-06-16T07:05:24.750337+00:00 frame 23: done load_mask (0.001s)
+2026-06-16T07:05:24.750337+00:00 frame 23: start intensity_maps
+2026-06-16T07:05:24.756336+00:00 frame 23: done intensity_maps (0.006s)
+2026-06-16T07:05:24.757337+00:00 frame 23: start nearby_persistent
+2026-06-16T07:05:24.766335+00:00 frame 23: done nearby_persistent (0.010s)
+2026-06-16T07:05:24.767337+00:00 frame 23: start middle_frame_recovery
+2026-06-16T07:05:24.773336+00:00 frame 23: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:24.774337+00:00 frame 23: start cumulative_traversed_prior
+2026-06-16T07:05:24.798337+00:00 frame 23: done cumulative_traversed_prior (0.024s)
+2026-06-16T07:05:24.799340+00:00 frame 23: start flicker_removal
+2026-06-16T07:05:24.858849+00:00 frame 23: done flicker_removal (0.060s)
+2026-06-16T07:05:24.861847+00:00 frame 23: complete elapsed=0.111s recovered=0 removed=0
+2026-06-16T07:05:24.861847+00:00 frame 24/47: begin
+2026-06-16T07:05:24.861847+00:00 frame 24: start load_mask
+2026-06-16T07:05:24.863852+00:00 frame 24: done load_mask (0.001s)
+2026-06-16T07:05:24.863852+00:00 frame 24: start intensity_maps
+2026-06-16T07:05:24.870848+00:00 frame 24: done intensity_maps (0.007s)
+2026-06-16T07:05:24.871848+00:00 frame 24: start nearby_persistent
+2026-06-16T07:05:24.883848+00:00 frame 24: done nearby_persistent (0.012s)
+2026-06-16T07:05:24.883848+00:00 frame 24: start middle_frame_recovery
+2026-06-16T07:05:24.893849+00:00 frame 24: done middle_frame_recovery (0.010s)
+2026-06-16T07:05:24.894849+00:00 frame 24: start cumulative_traversed_prior
+2026-06-16T07:05:24.920357+00:00 frame 24: done cumulative_traversed_prior (0.026s)
+2026-06-16T07:05:24.921360+00:00 frame 24: start flicker_removal
+2026-06-16T07:05:24.983357+00:00 frame 24: done flicker_removal (0.062s)
+2026-06-16T07:05:24.986359+00:00 frame 24: complete elapsed=0.123s recovered=0 removed=0
+2026-06-16T07:05:24.987359+00:00 frame 25/47: begin
+2026-06-16T07:05:24.987359+00:00 frame 25: start load_mask
+2026-06-16T07:05:24.988359+00:00 frame 25: done load_mask (0.001s)
+2026-06-16T07:05:24.988359+00:00 frame 25: start intensity_maps
+2026-06-16T07:05:24.994358+00:00 frame 25: done intensity_maps (0.006s)
+2026-06-16T07:05:24.994358+00:00 frame 25: start nearby_persistent
+2026-06-16T07:05:25.003363+00:00 frame 25: done nearby_persistent (0.008s)
+2026-06-16T07:05:25.004364+00:00 frame 25: start middle_frame_recovery
+2026-06-16T07:05:25.013365+00:00 frame 25: done middle_frame_recovery (0.009s)
+2026-06-16T07:05:25.013365+00:00 frame 25: start cumulative_traversed_prior
+2026-06-16T07:05:25.045803+00:00 frame 25: done cumulative_traversed_prior (0.031s)
+2026-06-16T07:05:25.045803+00:00 frame 25: start flicker_removal
+2026-06-16T07:05:25.118326+00:00 frame 25: done flicker_removal (0.073s)
+2026-06-16T07:05:25.121329+00:00 frame 25: complete elapsed=0.133s recovered=0 removed=0
+2026-06-16T07:05:25.121329+00:00 frame 26/47: begin
+2026-06-16T07:05:25.122328+00:00 frame 26: start load_mask
+2026-06-16T07:05:25.123331+00:00 frame 26: done load_mask (0.001s)
+2026-06-16T07:05:25.123331+00:00 frame 26: start intensity_maps
+2026-06-16T07:05:25.130328+00:00 frame 26: done intensity_maps (0.007s)
+2026-06-16T07:05:25.131327+00:00 frame 26: start nearby_persistent
+2026-06-16T07:05:25.143327+00:00 frame 26: done nearby_persistent (0.012s)
+2026-06-16T07:05:25.144327+00:00 frame 26: start middle_frame_recovery
+2026-06-16T07:05:25.152327+00:00 frame 26: done middle_frame_recovery (0.007s)
+2026-06-16T07:05:25.152327+00:00 frame 26: start cumulative_traversed_prior
+2026-06-16T07:05:25.176328+00:00 frame 26: done cumulative_traversed_prior (0.024s)
+2026-06-16T07:05:25.177326+00:00 frame 26: start flicker_removal
+2026-06-16T07:05:25.242840+00:00 frame 26: done flicker_removal (0.065s)
+2026-06-16T07:05:25.245840+00:00 frame 26: complete elapsed=0.123s recovered=0 removed=0
+2026-06-16T07:05:25.246840+00:00 frame 27/47: begin
+2026-06-16T07:05:25.246840+00:00 frame 27: start load_mask
+2026-06-16T07:05:25.247841+00:00 frame 27: done load_mask (0.001s)
+2026-06-16T07:05:25.248839+00:00 frame 27: start intensity_maps
+2026-06-16T07:05:25.254839+00:00 frame 27: done intensity_maps (0.007s)
+2026-06-16T07:05:25.255841+00:00 frame 27: start nearby_persistent
+2026-06-16T07:05:25.263843+00:00 frame 27: done nearby_persistent (0.008s)
+2026-06-16T07:05:25.264842+00:00 frame 27: start middle_frame_recovery
+2026-06-16T07:05:25.270839+00:00 frame 27: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:25.270839+00:00 frame 27: start cumulative_traversed_prior
+2026-06-16T07:05:25.299844+00:00 frame 27: done cumulative_traversed_prior (0.029s)
+2026-06-16T07:05:25.299844+00:00 frame 27: start flicker_removal
+2026-06-16T07:05:25.365352+00:00 frame 27: done flicker_removal (0.065s)
+2026-06-16T07:05:25.367351+00:00 frame 27: complete elapsed=0.120s recovered=0 removed=0
+2026-06-16T07:05:25.368354+00:00 frame 28/47: begin
+2026-06-16T07:05:25.368354+00:00 frame 28: start load_mask
+2026-06-16T07:05:25.370353+00:00 frame 28: done load_mask (0.002s)
+2026-06-16T07:05:25.370353+00:00 frame 28: start intensity_maps
+2026-06-16T07:05:25.377352+00:00 frame 28: done intensity_maps (0.007s)
+2026-06-16T07:05:25.378353+00:00 frame 28: start nearby_persistent
+2026-06-16T07:05:25.386352+00:00 frame 28: done nearby_persistent (0.009s)
+2026-06-16T07:05:25.388353+00:00 frame 28: start middle_frame_recovery
+2026-06-16T07:05:25.394352+00:00 frame 28: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:25.395353+00:00 frame 28: start cumulative_traversed_prior
+2026-06-16T07:05:25.421866+00:00 frame 28: done cumulative_traversed_prior (0.026s)
+2026-06-16T07:05:25.421866+00:00 frame 28: start flicker_removal
+2026-06-16T07:05:25.500382+00:00 frame 28: done flicker_removal (0.078s)
+2026-06-16T07:05:25.502385+00:00 frame 28: complete elapsed=0.133s recovered=0 removed=0
+2026-06-16T07:05:25.502385+00:00 frame 29/47: begin
+2026-06-16T07:05:25.502385+00:00 frame 29: start load_mask
+2026-06-16T07:05:25.504383+00:00 frame 29: done load_mask (0.002s)
+2026-06-16T07:05:25.504383+00:00 frame 29: start intensity_maps
+2026-06-16T07:05:25.510891+00:00 frame 29: done intensity_maps (0.006s)
+2026-06-16T07:05:25.510891+00:00 frame 29: start nearby_persistent
+2026-06-16T07:05:25.519398+00:00 frame 29: done nearby_persistent (0.009s)
+2026-06-16T07:05:25.520399+00:00 frame 29: start middle_frame_recovery
+2026-06-16T07:05:25.526399+00:00 frame 29: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:25.527399+00:00 frame 29: start cumulative_traversed_prior
+2026-06-16T07:05:25.551398+00:00 frame 29: done cumulative_traversed_prior (0.024s)
+2026-06-16T07:05:25.551398+00:00 frame 29: start flicker_removal
+2026-06-16T07:05:25.622804+00:00 frame 29: done flicker_removal (0.071s)
+2026-06-16T07:05:25.625802+00:00 frame 29: complete elapsed=0.122s recovered=0 removed=0
+2026-06-16T07:05:25.625802+00:00 frame 30/47: begin
+2026-06-16T07:05:25.626801+00:00 frame 30: start load_mask
+2026-06-16T07:05:25.627805+00:00 frame 30: done load_mask (0.002s)
+2026-06-16T07:05:25.628804+00:00 frame 30: start intensity_maps
+2026-06-16T07:05:25.635806+00:00 frame 30: done intensity_maps (0.007s)
+2026-06-16T07:05:25.635806+00:00 frame 30: start nearby_persistent
+2026-06-16T07:05:25.646801+00:00 frame 30: done nearby_persistent (0.011s)
+2026-06-16T07:05:25.647801+00:00 frame 30: start middle_frame_recovery
+2026-06-16T07:05:25.654801+00:00 frame 30: done middle_frame_recovery (0.007s)
+2026-06-16T07:05:25.654801+00:00 frame 30: start cumulative_traversed_prior
+2026-06-16T07:05:25.677803+00:00 frame 30: done cumulative_traversed_prior (0.023s)
+2026-06-16T07:05:25.678806+00:00 frame 30: start flicker_removal
+2026-06-16T07:05:25.742339+00:00 frame 30: done flicker_removal (0.064s)
+2026-06-16T07:05:25.745338+00:00 frame 30: complete elapsed=0.118s recovered=0 removed=0
+2026-06-16T07:05:25.745338+00:00 frame 31/47: begin
+2026-06-16T07:05:25.746339+00:00 frame 31: start load_mask
+2026-06-16T07:05:25.746339+00:00 frame 31: done load_mask (0.001s)
+2026-06-16T07:05:25.747339+00:00 frame 31: start intensity_maps
+2026-06-16T07:05:25.753339+00:00 frame 31: done intensity_maps (0.006s)
+2026-06-16T07:05:25.753339+00:00 frame 31: start nearby_persistent
+2026-06-16T07:05:25.762343+00:00 frame 31: done nearby_persistent (0.009s)
+2026-06-16T07:05:25.762343+00:00 frame 31: start middle_frame_recovery
+2026-06-16T07:05:25.768338+00:00 frame 31: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:25.769339+00:00 frame 31: start cumulative_traversed_prior
+2026-06-16T07:05:25.801346+00:00 frame 31: done cumulative_traversed_prior (0.032s)
+2026-06-16T07:05:25.801346+00:00 frame 31: start flicker_removal
+2026-06-16T07:05:25.868851+00:00 frame 31: done flicker_removal (0.067s)
+2026-06-16T07:05:25.870853+00:00 frame 31: complete elapsed=0.124s recovered=0 removed=0
+2026-06-16T07:05:25.870853+00:00 frame 32/47: begin
+2026-06-16T07:05:25.871851+00:00 frame 32: start load_mask
+2026-06-16T07:05:25.872853+00:00 frame 32: done load_mask (0.001s)
+2026-06-16T07:05:25.872853+00:00 frame 32: start intensity_maps
+2026-06-16T07:05:25.879852+00:00 frame 32: done intensity_maps (0.007s)
+2026-06-16T07:05:25.879852+00:00 frame 32: start nearby_persistent
+2026-06-16T07:05:25.889851+00:00 frame 32: done nearby_persistent (0.010s)
+2026-06-16T07:05:25.890852+00:00 frame 32: start middle_frame_recovery
+2026-06-16T07:05:25.898856+00:00 frame 32: done middle_frame_recovery (0.008s)
+2026-06-16T07:05:25.898856+00:00 frame 32: start cumulative_traversed_prior
+2026-06-16T07:05:25.928368+00:00 frame 32: done cumulative_traversed_prior (0.030s)
+2026-06-16T07:05:25.929369+00:00 frame 32: start flicker_removal
+2026-06-16T07:05:25.990368+00:00 frame 32: done flicker_removal (0.061s)
+2026-06-16T07:05:25.992369+00:00 frame 32: complete elapsed=0.120s recovered=0 removed=0
+2026-06-16T07:05:25.992369+00:00 frame 33/47: begin
+2026-06-16T07:05:25.993369+00:00 frame 33: start load_mask
+2026-06-16T07:05:25.994370+00:00 frame 33: done load_mask (0.001s)
+2026-06-16T07:05:25.994370+00:00 frame 33: start intensity_maps
+2026-06-16T07:05:25.999374+00:00 frame 33: done intensity_maps (0.005s)
+2026-06-16T07:05:25.999374+00:00 frame 33: start nearby_persistent
+2026-06-16T07:05:26.007374+00:00 frame 33: done nearby_persistent (0.007s)
+2026-06-16T07:05:26.008374+00:00 frame 33: start middle_frame_recovery
+2026-06-16T07:05:26.014886+00:00 frame 33: done middle_frame_recovery (0.007s)
+2026-06-16T07:05:26.015887+00:00 frame 33: start cumulative_traversed_prior
+2026-06-16T07:05:26.043885+00:00 frame 33: done cumulative_traversed_prior (0.028s)
+2026-06-16T07:05:26.043885+00:00 frame 33: start flicker_removal
+2026-06-16T07:05:26.107890+00:00 frame 33: done flicker_removal (0.063s)
+2026-06-16T07:05:26.109890+00:00 frame 33: complete elapsed=0.116s recovered=0 removed=0
+2026-06-16T07:05:26.109890+00:00 frame 34/47: begin
+2026-06-16T07:05:26.110890+00:00 frame 34: start load_mask
+2026-06-16T07:05:26.111889+00:00 frame 34: done load_mask (0.001s)
+2026-06-16T07:05:26.111889+00:00 frame 34: start intensity_maps
+2026-06-16T07:05:26.118397+00:00 frame 34: done intensity_maps (0.006s)
+2026-06-16T07:05:26.118397+00:00 frame 34: start nearby_persistent
+2026-06-16T07:05:26.126397+00:00 frame 34: done nearby_persistent (0.009s)
+2026-06-16T07:05:26.128400+00:00 frame 34: start middle_frame_recovery
+2026-06-16T07:05:26.134397+00:00 frame 34: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:26.134397+00:00 frame 34: start cumulative_traversed_prior
+2026-06-16T07:05:26.161398+00:00 frame 34: done cumulative_traversed_prior (0.027s)
+2026-06-16T07:05:26.162399+00:00 frame 34: start flicker_removal
+2026-06-16T07:05:26.229906+00:00 frame 34: done flicker_removal (0.068s)
+2026-06-16T07:05:26.231907+00:00 frame 34: complete elapsed=0.121s recovered=0 removed=0
+2026-06-16T07:05:26.232905+00:00 frame 35/47: begin
+2026-06-16T07:05:26.232905+00:00 frame 35: start load_mask
+2026-06-16T07:05:26.234906+00:00 frame 35: done load_mask (0.002s)
+2026-06-16T07:05:26.234906+00:00 frame 35: start intensity_maps
+2026-06-16T07:05:26.240907+00:00 frame 35: done intensity_maps (0.006s)
+2026-06-16T07:05:26.241909+00:00 frame 35: start nearby_persistent
+2026-06-16T07:05:26.248906+00:00 frame 35: done nearby_persistent (0.007s)
+2026-06-16T07:05:26.249906+00:00 frame 35: start middle_frame_recovery
+2026-06-16T07:05:26.255906+00:00 frame 35: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:26.255906+00:00 frame 35: start cumulative_traversed_prior
+2026-06-16T07:05:26.277905+00:00 frame 35: done cumulative_traversed_prior (0.022s)
+2026-06-16T07:05:26.277905+00:00 frame 35: start flicker_removal
+2026-06-16T07:05:26.346414+00:00 frame 35: done flicker_removal (0.069s)
+2026-06-16T07:05:26.349414+00:00 frame 35: complete elapsed=0.115s recovered=0 removed=0
+2026-06-16T07:05:26.349414+00:00 frame 36/47: begin
+2026-06-16T07:05:26.350415+00:00 frame 36: start load_mask
+2026-06-16T07:05:26.350415+00:00 frame 36: done load_mask (0.001s)
+2026-06-16T07:05:26.351413+00:00 frame 36: start intensity_maps
+2026-06-16T07:05:26.358415+00:00 frame 36: done intensity_maps (0.007s)
+2026-06-16T07:05:26.358415+00:00 frame 36: start nearby_persistent
+2026-06-16T07:05:26.365414+00:00 frame 36: done nearby_persistent (0.007s)
+2026-06-16T07:05:26.366414+00:00 frame 36: start middle_frame_recovery
+2026-06-16T07:05:26.372413+00:00 frame 36: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:26.372413+00:00 frame 36: start cumulative_traversed_prior
+2026-06-16T07:05:26.397419+00:00 frame 36: done cumulative_traversed_prior (0.025s)
+2026-06-16T07:05:26.398414+00:00 frame 36: start flicker_removal
+2026-06-16T07:05:26.460931+00:00 frame 36: done flicker_removal (0.062s)
+2026-06-16T07:05:26.462930+00:00 frame 36: complete elapsed=0.112s recovered=0 removed=0
+2026-06-16T07:05:26.462930+00:00 frame 37/47: begin
+2026-06-16T07:05:26.463931+00:00 frame 37: start load_mask
+2026-06-16T07:05:26.464931+00:00 frame 37: done load_mask (0.001s)
+2026-06-16T07:05:26.464931+00:00 frame 37: start intensity_maps
+2026-06-16T07:05:26.470927+00:00 frame 37: done intensity_maps (0.006s)
+2026-06-16T07:05:26.471928+00:00 frame 37: start nearby_persistent
+2026-06-16T07:05:26.478928+00:00 frame 37: done nearby_persistent (0.007s)
+2026-06-16T07:05:26.479928+00:00 frame 37: start middle_frame_recovery
+2026-06-16T07:05:26.487933+00:00 frame 37: done middle_frame_recovery (0.008s)
+2026-06-16T07:05:26.487933+00:00 frame 37: start cumulative_traversed_prior
+2026-06-16T07:05:26.509996+00:00 frame 37: done cumulative_traversed_prior (0.022s)
+2026-06-16T07:05:26.510999+00:00 frame 37: start flicker_removal
+2026-06-16T07:05:26.575506+00:00 frame 37: done flicker_removal (0.065s)
+2026-06-16T07:05:26.578503+00:00 frame 37: complete elapsed=0.114s recovered=0 removed=0
+2026-06-16T07:05:26.578503+00:00 frame 38/47: begin
+2026-06-16T07:05:26.578503+00:00 frame 38: start load_mask
+2026-06-16T07:05:26.579504+00:00 frame 38: done load_mask (0.001s)
+2026-06-16T07:05:26.579504+00:00 frame 38: start intensity_maps
+2026-06-16T07:05:26.587504+00:00 frame 38: done intensity_maps (0.007s)
+2026-06-16T07:05:26.587504+00:00 frame 38: start nearby_persistent
+2026-06-16T07:05:26.594504+00:00 frame 38: done nearby_persistent (0.007s)
+2026-06-16T07:05:26.595503+00:00 frame 38: start middle_frame_recovery
+2026-06-16T07:05:26.602508+00:00 frame 38: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:26.602508+00:00 frame 38: start cumulative_traversed_prior
+2026-06-16T07:05:26.626020+00:00 frame 38: done cumulative_traversed_prior (0.024s)
+2026-06-16T07:05:26.627020+00:00 frame 38: start flicker_removal
+2026-06-16T07:05:26.688023+00:00 frame 38: done flicker_removal (0.061s)
+2026-06-16T07:05:26.690022+00:00 frame 38: complete elapsed=0.111s recovered=0 removed=0
+2026-06-16T07:05:26.691025+00:00 frame 39/47: begin
+2026-06-16T07:05:26.691025+00:00 frame 39: start load_mask
+2026-06-16T07:05:26.692024+00:00 frame 39: done load_mask (0.001s)
+2026-06-16T07:05:26.692024+00:00 frame 39: start intensity_maps
+2026-06-16T07:05:26.700535+00:00 frame 39: done intensity_maps (0.008s)
+2026-06-16T07:05:26.700535+00:00 frame 39: start nearby_persistent
+2026-06-16T07:05:26.708537+00:00 frame 39: done nearby_persistent (0.008s)
+2026-06-16T07:05:26.709536+00:00 frame 39: start middle_frame_recovery
+2026-06-16T07:05:26.716045+00:00 frame 39: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:26.716045+00:00 frame 39: start cumulative_traversed_prior
+2026-06-16T07:05:26.743550+00:00 frame 39: done cumulative_traversed_prior (0.027s)
+2026-06-16T07:05:26.743550+00:00 frame 39: start flicker_removal
+2026-06-16T07:05:26.810554+00:00 frame 39: done flicker_removal (0.067s)
+2026-06-16T07:05:26.815063+00:00 frame 39: complete elapsed=0.122s recovered=0 removed=0
+2026-06-16T07:05:26.815063+00:00 frame 40/47: begin
+2026-06-16T07:05:26.816063+00:00 frame 40: start load_mask
+2026-06-16T07:05:26.817064+00:00 frame 40: done load_mask (0.001s)
+2026-06-16T07:05:26.817064+00:00 frame 40: start intensity_maps
+2026-06-16T07:05:26.825062+00:00 frame 40: done intensity_maps (0.008s)
+2026-06-16T07:05:26.825062+00:00 frame 40: start nearby_persistent
+2026-06-16T07:05:26.833062+00:00 frame 40: done nearby_persistent (0.008s)
+2026-06-16T07:05:26.834065+00:00 frame 40: start middle_frame_recovery
+2026-06-16T07:05:26.840062+00:00 frame 40: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:26.840062+00:00 frame 40: start cumulative_traversed_prior
+2026-06-16T07:05:26.863062+00:00 frame 40: done cumulative_traversed_prior (0.023s)
+2026-06-16T07:05:26.863062+00:00 frame 40: start flicker_removal
+2026-06-16T07:05:26.933574+00:00 frame 40: done flicker_removal (0.070s)
+2026-06-16T07:05:26.936574+00:00 frame 40: complete elapsed=0.120s recovered=0 removed=0
+2026-06-16T07:05:26.936574+00:00 frame 41/47: begin
+2026-06-16T07:05:26.937575+00:00 frame 41: start load_mask
+2026-06-16T07:05:26.937575+00:00 frame 41: done load_mask (0.001s)
+2026-06-16T07:05:26.938576+00:00 frame 41: start intensity_maps
+2026-06-16T07:05:26.944575+00:00 frame 41: done intensity_maps (0.007s)
+2026-06-16T07:05:26.944575+00:00 frame 41: start nearby_persistent
+2026-06-16T07:05:26.954574+00:00 frame 41: done nearby_persistent (0.010s)
+2026-06-16T07:05:26.955577+00:00 frame 41: start middle_frame_recovery
+2026-06-16T07:05:26.962575+00:00 frame 41: done middle_frame_recovery (0.007s)
+2026-06-16T07:05:26.962575+00:00 frame 41: start cumulative_traversed_prior
+2026-06-16T07:05:26.996576+00:00 frame 41: done cumulative_traversed_prior (0.033s)
+2026-06-16T07:05:26.996576+00:00 frame 41: start flicker_removal
+2026-06-16T07:05:27.056089+00:00 frame 41: done flicker_removal (0.059s)
+2026-06-16T07:05:27.059087+00:00 frame 41: complete elapsed=0.120s recovered=0 removed=0
+2026-06-16T07:05:27.060090+00:00 frame 42/47: begin
+2026-06-16T07:05:27.060090+00:00 frame 42: start load_mask
+2026-06-16T07:05:27.061089+00:00 frame 42: done load_mask (0.001s)
+2026-06-16T07:05:27.061089+00:00 frame 42: start intensity_maps
+2026-06-16T07:05:27.068086+00:00 frame 42: done intensity_maps (0.006s)
+2026-06-16T07:05:27.068086+00:00 frame 42: start nearby_persistent
+2026-06-16T07:05:27.076089+00:00 frame 42: done nearby_persistent (0.008s)
+2026-06-16T07:05:27.077092+00:00 frame 42: start middle_frame_recovery
+2026-06-16T07:05:27.085089+00:00 frame 42: done middle_frame_recovery (0.008s)
+2026-06-16T07:05:27.086088+00:00 frame 42: start cumulative_traversed_prior
+2026-06-16T07:05:27.109090+00:00 frame 42: done cumulative_traversed_prior (0.023s)
+2026-06-16T07:05:27.109090+00:00 frame 42: start flicker_removal
+2026-06-16T07:05:27.174600+00:00 frame 42: done flicker_removal (0.065s)
+2026-06-16T07:05:27.176597+00:00 frame 42: complete elapsed=0.116s recovered=0 removed=0
+2026-06-16T07:05:27.176597+00:00 frame 43/47: begin
+2026-06-16T07:05:27.177600+00:00 frame 43: start load_mask
+2026-06-16T07:05:27.178598+00:00 frame 43: done load_mask (0.001s)
+2026-06-16T07:05:27.178598+00:00 frame 43: start intensity_maps
+2026-06-16T07:05:27.185597+00:00 frame 43: done intensity_maps (0.007s)
+2026-06-16T07:05:27.185597+00:00 frame 43: start nearby_persistent
+2026-06-16T07:05:27.193602+00:00 frame 43: done nearby_persistent (0.007s)
+2026-06-16T07:05:27.194600+00:00 frame 43: start middle_frame_recovery
+2026-06-16T07:05:27.200600+00:00 frame 43: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:27.200600+00:00 frame 43: start cumulative_traversed_prior
+2026-06-16T07:05:27.225112+00:00 frame 43: done cumulative_traversed_prior (0.024s)
+2026-06-16T07:05:27.226111+00:00 frame 43: start flicker_removal
+2026-06-16T07:05:27.302116+00:00 frame 43: done flicker_removal (0.076s)
+2026-06-16T07:05:27.305116+00:00 frame 43: complete elapsed=0.126s recovered=0 removed=0
+2026-06-16T07:05:27.305116+00:00 frame 44/47: begin
+2026-06-16T07:05:27.306116+00:00 frame 44: start load_mask
+2026-06-16T07:05:27.307116+00:00 frame 44: done load_mask (0.002s)
+2026-06-16T07:05:27.308117+00:00 frame 44: start intensity_maps
+2026-06-16T07:05:27.315624+00:00 frame 44: done intensity_maps (0.008s)
+2026-06-16T07:05:27.315624+00:00 frame 44: start nearby_persistent
+2026-06-16T07:05:27.323624+00:00 frame 44: done nearby_persistent (0.008s)
+2026-06-16T07:05:27.324625+00:00 frame 44: start middle_frame_recovery
+2026-06-16T07:05:27.331624+00:00 frame 44: done middle_frame_recovery (0.007s)
+2026-06-16T07:05:27.331624+00:00 frame 44: start cumulative_traversed_prior
+2026-06-16T07:05:27.360624+00:00 frame 44: done cumulative_traversed_prior (0.029s)
+2026-06-16T07:05:27.361623+00:00 frame 44: start flicker_removal
+2026-06-16T07:05:27.421136+00:00 frame 44: done flicker_removal (0.060s)
+2026-06-16T07:05:27.424136+00:00 frame 44: complete elapsed=0.117s recovered=0 removed=0
+2026-06-16T07:05:27.424136+00:00 frame 45/47: begin
+2026-06-16T07:05:27.425135+00:00 frame 45: start load_mask
+2026-06-16T07:05:27.426136+00:00 frame 45: done load_mask (0.001s)
+2026-06-16T07:05:27.426136+00:00 frame 45: start intensity_maps
+2026-06-16T07:05:27.432136+00:00 frame 45: done intensity_maps (0.006s)
+2026-06-16T07:05:27.432136+00:00 frame 45: start nearby_persistent
+2026-06-16T07:05:27.438136+00:00 frame 45: done nearby_persistent (0.006s)
+2026-06-16T07:05:27.439136+00:00 frame 45: start middle_frame_recovery
+2026-06-16T07:05:27.445136+00:00 frame 45: done middle_frame_recovery (0.006s)
+2026-06-16T07:05:27.445136+00:00 frame 45: start cumulative_traversed_prior
+2026-06-16T07:05:27.483139+00:00 frame 45: done cumulative_traversed_prior (0.038s)
+2026-06-16T07:05:27.484140+00:00 frame 45: start flicker_removal
+2026-06-16T07:05:27.540373+00:00 frame 45: done flicker_removal (0.057s)
+2026-06-16T07:05:27.543372+00:00 frame 45: complete elapsed=0.118s recovered=0 removed=0
+2026-06-16T07:05:27.543372+00:00 frame 46/47: begin
+2026-06-16T07:05:27.544372+00:00 frame 46: start load_mask
+2026-06-16T07:05:27.545372+00:00 frame 46: done load_mask (0.001s)
+2026-06-16T07:05:27.545372+00:00 frame 46: start intensity_maps
+2026-06-16T07:05:27.550373+00:00 frame 46: done intensity_maps (0.006s)
+2026-06-16T07:05:27.551372+00:00 frame 46: start nearby_persistent
+2026-06-16T07:05:27.556372+00:00 frame 46: done nearby_persistent (0.005s)
+2026-06-16T07:05:27.557372+00:00 frame 46: start middle_frame_recovery
+2026-06-16T07:05:27.565372+00:00 frame 46: done middle_frame_recovery (0.008s)
+2026-06-16T07:05:27.566373+00:00 frame 46: start cumulative_traversed_prior
+2026-06-16T07:05:27.589372+00:00 frame 46: done cumulative_traversed_prior (0.024s)
+2026-06-16T07:05:27.590372+00:00 frame 46: start flicker_removal
+2026-06-16T07:05:27.649885+00:00 frame 46: done flicker_removal (0.060s)
+2026-06-16T07:05:27.652885+00:00 frame 46: complete elapsed=0.108s recovered=0 removed=0
+2026-06-16T07:05:27.652885+00:00 frame 47/47: begin
+2026-06-16T07:05:27.652885+00:00 frame 47: start load_mask
+2026-06-16T07:05:27.654885+00:00 frame 47: done load_mask (0.002s)
+2026-06-16T07:05:27.654885+00:00 frame 47: start intensity_maps
+2026-06-16T07:05:27.661885+00:00 frame 47: done intensity_maps (0.006s)
+2026-06-16T07:05:27.661885+00:00 frame 47: start nearby_persistent
+2026-06-16T07:05:27.665884+00:00 frame 47: done nearby_persistent (0.004s)
+2026-06-16T07:05:27.666887+00:00 frame 47: start middle_frame_recovery
+2026-06-16T07:05:27.666887+00:00 frame 47: done middle_frame_recovery (0.000s)
+2026-06-16T07:05:27.666887+00:00 frame 47: start cumulative_traversed_prior
+2026-06-16T07:05:27.690888+00:00 frame 47: done cumulative_traversed_prior (0.023s)
+2026-06-16T07:05:27.690888+00:00 frame 47: start flicker_removal
+2026-06-16T07:05:27.738425+00:00 frame 47: done flicker_removal (0.048s)
+2026-06-16T07:05:27.741428+00:00 frame 47: complete elapsed=0.087s recovered=0 removed=0
+2026-06-16T07:05:27.762425+00:00 saving temporal masks and difference maps
+2026-06-16T07:05:27.762425+00:00 frame 1: start save_outputs
+2026-06-16T07:05:27.783428+00:00 frame 1: done save_outputs (0.021s)
+2026-06-16T07:05:27.784427+00:00 frame 2: start save_outputs
+2026-06-16T07:05:27.804429+00:00 frame 2: done save_outputs (0.020s)
+2026-06-16T07:05:27.804429+00:00 frame 3: start save_outputs
+2026-06-16T07:05:27.821940+00:00 frame 3: done save_outputs (0.018s)
+2026-06-16T07:05:27.822937+00:00 frame 4: start save_outputs
+2026-06-16T07:05:27.843938+00:00 frame 4: done save_outputs (0.022s)
+2026-06-16T07:05:27.843938+00:00 frame 5: start save_outputs
+2026-06-16T07:05:27.861937+00:00 frame 5: done save_outputs (0.018s)
+2026-06-16T07:05:27.861937+00:00 frame 6: start save_outputs
+2026-06-16T07:05:27.881939+00:00 frame 6: done save_outputs (0.020s)
+2026-06-16T07:05:27.882938+00:00 frame 7: start save_outputs
+2026-06-16T07:05:27.899943+00:00 frame 7: done save_outputs (0.018s)
+2026-06-16T07:05:27.900940+00:00 frame 8: start save_outputs
+2026-06-16T07:05:27.919452+00:00 frame 8: done save_outputs (0.018s)
+2026-06-16T07:05:27.919452+00:00 frame 9: start save_outputs
+2026-06-16T07:05:27.937453+00:00 frame 9: done save_outputs (0.018s)
+2026-06-16T07:05:27.937453+00:00 frame 10: start save_outputs
+2026-06-16T07:05:27.955454+00:00 frame 10: done save_outputs (0.018s)
+2026-06-16T07:05:27.955454+00:00 frame 11: start save_outputs
+2026-06-16T07:05:27.977449+00:00 frame 11: done save_outputs (0.022s)
+2026-06-16T07:05:27.978450+00:00 frame 12: start save_outputs
+2026-06-16T07:05:27.996450+00:00 frame 12: done save_outputs (0.019s)
+2026-06-16T07:05:27.997450+00:00 frame 13: start save_outputs
+2026-06-16T07:05:28.015964+00:00 frame 13: done save_outputs (0.019s)
+2026-06-16T07:05:28.015964+00:00 frame 14: start save_outputs
+2026-06-16T07:05:28.034965+00:00 frame 14: done save_outputs (0.018s)
+2026-06-16T07:05:28.034965+00:00 frame 15: start save_outputs
+2026-06-16T07:05:28.055963+00:00 frame 15: done save_outputs (0.021s)
+2026-06-16T07:05:28.055963+00:00 frame 16: start save_outputs
+2026-06-16T07:05:28.073964+00:00 frame 16: done save_outputs (0.018s)
+2026-06-16T07:05:28.073964+00:00 frame 17: start save_outputs
+2026-06-16T07:05:28.094965+00:00 frame 17: done save_outputs (0.021s)
+2026-06-16T07:05:28.094965+00:00 frame 18: start save_outputs
+2026-06-16T07:05:28.112965+00:00 frame 18: done save_outputs (0.017s)
+2026-06-16T07:05:28.112965+00:00 frame 19: start save_outputs
+2026-06-16T07:05:28.130474+00:00 frame 19: done save_outputs (0.018s)
+2026-06-16T07:05:28.131474+00:00 frame 20: start save_outputs
+2026-06-16T07:05:28.147473+00:00 frame 20: done save_outputs (0.016s)
+2026-06-16T07:05:28.147473+00:00 frame 21: start save_outputs
+2026-06-16T07:05:28.166472+00:00 frame 21: done save_outputs (0.019s)
+2026-06-16T07:05:28.167473+00:00 frame 22: start save_outputs
+2026-06-16T07:05:28.186472+00:00 frame 22: done save_outputs (0.020s)
+2026-06-16T07:05:28.187475+00:00 frame 23: start save_outputs
+2026-06-16T07:05:28.206476+00:00 frame 23: done save_outputs (0.019s)
+2026-06-16T07:05:28.206476+00:00 frame 24: start save_outputs
+2026-06-16T07:05:28.225986+00:00 frame 24: done save_outputs (0.020s)
+2026-06-16T07:05:28.226986+00:00 frame 25: start save_outputs
+2026-06-16T07:05:28.246985+00:00 frame 25: done save_outputs (0.020s)
+2026-06-16T07:05:28.246985+00:00 frame 26: start save_outputs
+2026-06-16T07:05:28.268985+00:00 frame 26: done save_outputs (0.022s)
+2026-06-16T07:05:28.269985+00:00 frame 27: start save_outputs
+2026-06-16T07:05:28.288985+00:00 frame 27: done save_outputs (0.019s)
+2026-06-16T07:05:28.288985+00:00 frame 28: start save_outputs
+2026-06-16T07:05:28.305990+00:00 frame 28: done save_outputs (0.017s)
+2026-06-16T07:05:28.305990+00:00 frame 29: start save_outputs
+2026-06-16T07:05:28.326414+00:00 frame 29: done save_outputs (0.020s)
+2026-06-16T07:05:28.326414+00:00 frame 30: start save_outputs
+2026-06-16T07:05:28.348418+00:00 frame 30: done save_outputs (0.022s)
+2026-06-16T07:05:28.348418+00:00 frame 31: start save_outputs
+2026-06-16T07:05:28.368418+00:00 frame 31: done save_outputs (0.019s)
+2026-06-16T07:05:28.368418+00:00 frame 32: start save_outputs
+2026-06-16T07:05:28.389416+00:00 frame 32: done save_outputs (0.021s)
+2026-06-16T07:05:28.390417+00:00 frame 33: start save_outputs
+2026-06-16T07:05:28.410422+00:00 frame 33: done save_outputs (0.021s)
+2026-06-16T07:05:28.411422+00:00 frame 34: start save_outputs
+2026-06-16T07:05:28.430935+00:00 frame 34: done save_outputs (0.020s)
+2026-06-16T07:05:28.431933+00:00 frame 35: start save_outputs
+2026-06-16T07:05:28.451932+00:00 frame 35: done save_outputs (0.020s)
+2026-06-16T07:05:28.451932+00:00 frame 36: start save_outputs
+2026-06-16T07:05:28.471933+00:00 frame 36: done save_outputs (0.020s)
+2026-06-16T07:05:28.471933+00:00 frame 37: start save_outputs
+2026-06-16T07:05:28.492941+00:00 frame 37: done save_outputs (0.020s)
+2026-06-16T07:05:28.492941+00:00 frame 38: start save_outputs
+2026-06-16T07:05:28.512978+00:00 frame 38: done save_outputs (0.020s)
+2026-06-16T07:05:28.512978+00:00 frame 39: start save_outputs
+2026-06-16T07:05:28.533490+00:00 frame 39: done save_outputs (0.020s)
+2026-06-16T07:05:28.533490+00:00 frame 40: start save_outputs
+2026-06-16T07:05:28.554489+00:00 frame 40: done save_outputs (0.021s)
+2026-06-16T07:05:28.555490+00:00 frame 41: start save_outputs
+2026-06-16T07:05:28.577489+00:00 frame 41: done save_outputs (0.022s)
+2026-06-16T07:05:28.577489+00:00 frame 42: start save_outputs
+2026-06-16T07:05:28.598492+00:00 frame 42: done save_outputs (0.021s)
+2026-06-16T07:05:28.599497+00:00 frame 43: start save_outputs
+2026-06-16T07:05:28.619017+00:00 frame 43: done save_outputs (0.020s)
+2026-06-16T07:05:28.619017+00:00 frame 44: start save_outputs
+2026-06-16T07:05:28.640018+00:00 frame 44: done save_outputs (0.021s)
+2026-06-16T07:05:28.640018+00:00 frame 45: start save_outputs
+2026-06-16T07:05:28.661017+00:00 frame 45: done save_outputs (0.020s)
+2026-06-16T07:05:28.661017+00:00 frame 46: start save_outputs
+2026-06-16T07:05:28.684022+00:00 frame 46: done save_outputs (0.023s)
+2026-06-16T07:05:28.685022+00:00 frame 47: start save_outputs
+2026-06-16T07:05:28.708047+00:00 frame 47: done save_outputs (0.023s)
+2026-06-16T07:05:28.709046+00:00 saved temporal outputs to C:\Users\MoAww\Desktop\Projects\fungi\backend\outputs\micro_fungi_clip_2026-06-16_08-04-38\temporal_masks and C:\Users\MoAww\Desktop\Projects\fungi\backend\outputs\micro_fungi_clip_2026-06-16_08-04-38\temporal_difference_maps
+2026-06-16T07:05:28.710047+00:00 temporal continuity completed successfully

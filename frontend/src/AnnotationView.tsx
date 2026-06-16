@@ -387,13 +387,25 @@ export default function AnnotationView({
   }
   const currentAsset = frameAssets[frameIndex] ?? fallbackAsset
   const frameUrl = assetUrl(currentAsset.original_frame_url) ?? ''
+
+  const previewImageUrl = useCallback((path: string | undefined) => {
+    if (!path) return null
+    const base = path.startsWith('http') ? path : `${BACKEND_ORIGIN}${path}`
+    return `${base}${base.includes('?') ? '&' : '?'}t=${Date.now()}`
+  }, [])
+
   const skeletonUrl = (() => {
     const base = assetUrl(currentAsset.skeleton_frame_url)
     if (!base) return null
     if (!showRawJunctionDebug) return base
     return `${base}${base.includes('?') ? '&' : '?'}debug_raw_junctions=true`
   })()
-  const showOverlayVideo = viewerMode === 'overlay' && playing
+  const showSegmentationPreview =
+    segmentationPreview != null && segmentationPreview.frame_index === frameIndex
+  const previewOverlayUrl = showSegmentationPreview
+    ? previewImageUrl(segmentationPreview?.guided_overlay_url)
+    : null
+  const showOverlayVideo = viewerMode === 'overlay' && playing && !showSegmentationPreview
 
   useEffect(() => {
     annotationRef.current = annotation
@@ -437,12 +449,6 @@ export default function AnnotationView({
     const res = await fetch(`${API_URL}/jobs/${jobId}/temporal/${index}`)
     if (res.ok) setTemporalMeta(await res.json())
   }, [jobId])
-
-  const previewImageUrl = useCallback((path: string | undefined) => {
-    if (!path) return null
-    const base = path.startsWith('http') ? path : `${BACKEND_ORIGIN}${path}`
-    return `${base}${base.includes('?') ? '&' : '?'}t=${Date.now()}`
-  }, [])
 
   const persistCorrections = useCallback(async (targetFrameIndex?: number) => {
     const saveIndex = targetFrameIndex ?? activeCorrectionFrameRef.current ?? frameIndexRef.current
@@ -728,7 +734,8 @@ export default function AnnotationView({
         return
       }
       setSegmentationPreview(data as SegmentationPreviewResult)
-      setStatusMsg('Preview ready')
+      setPlaying(false)
+      setStatusMsg('Preview ready — change frame to return to overlay')
     } catch {
       setStatusMsg('Preview failed')
     } finally {
@@ -984,6 +991,16 @@ export default function AnnotationView({
                 onPause={() => setPlaying(false)}
                 onClick={registerUserInteraction}
               />
+            ) : showSegmentationPreview && previewOverlayUrl ? (
+              <div className="annotation-viewer-preview-wrap">
+                <img
+                  key={`preview-${frameIndex}-${previewOverlayUrl}`}
+                  src={previewOverlayUrl}
+                  alt="Segmentation preview with corrections"
+                  className="annotation-viewer-media annotation-viewer-image"
+                />
+                <div className="annotation-viewer-preview-badge">Segmentation preview</div>
+              </div>
             ) : viewerMode === 'skeleton' ? (
               skeletonUrl ? (
                 <img
@@ -1031,60 +1048,6 @@ export default function AnnotationView({
           <p className="annotation-settings-hint correction-color-legend">
             Auto: green · Add: cyan · Remove: magenta · Static: blue
           </p>
-
-          {segmentationPreview && (
-            <div className="annotation-side-section preview-panel">
-              <h3>Segmentation Preview</h3>
-              <div className="preview-grid">
-                <div className="preview-item">
-                  <span>Auto segmentation</span>
-                  {previewImageUrl(segmentationPreview.auto_overlay_url) && (
-                    <img src={previewImageUrl(segmentationPreview.auto_overlay_url)!} alt="Auto segmentation preview" />
-                  )}
-                </div>
-                <div className="preview-item">
-                  <span>With corrections</span>
-                  {previewImageUrl(segmentationPreview.guided_overlay_url) && (
-                    <img src={previewImageUrl(segmentationPreview.guided_overlay_url)!} alt="Corrected segmentation preview" />
-                  )}
-                </div>
-              </div>
-              {previewImageUrl(segmentationPreview.difference_map_url) && (
-                <div className="preview-item" style={{ marginTop: 12 }}>
-                  <span>Difference map</span>
-                  <img src={previewImageUrl(segmentationPreview.difference_map_url)!} alt="Segmentation difference map" />
-                </div>
-              )}
-              {(segmentationPreview.auto_metrics || segmentationPreview.guided_metrics) && (
-                <div className="preview-metrics-row">
-                  {segmentationPreview.auto_metrics && (
-                    <div className="preview-metrics-card">
-                      <h4>Auto</h4>
-                      {Object.entries(segmentationPreview.auto_metrics).slice(0, 4).map(([key, value]) => (
-                        <p key={key}>{key}: {String(value)}</p>
-                      ))}
-                    </div>
-                  )}
-                  {segmentationPreview.guided_metrics && (
-                    <div className="preview-metrics-card">
-                      <h4>Corrected</h4>
-                      {Object.entries(segmentationPreview.guided_metrics).slice(0, 4).map(([key, value]) => (
-                        <p key={key}>{key}: {String(value)}</p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-              <button
-                type="button"
-                className="btn btn-secondary btn-compact"
-                style={{ marginTop: 12 }}
-                onClick={() => setSegmentationPreview(null)}
-              >
-                Close Preview
-              </button>
-            </div>
-          )}
 
           <div className="annotation-side-section">
             <h3>Keyframes</h3>
