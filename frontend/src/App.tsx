@@ -3,9 +3,7 @@ import { Upload, Download, Activity, Play, CheckCircle2, AlertCircle } from 'luc
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import AnnotationView from './AnnotationView'
 import PreSegmentationSetup from './PreSegmentationSetup'
-
-const API_URL = 'http://localhost:8000/api'
-const BACKEND_ORIGIN = 'http://localhost:8000'
+import { API_URL, BACKEND_ORIGIN } from './config'
 const JOB_STORAGE_KEY = 'fungi_active_job_id'
 
 type ProcessingStage = 'extracting_frames' | 'segmenting' | 'temporal_overlays' | 'temporal' | 'tracking' | 'finished' | 'error' | 'ready' | 'review' | 'setup'
@@ -36,15 +34,24 @@ const STAGE_LABELS: Record<ProcessingStage, string> = {
   review: 'Review automated segmentation',
 }
 
+interface ResultsStats {
+  metrics_type?: 'hyphal' | 'bacterial' | 'generic'
+  frames_processed: number
+  max_growth_rate_um_min?: number
+  avg_growth_rate_um_min?: number
+  total_branches_end?: number
+  max_tips?: number
+  max_object_count?: number
+  final_object_count?: number
+  max_total_area_um2?: number
+  max_object_count_growth_per_min?: number
+  avg_object_count_growth_per_min?: number
+}
+
 interface Results {
-  stats: {
-    frames_processed: number
-    max_growth_rate_um_min: number
-    avg_growth_rate_um_min: number
-    total_branches_end: number
-    max_tips: number
-  }
-  chart_data: any[]
+  stats: ResultsStats
+  chart_data: Record<string, number>[]
+  metrics_csv_url?: string
 }
 
 function App() {
@@ -52,6 +59,8 @@ function App() {
   const [isDragging, setIsDragging] = useState(false)
   const [job, setJob] = useState<JobStatus | null>(null)
   const [results, setResults] = useState<Results | null>(null)
+  const [resultsError, setResultsError] = useState<string | null>(null)
+  const [resultsLoading, setResultsLoading] = useState(false)
   const [view, setView] = useState<AppView>('upload')
   const [videoVersion, setVideoVersion] = useState(0)
   const [returnToAnnotating, setReturnToAnnotating] = useState(false)
@@ -162,9 +171,32 @@ function App() {
     }
   }
 
+  const fetchResults = async (jobId: string): Promise<boolean> => {
+    try {
+      const res = await fetch(`${API_URL}/results/${jobId}`)
+      const data = await res.json()
+      if (!res.ok || !data?.stats || !Array.isArray(data.chart_data)) {
+        setResults(null)
+        setResultsError(typeof data?.error === 'string' ? data.error : 'Failed to load metrics')
+        return false
+      }
+      setResults(data as Results)
+      setResultsError(null)
+      return true
+    } catch (error) {
+      console.error('Failed to fetch results', error)
+      setResults(null)
+      setResultsError('Failed to connect to the metrics service')
+      return false
+    }
+  }
+
   const openResults = async () => {
     if (!job) return
+    setResultsLoading(true)
+    setResultsError(null)
     await fetchResults(job.job_id)
+    setResultsLoading(false)
     setView('results')
   }
 
@@ -262,24 +294,20 @@ function App() {
     return () => clearInterval(interval)
   }, [job, view, returnToAnnotating])
 
-  const fetchResults = async (jobId: string) => {
-    try {
-      const res = await fetch(`${API_URL}/results/${jobId}`)
-      const data = await res.json()
-      setResults(data)
-    } catch (error) {
-      console.error("Failed to fetch results", error)
-    }
-  }
-
   const reset = () => {
     setFile(null)
     setJob(null)
     setResults(null)
+    setResultsError(null)
+    setResultsLoading(false)
     setView('upload')
     setReturnToAnnotating(false)
     sessionStorage.removeItem(JOB_STORAGE_KEY)
   }
+
+  const metricsType = results?.stats.metrics_type ?? 'hyphal'
+  const isHyphalMetrics = metricsType === 'hyphal'
+  const isBacterialMetrics = metricsType === 'bacterial'
 
   return (
     <div className={view === 'annotating' || view === 'setup' ? 'app-shell app-shell-annotation' : 'app-shell'}>
@@ -536,7 +564,12 @@ function App() {
         </div>
       )}
 
-      {view === 'results' && results && job && (
+      {view === 'results' && job && (
+        resultsLoading ? (
+          <div className="glass-panel progress-panel">
+            <h2>Loading metrics…</h2>
+          </div>
+        ) : results ? (
         <div className="dashboard-grid">
           <div className="main-content">
             <div className="glass-panel" style={{ marginBottom: 24, padding: 0, overflow: 'hidden' }}>
@@ -559,26 +592,46 @@ function App() {
 
             <div className="glass-panel">
               <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Activity size={20} color="var(--accent)" /> Growth Dynamics
+                <Activity size={20} color="var(--accent)" />
+                {isHyphalMetrics ? 'Growth Dynamics' : isBacterialMetrics ? 'Bacterial Population Dynamics' : 'Metrics Over Time'}
               </h3>
               <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={results.chart_data}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                    <XAxis 
-                      dataKey="time_min" 
-                      stroke="var(--text-secondary)" 
-                      label={{ value: 'Time (min)', position: 'insideBottom', offset: -5, fill: 'var(--text-secondary)' }} 
-                    />
-                    <YAxis yAxisId="left" stroke="var(--text-secondary)" label={{ value: 'Length (μm)', angle: -90, position: 'insideLeft', fill: 'var(--text-secondary)' }} />
-                    <YAxis yAxisId="right" orientation="right" stroke="var(--success)" label={{ value: 'Branch Points', angle: 90, position: 'insideRight', fill: 'var(--success)' }} />
-                    <Tooltip 
-                      contentStyle={{ background: 'var(--bg-color)', border: '1px solid var(--panel-border)', borderRadius: 8 }}
-                      itemStyle={{ color: 'var(--text-primary)' }}
-                    />
-                    <Line yAxisId="left" type="monotone" dataKey="hyphal_length_um" stroke="var(--accent)" strokeWidth={3} dot={false} name="Length" />
-                    <Line yAxisId="right" type="monotone" dataKey="branch_points" stroke="var(--success)" strokeWidth={3} dot={false} name="Branches" />
-                  </LineChart>
+                  {isBacterialMetrics ? (
+                    <LineChart data={results.chart_data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                      <XAxis
+                        dataKey="time_min"
+                        stroke="var(--text-secondary)"
+                        label={{ value: 'Time (min)', position: 'insideBottom', offset: -5, fill: 'var(--text-secondary)' }}
+                      />
+                      <YAxis yAxisId="left" stroke="var(--text-secondary)" label={{ value: 'Object Count', angle: -90, position: 'insideLeft', fill: 'var(--text-secondary)' }} />
+                      <YAxis yAxisId="right" orientation="right" stroke="var(--success)" label={{ value: 'Total Area (µm²)', angle: 90, position: 'insideRight', fill: 'var(--success)' }} />
+                      <Tooltip
+                        contentStyle={{ background: 'var(--bg-color)', border: '1px solid var(--panel-border)', borderRadius: 8 }}
+                        itemStyle={{ color: 'var(--text-primary)' }}
+                      />
+                      <Line yAxisId="left" type="monotone" dataKey="object_count" stroke="var(--accent)" strokeWidth={3} dot={false} name="Object Count" />
+                      <Line yAxisId="right" type="monotone" dataKey="total_area_um2" stroke="var(--success)" strokeWidth={3} dot={false} name="Total Area (µm²)" />
+                    </LineChart>
+                  ) : (
+                    <LineChart data={results.chart_data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                      <XAxis 
+                        dataKey="time_min" 
+                        stroke="var(--text-secondary)" 
+                        label={{ value: 'Time (min)', position: 'insideBottom', offset: -5, fill: 'var(--text-secondary)' }} 
+                      />
+                      <YAxis yAxisId="left" stroke="var(--text-secondary)" label={{ value: 'Length (μm)', angle: -90, position: 'insideLeft', fill: 'var(--text-secondary)' }} />
+                      <YAxis yAxisId="right" orientation="right" stroke="var(--success)" label={{ value: 'Branch Points', angle: 90, position: 'insideRight', fill: 'var(--success)' }} />
+                      <Tooltip 
+                        contentStyle={{ background: 'var(--bg-color)', border: '1px solid var(--panel-border)', borderRadius: 8 }}
+                        itemStyle={{ color: 'var(--text-primary)' }}
+                      />
+                      <Line yAxisId="left" type="monotone" dataKey="hyphal_length_um" stroke="var(--accent)" strokeWidth={3} dot={false} name="Length" />
+                      <Line yAxisId="right" type="monotone" dataKey="branch_points" stroke="var(--success)" strokeWidth={3} dot={false} name="Branches" />
+                    </LineChart>
+                  )}
                 </ResponsiveContainer>
               </div>
             </div>
@@ -591,28 +644,65 @@ function App() {
                 <CheckCircle2 size={20} color="var(--success)" />
               </div>
               
-              <div className="stat-card">
-                <div className="stat-label">Max Growth Rate</div>
-                <div className="stat-value">{results.stats.max_growth_rate_um_min.toFixed(2)}</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>μm / min</div>
-              </div>
+              {isHyphalMetrics && (
+                <>
+                  <div className="stat-card">
+                    <div className="stat-label">Max Growth Rate</div>
+                    <div className="stat-value">{(results.stats.max_growth_rate_um_min ?? 0).toFixed(2)}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>μm / min</div>
+                  </div>
 
-              <div className="stat-card">
-                <div className="stat-label">Avg Growth Rate</div>
-                <div className="stat-value">{results.stats.avg_growth_rate_um_min.toFixed(2)}</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>μm / min</div>
-              </div>
+                  <div className="stat-card">
+                    <div className="stat-label">Avg Growth Rate</div>
+                    <div className="stat-value">{(results.stats.avg_growth_rate_um_min ?? 0).toFixed(2)}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>μm / min</div>
+                  </div>
 
-              <div className="stat-card">
-                <div className="stat-label">Total Branches</div>
-                <div className="stat-value">{results.stats.total_branches_end}</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>at final frame</div>
-              </div>
+                  <div className="stat-card">
+                    <div className="stat-label">Total Branches</div>
+                    <div className="stat-value">{results.stats.total_branches_end ?? 0}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>at final frame</div>
+                  </div>
 
-              <div className="stat-card">
-                <div className="stat-label">Max Tips Detected</div>
-                <div className="stat-value">{results.stats.max_tips}</div>
-              </div>
+                  <div className="stat-card">
+                    <div className="stat-label">Max Tips Detected</div>
+                    <div className="stat-value">{results.stats.max_tips ?? 0}</div>
+                  </div>
+                </>
+              )}
+
+              {isBacterialMetrics && (
+                <>
+                  <div className="stat-card">
+                    <div className="stat-label">Max Object Count</div>
+                    <div className="stat-value">{results.stats.max_object_count ?? 0}</div>
+                  </div>
+
+                  <div className="stat-card">
+                    <div className="stat-label">Final Object Count</div>
+                    <div className="stat-value">{results.stats.final_object_count ?? 0}</div>
+                  </div>
+
+                  <div className="stat-card">
+                    <div className="stat-label">Max Total Area</div>
+                    <div className="stat-value">{(results.stats.max_total_area_um2 ?? 0).toFixed(1)}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>µm²</div>
+                  </div>
+
+                  <div className="stat-card">
+                    <div className="stat-label">Max Count Growth Rate</div>
+                    <div className="stat-value">{(results.stats.max_object_count_growth_per_min ?? 0).toFixed(2)}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>objects / min</div>
+                  </div>
+                </>
+              )}
+
+              {!isHyphalMetrics && !isBacterialMetrics && (
+                <div className="stat-card">
+                  <div className="stat-label">Frames Processed</div>
+                  <div className="stat-value">{results.stats.frames_processed}</div>
+                </div>
+              )}
 
               <div style={{ marginTop: 24 }}>
                 <a href={`${API_URL}/jobs/${job.job_id}/media/metrics_csv`} download className="btn" style={{ width: '100%', justifyContent: 'center' }}>
@@ -634,6 +724,23 @@ function App() {
             </div>
           </div>
         </div>
+        ) : (
+          <div className="glass-panel" style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
+            <AlertCircle size={48} color="var(--accent)" style={{ margin: '0 auto 16px' }} />
+            <h2>Metrics Unavailable</h2>
+            <p style={{ color: 'var(--text-secondary)', marginTop: 12 }}>
+              {resultsError || 'No metrics were found for this job.'}
+            </p>
+            <button
+              type="button"
+              className="btn"
+              style={{ marginTop: 24 }}
+              onClick={() => setView('annotating')}
+            >
+              Back to Review
+            </button>
+          </div>
+        )
       )}
     </div>
   )

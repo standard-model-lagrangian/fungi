@@ -27,6 +27,7 @@ def default_bacterial_tracking_config() -> Dict[str, Any]:
         "max_track_gap_frames": 2,
         "min_track_length_frames": 2,
         "trajectory_tail_frames": 20,
+        "generate_tracking_label_overlay": True,
         "generate_trajectory_overlay_video": True,
         "generate_heatmaps": True,
         "max_objects_per_frame_for_tracking": DEFAULT_MAX_OBJECTS_PER_FRAME,
@@ -322,6 +323,105 @@ def _track_color(track_id: int) -> Tuple[int, int, int]:
     return int(bgr[2]), int(bgr[1]), int(bgr[0])
 
 
+def bacterial_label(track_id: int) -> str:
+    return f"Bacteria {int(track_id)}"
+
+
+def prepare_tracks_export_df(tracks_df: pd.DataFrame) -> pd.DataFrame:
+    if tracks_df.empty:
+        return pd.DataFrame(
+            columns=[
+                "frame_index",
+                "track_id",
+                "label",
+                "centroid_x_px",
+                "centroid_y_px",
+                "bbox_x",
+                "bbox_y",
+                "bbox_width",
+                "bbox_height",
+                "area_px",
+            ]
+        )
+    out = tracks_df.copy()
+    out["label"] = out["track_id"].apply(bacterial_label)
+    cols = [
+        "frame_index",
+        "track_id",
+        "label",
+        "centroid_x_px",
+        "centroid_y_px",
+        "bbox_x",
+        "bbox_y",
+        "bbox_width",
+        "bbox_height",
+        "area_px",
+    ]
+    return out[cols]
+
+
+def tracking_label_overlay_filename(frame_index: int) -> str:
+    return f"frame_{frame_index + 1:06d}.png"
+
+
+def resolve_tracking_label_overlay_path(out_dir: Path, frame_index: int) -> Path:
+    label_dir = out_dir / "overlay_frames"
+    primary = label_dir / tracking_label_overlay_filename(frame_index)
+    if primary.exists():
+        return primary
+    legacy = label_dir / f"frame_{frame_index:06d}.png"
+    if legacy.exists():
+        return legacy
+    return primary
+
+
+def render_tracking_label_overlay_frame(
+    base_image: np.ndarray,
+    tracks_df: pd.DataFrame,
+    frame_index: int,
+) -> np.ndarray:
+    overlay = np.asarray(base_image).copy()
+    if tracks_df.empty:
+        return overlay
+
+    frame_rows = tracks_df[tracks_df["frame_index"] == frame_index]
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 0.45
+    thickness = 1
+    for _, row in frame_rows.iterrows():
+        track_id = int(row["track_id"])
+        color = _track_color(track_id)
+        x = int(row["bbox_x"])
+        y = int(row["bbox_y"])
+        w = max(1, int(row["bbox_width"]))
+        h = max(1, int(row["bbox_height"]))
+        cv2.rectangle(overlay, (x, y), (x + w, y + h), color, 2, cv2.LINE_AA)
+
+        label = bacterial_label(track_id)
+        (text_w, text_h), baseline = cv2.getTextSize(label, font, font_scale, thickness)
+        label_x = x
+        label_y = max(text_h + 6, y - 6)
+        pad = 3
+        cv2.rectangle(
+            overlay,
+            (label_x, label_y - text_h - pad),
+            (label_x + text_w + pad * 2, label_y + baseline + pad),
+            (0, 0, 0),
+            -1,
+        )
+        cv2.putText(
+            overlay,
+            label,
+            (label_x + pad, label_y),
+            font,
+            font_scale,
+            color,
+            thickness,
+            cv2.LINE_AA,
+        )
+    return overlay
+
+
 def render_trajectory_overlay_frame(
     base_image: np.ndarray,
     tracks_df: pd.DataFrame,
@@ -523,7 +623,7 @@ def run_bacterial_tracking_pipeline(
     metadata["warnings"].extend(track_warnings)
 
     tracks_csv = out_dir / "bacterial_tracks.csv"
-    tracks_df.to_csv(tracks_csv, index=False)
+    prepare_tracks_export_df(tracks_df).to_csv(tracks_csv, index=False)
     result_paths["bacterial_tracks_csv"] = str(tracks_csv)
 
     summary_df = compute_track_summaries(
@@ -546,6 +646,34 @@ def run_bacterial_tracking_pipeline(
     frame_metrics_csv = out_dir / "bacterial_frame_metrics.csv"
     frame_metrics_df.to_csv(frame_metrics_csv, index=False)
     result_paths["bacterial_frame_metrics_csv"] = str(frame_metrics_csv)
+
+    label_overlay_frames_dir = out_dir / "overlay_frames"
+    label_overlay_frames_dir.mkdir(parents=True, exist_ok=True)
+    label_overlay_video_frames: List[np.ndarray] = []
+    if cfg.get("generate_tracking_label_overlay", True):
+        label_ctx = perf_logger.timed("bacterial_tracking_label_overlay") if perf_logger else _null_context()
+        with label_ctx:
+            for i, frame in enumerate(frames):
+                base = base_overlays[i] if base_overlays is not None and i < len(base_overlays) else frame
+                rendered = render_tracking_label_overlay_frame(base, tracks_df, i)
+                label_overlay_video_frames.append(rendered)
+                Image.fromarray(rendered).save(
+                    label_overlay_frames_dir / tracking_label_overlay_filename(i)
+                )
+
+            if label_overlay_video_frames:
+                h, w = label_overlay_video_frames[0].shape[:2]
+                label_video_path = out_dir / "bacteria_tracking_overlay.mp4"
+                writer = cv2.VideoWriter(
+                    str(label_video_path),
+                    cv2.VideoWriter_fourcc(*"avc1"),
+                    max(1, int(60 / max(frame_interval_min, 1))),
+                    (w, h),
+                )
+                for fr in label_overlay_video_frames:
+                    writer.write(cv2.cvtColor(fr, cv2.COLOR_RGB2BGR))
+                writer.release()
+                result_paths["bacteria_tracking_overlay_video"] = str(label_video_path)
 
     tail = int(cfg["trajectory_tail_frames"])
     overlay_video_frames: List[np.ndarray] = []

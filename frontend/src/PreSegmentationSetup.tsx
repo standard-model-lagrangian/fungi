@@ -10,11 +10,21 @@ import {
   type SkeletonizationMode,
 } from './segmentationPresets'
 
-const API_URL = 'http://localhost:8000/api'
-const BACKEND_ORIGIN = 'http://localhost:8000'
+import { API_URL, BACKEND_ORIGIN } from './config'
 
-type SetupLayer = 'ignore' | 'roi'
 type SetupTool = 'brush' | 'polygon' | 'bbox' | 'erase'
+
+interface CropRect {
+  x0: number
+  y0: number
+  x1: number
+  y1: number
+}
+
+type CropHandle = 'move' | 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw'
+
+const MIN_CROP_SIZE_PX = 20
+const CROP_HANDLE_SCREEN_PX = 10
 
 interface PreviewFrame {
   frame_index: number
@@ -197,10 +207,6 @@ function fillBBox(
   ctx.restore()
 }
 
-function clearMaskCanvas(ctx: CanvasRenderingContext2D, width: number, height: number) {
-  ctx.clearRect(0, 0, width, height)
-}
-
 function tintMask(
   ctx: CanvasRenderingContext2D,
   mask: HTMLCanvasElement,
@@ -221,45 +227,183 @@ function tintMask(
   ctx.drawImage(tmp, layout.offsetX, layout.offsetY, layout.drawWidth, layout.drawHeight)
 }
 
-function drawRoiOutline(
+function fullCropRect(imageWidth: number, imageHeight: number): CropRect {
+  return { x0: 0, y0: 0, x1: imageWidth, y1: imageHeight }
+}
+
+function isFullCropRect(crop: CropRect, imageWidth: number, imageHeight: number): boolean {
+  return (
+    crop.x0 <= 0
+    && crop.y0 <= 0
+    && crop.x1 >= imageWidth
+    && crop.y1 >= imageHeight
+  )
+}
+
+function normalizeCropRect(crop: CropRect, imageWidth: number, imageHeight: number): CropRect {
+  const x0 = Math.max(0, Math.min(imageWidth, Math.round(Math.min(crop.x0, crop.x1))))
+  const y0 = Math.max(0, Math.min(imageHeight, Math.round(Math.min(crop.y0, crop.y1))))
+  const x1 = Math.max(0, Math.min(imageWidth, Math.round(Math.max(crop.x0, crop.x1))))
+  const y1 = Math.max(0, Math.min(imageHeight, Math.round(Math.max(crop.y0, crop.y1))))
+  return {
+    x0: Math.min(x0, x1),
+    y0: Math.min(y0, y1),
+    x1: Math.max(x0, x1),
+    y1: Math.max(y0, y1),
+  }
+}
+
+function cropRectFromMask(mask: HTMLCanvasElement, imageWidth: number, imageHeight: number): CropRect {
+  const ctx = mask.getContext('2d')
+  if (!ctx) return fullCropRect(imageWidth, imageHeight)
+  const data = ctx.getImageData(0, 0, imageWidth, imageHeight).data
+  let y0 = imageHeight
+  let y1 = 0
+  let x0 = imageWidth
+  let x1 = 0
+  let anyOn = false
+  let allOn = true
+  for (let y = 0; y < imageHeight; y++) {
+    for (let x = 0; x < imageWidth; x++) {
+      const on = data[(y * imageWidth + x) * 4] > 127
+      if (on) {
+        anyOn = true
+        y0 = Math.min(y0, y)
+        y1 = Math.max(y1, y + 1)
+        x0 = Math.min(x0, x)
+        x1 = Math.max(x1, x + 1)
+      } else {
+        allOn = false
+      }
+    }
+  }
+  if (!anyOn || allOn) return fullCropRect(imageWidth, imageHeight)
+  return normalizeCropRect({ x0, y0, x1, y1 }, imageWidth, imageHeight)
+}
+
+function syncRoiMaskFromCrop(
+  roi: HTMLCanvasElement,
+  crop: CropRect,
+  imageWidth: number,
+  imageHeight: number,
+) {
+  const ctx = roi.getContext('2d')
+  if (!ctx) return
+  ctx.clearRect(0, 0, imageWidth, imageHeight)
+  if (isFullCropRect(crop, imageWidth, imageHeight)) {
+    ctx.fillStyle = '#fff'
+    ctx.fillRect(0, 0, imageWidth, imageHeight)
+    return
+  }
+  ctx.fillStyle = '#000'
+  ctx.fillRect(0, 0, imageWidth, imageHeight)
+  ctx.fillStyle = '#fff'
+  ctx.fillRect(crop.x0, crop.y0, crop.x1 - crop.x0, crop.y1 - crop.y0)
+}
+
+function hitTestCropHandle(
+  x: number,
+  y: number,
+  crop: CropRect,
+  layout: ReturnType<typeof getDisplayMetrics>,
+): CropHandle | null {
+  const margin = CROP_HANDLE_SCREEN_PX / layout.scale
+  const insideX = x >= crop.x0 + margin && x <= crop.x1 - margin
+  const insideY = y >= crop.y0 + margin && y <= crop.y1 - margin
+  const onLeft = Math.abs(x - crop.x0) <= margin
+  const onRight = Math.abs(x - crop.x1) <= margin
+  const onTop = Math.abs(y - crop.y0) <= margin
+  const onBottom = Math.abs(y - crop.y1) <= margin
+
+  if (onTop && onLeft) return 'nw'
+  if (onTop && onRight) return 'ne'
+  if (onBottom && onLeft) return 'sw'
+  if (onBottom && onRight) return 'se'
+  if (onTop && insideX) return 'n'
+  if (onBottom && insideX) return 's'
+  if (onLeft && insideY) return 'w'
+  if (onRight && insideY) return 'e'
+  if (insideX && insideY) return 'move'
+  return null
+}
+
+function applyCropDrag(
+  startCrop: CropRect,
+  handle: CropHandle,
+  startPoint: { x: number; y: number },
+  currentPoint: { x: number; y: number },
+  imageWidth: number,
+  imageHeight: number,
+): CropRect {
+  const dx = currentPoint.x - startPoint.x
+  const dy = currentPoint.y - startPoint.y
+  let { x0, y0, x1, y1 } = startCrop
+
+  if (handle === 'move') {
+    const width = x1 - x0
+    const height = y1 - y0
+    x0 = Math.max(0, Math.min(imageWidth - width, x0 + dx))
+    y0 = Math.max(0, Math.min(imageHeight - height, y0 + dy))
+    x1 = x0 + width
+    y1 = y0 + height
+  } else {
+    if (handle.includes('w')) x0 = Math.max(0, Math.min(x1 - MIN_CROP_SIZE_PX, startCrop.x0 + dx))
+    if (handle.includes('e')) x1 = Math.min(imageWidth, Math.max(x0 + MIN_CROP_SIZE_PX, startCrop.x1 + dx))
+    if (handle.includes('n')) y0 = Math.max(0, Math.min(y1 - MIN_CROP_SIZE_PX, startCrop.y0 + dy))
+    if (handle.includes('s')) y1 = Math.min(imageHeight, Math.max(y0 + MIN_CROP_SIZE_PX, startCrop.y1 + dy))
+  }
+
+  return normalizeCropRect({ x0, y0, x1, y1 }, imageWidth, imageHeight)
+}
+
+function drawCropOverlay(
   ctx: CanvasRenderingContext2D,
-  mask: HTMLCanvasElement,
+  crop: CropRect,
   layout: ReturnType<typeof getDisplayMetrics>,
   imageWidth: number,
   imageHeight: number,
 ) {
-  const tmp = document.createElement('canvas')
-  tmp.width = imageWidth
-  tmp.height = imageHeight
-  const tctx = tmp.getContext('2d')
-  if (!tctx) return
-  tctx.drawImage(mask, 0, 0)
-  const data = tctx.getImageData(0, 0, imageWidth, imageHeight)
-  const edge = document.createElement('canvas')
-  edge.width = imageWidth
-  edge.height = imageHeight
-  const ectx = edge.getContext('2d')
-  if (!ectx) return
-  const out = ectx.createImageData(imageWidth, imageHeight)
-  const w = imageWidth
-  const h = imageHeight
-  const px = data.data
-  const isOn = (x: number, y: number) => px[(y * w + x) * 4] > 127
-  for (let y = 1; y < h - 1; y++) {
-    for (let x = 1; x < w - 1; x++) {
-      if (!isOn(x, y)) continue
-      const border = !isOn(x - 1, y) || !isOn(x + 1, y) || !isOn(x, y - 1) || !isOn(x, y + 1)
-      if (border) {
-        const i = (y * w + x) * 4
-        out.data[i] = 250
-        out.data[i + 1] = 204
-        out.data[i + 2] = 21
-        out.data[i + 3] = 255
-      }
-    }
+  const left = layout.offsetX + crop.x0 * layout.scale
+  const top = layout.offsetY + crop.y0 * layout.scale
+  const width = (crop.x1 - crop.x0) * layout.scale
+  const height = (crop.y1 - crop.y0) * layout.scale
+  const right = left + width
+  const bottom = top + height
+
+  if (!isFullCropRect(crop, imageWidth, imageHeight)) {
+    ctx.save()
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.45)'
+    ctx.fillRect(layout.offsetX, layout.offsetY, layout.drawWidth, top - layout.offsetY)
+    ctx.fillRect(layout.offsetX, bottom, layout.drawWidth, layout.offsetY + layout.drawHeight - bottom)
+    ctx.fillRect(layout.offsetX, top, left - layout.offsetX, height)
+    ctx.fillRect(right, top, layout.offsetX + layout.drawWidth - right, height)
+    ctx.restore()
   }
-  ectx.putImageData(out, 0, 0)
-  ctx.drawImage(edge, layout.offsetX, layout.offsetY, layout.drawWidth, layout.drawHeight)
+
+  ctx.save()
+  ctx.strokeStyle = 'rgba(250, 204, 21, 0.95)'
+  ctx.lineWidth = 2
+  ctx.setLineDash([])
+  ctx.strokeRect(left, top, width, height)
+
+  const handleSize = 8
+  const handles = [
+    [left, top],
+    [right, top],
+    [left, bottom],
+    [right, bottom],
+    [left + width / 2, top],
+    [left + width / 2, bottom],
+    [left, top + height / 2],
+    [right, top + height / 2],
+  ]
+  ctx.fillStyle = 'rgba(250, 204, 21, 0.95)'
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.85)'
+  for (const [hx, hy] of handles) {
+    ctx.fillRect(hx - handleSize / 2, hy - handleSize / 2, handleSize, handleSize)
+    ctx.strokeRect(hx - handleSize / 2, hy - handleSize / 2, handleSize, handleSize)
+  }
+  ctx.restore()
 }
 
 export default function PreSegmentationSetup({
@@ -276,11 +420,11 @@ export default function PreSegmentationSetup({
 
   const [setupInfo, setSetupInfo] = useState<SetupInfo | null>(null)
   const [previewKey, setPreviewKey] = useState<'first' | 'middle' | 'last'>('first')
-  const [layer, setLayer] = useState<SetupLayer>('ignore')
   const [tool, setTool] = useState<SetupTool>('brush')
   const [brushSize, setBrushSize] = useState(18)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [masksReady, setMasksReady] = useState(false)
+  const [cropRect, setCropRect] = useState<CropRect | null>(null)
 
   const [pixelSize, setPixelSize] = useState('1.0')
   const [holeFillArea, setHoleFillArea] = useState('200')
@@ -327,19 +471,25 @@ export default function PreSegmentationSetup({
   const polygonRef = useRef<{ x: number; y: number }[]>([])
   const bboxStartRef = useRef<{ x: number; y: number } | null>(null)
   const bboxPreviewRef = useRef<{ x0: number; y0: number; x1: number; y1: number } | null>(null)
-  const layerRef = useRef<SetupLayer>(layer)
+  const cropRectRef = useRef<CropRect | null>(null)
+  const cropDragRef = useRef<CropHandle | null>(null)
+  const cropDragStartRef = useRef<{ crop: CropRect; point: { x: number; y: number } } | null>(null)
+  const cropEditedRef = useRef(false)
+  const masksInitializedRef = useRef(false)
+  const drawCanvasRef = useRef<(overrideCrop?: CropRect) => void>(() => {})
   const saveTimerRef = useRef<number | null>(null)
   const paramsHydratedRef = useRef(false)
 
   useEffect(() => {
-    layerRef.current = layer
-  }, [layer])
+    cropRectRef.current = cropRect
+  }, [cropRect])
 
   const imageWidth = setupInfo?.image_width ?? 0
   const imageHeight = setupInfo?.image_height ?? 0
   const previewFrame = setupInfo?.preview_frames?.[previewKey]
 
   const activePreset = presetById(targetObjectType)
+  const activeCrop = cropRect ?? fullCropRect(imageWidth, imageHeight)
 
   const scheduleSave = useCallback(() => {
     if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current)
@@ -347,6 +497,9 @@ export default function PreSegmentationSetup({
       const ignore = ignoreRef.current
       const roi = roiRef.current
       if (!ignore || !roi) return
+      if (cropRectRef.current) {
+        syncRoiMaskFromCrop(roi, cropRectRef.current, roi.width, roi.height)
+      }
       setSaveStatus('saving')
       try {
         const ignoreForm = new FormData()
@@ -365,7 +518,7 @@ export default function PreSegmentationSetup({
     }, 400)
   }, [jobId])
 
-  const drawCanvas = useCallback(() => {
+  const drawCanvas = useCallback((overrideCrop?: CropRect) => {
     const canvas = canvasRef.current
     const viewer = viewerRef.current
     const img = imageRef.current
@@ -376,6 +529,7 @@ export default function PreSegmentationSetup({
     const rect = viewer.getBoundingClientRect()
     const dpr = window.devicePixelRatio || 1
     const layout = getDisplayMetrics(rect, imageWidth, imageHeight)
+    const crop = overrideCrop ?? cropRectRef.current ?? fullCropRect(imageWidth, imageHeight)
     canvas.width = Math.max(1, Math.floor(rect.width * dpr))
     canvas.height = Math.max(1, Math.floor(rect.height * dpr))
     const ctx = canvas.getContext('2d')
@@ -386,39 +540,11 @@ export default function PreSegmentationSetup({
     ctx.fillRect(0, 0, rect.width, rect.height)
     ctx.drawImage(img, layout.offsetX, layout.offsetY, layout.drawWidth, layout.drawHeight)
     tintMask(ctx, ignore, 'rgba(60, 120, 255, 0.55)', layout, imageWidth, imageHeight)
-    tintMask(ctx, roi, 'rgba(250, 204, 21, 0.18)', layout, imageWidth, imageHeight)
-    drawRoiOutline(ctx, roi, layout, imageWidth, imageHeight)
-
-    // Dim area outside a constrained processing ROI
-    const roiCtx = roi.getContext('2d')
-    if (roiCtx) {
-      const roiData = roiCtx.getImageData(0, 0, imageWidth, imageHeight).data
-      const dim = document.createElement('canvas')
-      dim.width = imageWidth
-      dim.height = imageHeight
-      const dctx = dim.getContext('2d')
-      if (dctx) {
-        const dimImage = dctx.createImageData(imageWidth, imageHeight)
-        let hasExcluded = false
-        for (let i = 0; i < roiData.length; i += 4) {
-          if (roiData[i] < 128) {
-            dimImage.data[i] = 0
-            dimImage.data[i + 1] = 0
-            dimImage.data[i + 2] = 0
-            dimImage.data[i + 3] = 140
-            hasExcluded = true
-          }
-        }
-        if (hasExcluded) {
-          dctx.putImageData(dimImage, 0, 0)
-          ctx.drawImage(dim, layout.offsetX, layout.offsetY, layout.drawWidth, layout.drawHeight)
-        }
-      }
-    }
+    drawCropOverlay(ctx, crop, layout, imageWidth, imageHeight)
 
     if (tool === 'polygon' && polygonRef.current.length > 0) {
       ctx.save()
-      ctx.strokeStyle = layer === 'ignore' ? 'rgba(60, 120, 255, 0.9)' : 'rgba(250, 204, 21, 0.9)'
+      ctx.strokeStyle = 'rgba(60, 120, 255, 0.9)'
       ctx.lineWidth = 2
       ctx.beginPath()
       ctx.moveTo(
@@ -442,15 +568,36 @@ export default function PreSegmentationSetup({
       const w = Math.abs(x1 - x0) * layout.scale
       const h = Math.abs(y1 - y0) * layout.scale
       ctx.save()
-      ctx.strokeStyle = layer === 'ignore' ? 'rgba(60, 120, 255, 0.95)' : 'rgba(250, 204, 21, 0.95)'
-      ctx.fillStyle = layer === 'ignore' ? 'rgba(60, 120, 255, 0.2)' : 'rgba(250, 204, 21, 0.15)'
+      ctx.strokeStyle = 'rgba(60, 120, 255, 0.95)'
+      ctx.fillStyle = 'rgba(60, 120, 255, 0.2)'
       ctx.lineWidth = 2
       ctx.setLineDash([6, 4])
       ctx.fillRect(left, top, w, h)
       ctx.strokeRect(left, top, w, h)
       ctx.restore()
     }
-  }, [imageWidth, imageHeight, layer, tool])
+  }, [imageWidth, imageHeight, tool])
+
+  useEffect(() => {
+    drawCanvasRef.current = drawCanvas
+  }, [drawCanvas])
+
+  const applyCropRect = useCallback((nextCrop: CropRect) => {
+    const normalized = normalizeCropRect(nextCrop, imageWidth, imageHeight)
+    cropEditedRef.current = true
+    setCropRect(normalized)
+    cropRectRef.current = normalized
+    const roi = roiRef.current
+    if (roi) {
+      syncRoiMaskFromCrop(roi, normalized, imageWidth, imageHeight)
+    }
+    scheduleSave()
+    drawCanvasRef.current(normalized)
+  }, [imageWidth, imageHeight, scheduleSave])
+
+  const resetCropToFullFrame = useCallback(() => {
+    applyCropRect(fullCropRect(imageWidth, imageHeight))
+  }, [applyCropRect, imageWidth, imageHeight])
 
   const hydrateParamsFromServer = useCallback((params: Record<string, unknown>) => {
     setPixelSize(String(params.pixel_size_um ?? '1.0'))
@@ -560,15 +707,35 @@ export default function PreSegmentationSetup({
       loadMaskToCanvas(ignore, `${BACKEND_ORIGIN}/api/jobs/${jobId}/setup/ignore-mask?t=${Date.now()}`),
       loadMaskToCanvas(roi, `${BACKEND_ORIGIN}/api/jobs/${jobId}/setup/roi-mask?t=${Date.now()}`, true),
     ])
+    if (!cropEditedRef.current) {
+      const loadedCrop = cropRectFromMask(roi, w, h)
+      setCropRect(loadedCrop)
+      cropRectRef.current = loadedCrop
+      syncRoiMaskFromCrop(roi, loadedCrop, w, h)
+    } else if (cropRectRef.current) {
+      syncRoiMaskFromCrop(roi, cropRectRef.current, w, h)
+    }
     setMasksReady(true)
-    drawCanvas()
-  }, [jobId, drawCanvas])
+    drawCanvasRef.current(cropRectRef.current ?? undefined)
+  }, [jobId])
+
+  useEffect(() => {
+    masksInitializedRef.current = false
+    cropEditedRef.current = false
+    setCropRect(null)
+    cropRectRef.current = null
+    setMasksReady(false)
+  }, [jobId])
 
   useEffect(() => {
     void loadSetup()
-    const interval = window.setInterval(() => void loadSetup(), 1500)
-    return () => window.clearInterval(interval)
   }, [loadSetup])
+
+  useEffect(() => {
+    if (imageWidth <= 0 || imageHeight <= 0 || masksInitializedRef.current) return
+    masksInitializedRef.current = true
+    void loadMasks(imageWidth, imageHeight)
+  }, [imageWidth, imageHeight, loadMasks])
 
   useEffect(() => {
     void fetch(`${API_URL}/jobs/${jobId}/temporal-settings`).then(async (r) => {
@@ -582,36 +749,64 @@ export default function PreSegmentationSetup({
     img.crossOrigin = 'anonymous'
     img.onload = () => {
       imageRef.current = img
-      void loadMasks(imageWidth, imageHeight)
+      drawCanvasRef.current()
     }
     img.src = `${BACKEND_ORIGIN}${previewFrame.frame_url}`
-  }, [previewFrame, imageWidth, imageHeight, loadMasks])
+  }, [previewFrame, imageWidth, imageHeight])
 
   useEffect(() => {
     drawCanvas()
   }, [drawCanvas, masksReady, previewKey])
 
-  const activeMaskCanvas = () => (layerRef.current === 'ignore' ? ignoreRef.current : roiRef.current)
-
-  const prepareRoiReplace = (ctx: CanvasRenderingContext2D, target: HTMLCanvasElement, erase: boolean) => {
-    if (layerRef.current === 'roi' && !erase) {
-      clearMaskCanvas(ctx, target.width, target.height)
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!cropDragRef.current || !cropDragStartRef.current || !viewerRef.current) return
+      const coords = imageCoordsFromClient(
+        e.clientX,
+        e.clientY,
+        viewerRef.current,
+        imageWidth,
+        imageHeight,
+      )
+      if (!coords) return
+      const next = applyCropDrag(
+        cropDragStartRef.current.crop,
+        cropDragRef.current,
+        cropDragStartRef.current.point,
+        coords,
+        imageWidth,
+        imageHeight,
+      )
+      cropRectRef.current = next
+      drawCanvasRef.current(next)
     }
-  }
+    const onUp = () => {
+      if (!cropDragRef.current) return
+      const finalCrop = cropRectRef.current ?? fullCropRect(imageWidth, imageHeight)
+      applyCropRect(finalCrop)
+      cropDragRef.current = null
+      cropDragStartRef.current = null
+    }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+    }
+  }, [imageWidth, imageHeight, applyCropRect])
 
   const finishShape = () => {
-    const target = activeMaskCanvas()
+    const target = ignoreRef.current
     if (!target) return
     const ctx = target.getContext('2d')
     if (!ctx) return
     const erase = tool === 'erase'
 
     if (tool === 'polygon' && polygonRef.current.length >= 3) {
-      prepareRoiReplace(ctx, target, erase)
       fillPolygon(ctx, polygonRef.current, erase)
       polygonRef.current = []
       scheduleSave()
-      drawCanvas()
+      drawCanvasRef.current()
       return
     }
 
@@ -621,21 +816,32 @@ export default function PreSegmentationSetup({
       const w = Math.abs(end.x - start.x)
       const h = Math.abs(end.y - start.y)
       if (w >= 2 && h >= 2) {
-        prepareRoiReplace(ctx, target, erase)
         fillBBox(ctx, start.x, start.y, end.x, end.y, erase)
         scheduleSave()
       }
       bboxStartRef.current = null
       bboxPreviewRef.current = null
-      drawCanvas()
+      drawCanvasRef.current()
     }
   }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!masksReady || extracting) return
-    const coords = imageCoordsFromClient(e.clientX, e.clientY, viewerRef.current!, imageWidth, imageHeight)
+    const viewer = viewerRef.current
+    if (!viewer) return
+    const coords = imageCoordsFromClient(e.clientX, e.clientY, viewer, imageWidth, imageHeight)
     if (!coords) return
-    const target = activeMaskCanvas()
+
+    const layout = getDisplayMetrics(viewer.getBoundingClientRect(), imageWidth, imageHeight)
+    const crop = cropRectRef.current ?? fullCropRect(imageWidth, imageHeight)
+    const handle = hitTestCropHandle(coords.x, coords.y, crop, layout)
+    if (handle) {
+      cropDragRef.current = handle
+      cropDragStartRef.current = { crop, point: coords }
+      return
+    }
+
+    const target = ignoreRef.current
     if (!target) return
     const ctx = target.getContext('2d')
     if (!ctx) return
@@ -646,7 +852,7 @@ export default function PreSegmentationSetup({
       paintBrush(ctx, coords.x, coords.y, brushSize / 2, erase)
       lastPointRef.current = coords
       scheduleSave()
-      drawCanvas()
+      drawCanvasRef.current()
       return
     }
 
@@ -659,7 +865,7 @@ export default function PreSegmentationSetup({
         }
       }
       polygonRef.current = [...polygonRef.current, coords]
-      drawCanvas()
+      drawCanvasRef.current()
       return
     }
 
@@ -668,7 +874,7 @@ export default function PreSegmentationSetup({
       bboxStartRef.current = coords
       lastPointRef.current = coords
       bboxPreviewRef.current = { x0: coords.x, y0: coords.y, x1: coords.x, y1: coords.y }
-      drawCanvas()
+      drawCanvasRef.current()
       return
     }
   }
@@ -679,13 +885,13 @@ export default function PreSegmentationSetup({
     if (!coords) return
 
     if ((tool === 'brush' || tool === 'erase') && drawingRef.current) {
-      const target = activeMaskCanvas()
+      const target = ignoreRef.current
       const ctx = target?.getContext('2d')
       if (!ctx || !lastPointRef.current) return
       drawStroke(ctx, lastPointRef.current.x, lastPointRef.current.y, coords.x, coords.y, brushSize / 2, tool === 'erase')
       lastPointRef.current = coords
       scheduleSave()
-      drawCanvas()
+      drawCanvasRef.current()
       return
     }
 
@@ -697,7 +903,7 @@ export default function PreSegmentationSetup({
         x1: coords.x,
         y1: coords.y,
       }
-      drawCanvas()
+      drawCanvasRef.current()
     }
   }
 
@@ -753,13 +959,13 @@ export default function PreSegmentationSetup({
     if (ignore && roi) {
       if (skipRoiOnly) {
         const ctxI = ignore.getContext('2d')
-        const ctxR = roi.getContext('2d')
         if (ctxI) { ctxI.clearRect(0, 0, ignore.width, ignore.height) }
-        if (ctxR) {
-          ctxR.clearRect(0, 0, roi.width, roi.height)
-          ctxR.fillStyle = '#fff'
-          ctxR.fillRect(0, 0, roi.width, roi.height)
-        }
+        const full = fullCropRect(roi.width, roi.height)
+        setCropRect(full)
+        cropRectRef.current = full
+        syncRoiMaskFromCrop(roi, full, roi.width, roi.height)
+      } else if (cropRectRef.current) {
+        syncRoiMaskFromCrop(roi, cropRectRef.current, roi.width, roi.height)
       }
       const ignoreForm = new FormData()
       ignoreForm.append('ignore_mask', await canvasToBlob(ignore), 'ignore.png')
@@ -822,11 +1028,20 @@ export default function PreSegmentationSetup({
           {!masksReady && !extracting && <div className="setup-viewer-placeholder">Loading preview…</div>}
         </div>
 
-        <p className="setup-legend">Ignore: blue · Processing ROI: yellow outline</p>
+        <p className="setup-legend">
+          Image crop: yellow handles · Ignore regions: blue · Drag crop edges to limit segmentation to that area
+        </p>
 
         <div className="setup-tool-row">
-          <button type="button" className={`setup-tool-btn ${layer === 'ignore' ? 'active ignore' : ''}`} onClick={() => setLayer('ignore')}>Ignore Region</button>
-          <button type="button" className={`setup-tool-btn ${layer === 'roi' ? 'active roi' : ''}`} onClick={() => setLayer('roi')}>Processing ROI</button>
+          <span className="setup-section-label">Ignore Regions</span>
+          <button
+            type="button"
+            className="btn btn-secondary btn-compact"
+            onClick={resetCropToFullFrame}
+            disabled={isFullCropRect(activeCrop, imageWidth, imageHeight)}
+          >
+            Reset Crop to Full Frame
+          </button>
         </div>
 
         <div className="setup-tool-row">

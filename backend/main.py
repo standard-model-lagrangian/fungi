@@ -63,6 +63,7 @@ from bacterial_tracking import (
     get_bacterial_tracking_dir,
     load_bacterial_tracking_metadata,
     merge_bacterial_tracking_config,
+    resolve_tracking_label_overlay_path,
 )
 from corrections import (
     load_correction_masks,
@@ -284,6 +285,10 @@ def _build_frame_asset_entry(job_id, frame_index, output_dir):
         / "bacterial_trajectory_overlay_frames"
         / f"overlay_{frame_index:04d}.png"
     )
+    tracking_label_overlay_path = resolve_tracking_label_overlay_path(
+        output_dir / "bacteria_tracking",
+        frame_index,
+    )
     skeleton_tif = output_dir / "skeletons" / f"skeleton_{frame_index:04d}.tif"
     skeleton_png = output_dir / "skeletons" / f"skeleton_{frame_index:04d}.png"
     frame_path = output_dir / "frames" / f"frame_{frame_index:04d}.jpg"
@@ -344,6 +349,9 @@ def _build_frame_asset_entry(job_id, frame_index, output_dir):
         else None,
         "bacterial_trajectory_overlay_url": f"{prefix}/bacterial-tracking/trajectory/{frame_index}"
         if trajectory_overlay_path.exists()
+        else None,
+        "bacterial_tracking_overlay_url": f"{prefix}/bacterial-tracking/overlay/{frame_index}"
+        if tracking_label_overlay_path.exists()
         else None,
         "final_guided_overlay_url": f"{prefix}/guided_overlays/{frame_index}"
         if guided_overlay_path.exists()
@@ -750,11 +758,20 @@ async def get_setup_roi_mask(job_id: str):
         return JSONResponse({"error": "Job not found"}, status_code=404)
     frames_info = await list_frames(job_id)
     setup_dir = get_setup_dir(job["output_dir"])
-    return _setup_mask_response(
-        roi_mask_path(setup_dir),
-        frames_info["image_width"],
-        frames_info["image_height"],
-    )
+    path = roi_mask_path(setup_dir)
+    if path.exists():
+        return FileResponse(path, media_type="image/png")
+    import io
+
+    import numpy as np
+    from PIL import Image
+
+    h, w = frames_info["image_height"], frames_info["image_width"]
+    blank = np.ones((max(1, h), max(1, w)), dtype=np.uint8) * 255
+    buf = io.BytesIO()
+    Image.fromarray(blank).save(buf, format="PNG")
+    buf.seek(0)
+    return StreamingResponse(buf, media_type="image/png")
 
 
 @app.get("/api/jobs/{job_id}/setup/ignore-mask")
@@ -1750,8 +1767,14 @@ async def get_bacterial_tracking_info(job_id: str):
             heatmaps[key] = f"{prefix}/heatmaps/{key}"
 
     video_url = None
-    if (tracking_dir / "bacterial_trajectory_overlay.mp4").exists():
+    if (tracking_dir / "bacteria_tracking_overlay.mp4").exists():
         video_url = f"{prefix}/video"
+    elif (tracking_dir / "bacterial_trajectory_overlay.mp4").exists():
+        video_url = f"{prefix}/video"
+
+    label_overlay_video_url = None
+    if (tracking_dir / "bacteria_tracking_overlay.mp4").exists():
+        label_overlay_video_url = f"{prefix}/label-video"
 
     return {
         "available": True,
@@ -1759,8 +1782,24 @@ async def get_bacterial_tracking_info(job_id: str):
         "downloads": downloads,
         "heatmaps": heatmaps,
         "video_url": video_url,
+        "label_overlay_video_url": label_overlay_video_url,
         "trajectory_frame_url_template": f"{prefix}/trajectory/{{frame_index}}",
+        "label_overlay_frame_url_template": f"{prefix}/overlay/{{frame_index}}",
     }
+
+
+@app.get("/api/jobs/{job_id}/bacterial-tracking/overlay/{frame_index}")
+async def get_bacterial_tracking_label_overlay(job_id: str, frame_index: int):
+    job = _get_job(job_id)
+    if job is None:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    path = resolve_tracking_label_overlay_path(
+        get_bacterial_tracking_dir(Path(job["output_dir"])),
+        frame_index,
+    )
+    if not path.exists():
+        return JSONResponse({"error": "Tracking overlay not found"}, status_code=404)
+    return FileResponse(path, media_type="image/png")
 
 
 @app.get("/api/jobs/{job_id}/bacterial-tracking/trajectory/{frame_index}")
@@ -1821,9 +1860,23 @@ async def get_bacterial_tracking_video(job_id: str):
     job = _get_job(job_id)
     if job is None:
         return JSONResponse({"error": "Job not found"}, status_code=404)
-    path = get_bacterial_tracking_dir(Path(job["output_dir"])) / "bacterial_trajectory_overlay.mp4"
+    tracking_dir = get_bacterial_tracking_dir(Path(job["output_dir"]))
+    path = tracking_dir / "bacteria_tracking_overlay.mp4"
+    if not path.exists():
+        path = tracking_dir / "bacterial_trajectory_overlay.mp4"
     if not path.exists():
         return JSONResponse({"error": "Video not found"}, status_code=404)
+    return FileResponse(path, media_type="video/mp4")
+
+
+@app.get("/api/jobs/{job_id}/bacterial-tracking/label-video")
+async def get_bacterial_tracking_label_video(job_id: str):
+    job = _get_job(job_id)
+    if job is None:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    path = get_bacterial_tracking_dir(Path(job["output_dir"])) / "bacteria_tracking_overlay.mp4"
+    if not path.exists():
+        return JSONResponse({"error": "Label overlay video not found"}, status_code=404)
     return FileResponse(path, media_type="video/mp4")
 
 
@@ -1845,6 +1898,89 @@ async def put_bacterial_tracking_settings(job_id: str, body: dict = Body(...)):
     jobs[job_id]["params"] = params
     _sync_job_params_to_config(job_id, params)
     return merge_bacterial_tracking_config(params)
+
+
+def _resolve_job_metrics_csv(job) -> Optional[Path]:
+    results = job.get("results") or {}
+    candidates = []
+    for key in ("metrics_csv", "fungi_metrics_csv", "bacteria_metrics_csv"):
+        value = results.get(key)
+        if value:
+            candidates.append(Path(value))
+
+    output_dir = Path(job["output_dir"])
+    candidates.extend(
+        [
+            output_dir / "results" / "hyphal_metrics.csv",
+            output_dir / "fungi_metrics.csv",
+            output_dir / "bacteria_metrics.csv",
+        ]
+    )
+    for path in candidates:
+        if path.exists():
+            return path
+    return None
+
+
+def _build_results_payload(df: pd.DataFrame) -> dict:
+    data = df.copy()
+    if "time_min" not in data.columns and "frame" in data.columns:
+        data["time_min"] = data["frame"]
+
+    if "hyphal_length_um" in data.columns:
+        growth_col = "length_growth_um_per_min"
+        stats = {
+            "metrics_type": "hyphal",
+            "frames_processed": len(data),
+            "max_growth_rate_um_min": float(data[growth_col].max())
+            if growth_col in data.columns and not data[growth_col].isna().all()
+            else 0.0,
+            "avg_growth_rate_um_min": float(data[growth_col].mean())
+            if growth_col in data.columns and not data[growth_col].isna().all()
+            else 0.0,
+            "total_branches_end": int(data.iloc[-1]["branch_points"])
+            if not data.empty and "branch_points" in data.columns
+            else 0,
+            "max_tips": int(data["tip_count"].max())
+            if not data.empty and "tip_count" in data.columns
+            else 0,
+        }
+        chart_cols = [
+            col
+            for col in ("time_min", "hyphal_length_um", "branch_points", "tip_count")
+            if col in data.columns
+        ]
+        chart_data = data[chart_cols].fillna(0).to_dict(orient="records")
+        return {"stats": stats, "chart_data": chart_data}
+
+    if "object_count" in data.columns:
+        count_growth = "object_count_growth_per_min"
+        stats = {
+            "metrics_type": "bacterial",
+            "frames_processed": len(data),
+            "max_object_count": int(data["object_count"].max()) if not data.empty else 0,
+            "final_object_count": int(data.iloc[-1]["object_count"]) if not data.empty else 0,
+            "max_total_area_um2": float(data["total_area_um2"].max())
+            if "total_area_um2" in data.columns and not data.empty
+            else 0.0,
+            "max_object_count_growth_per_min": float(data[count_growth].max())
+            if count_growth in data.columns and not data[count_growth].isna().all()
+            else 0.0,
+            "avg_object_count_growth_per_min": float(data[count_growth].mean())
+            if count_growth in data.columns and not data[count_growth].isna().all()
+            else 0.0,
+        }
+        chart_cols = [
+            col
+            for col in ("time_min", "object_count", "total_area_um2", "mean_area_um2")
+            if col in data.columns
+        ]
+        chart_data = data[chart_cols].fillna(0).to_dict(orient="records")
+        return {"stats": stats, "chart_data": chart_data}
+
+    stats = {"metrics_type": "generic", "frames_processed": len(data)}
+    chart_data = data.fillna(0).to_dict(orient="records")
+    return {"stats": stats, "chart_data": chart_data}
 
 
 @app.get("/api/jobs/{job_id}/media/video")
@@ -1869,10 +2005,10 @@ async def get_job_metrics_csv(job_id: str):
     if "results" not in job:
         return JSONResponse({"error": "Metrics not ready"}, status_code=404)
 
-    csv_path = Path(job["results"]["metrics_csv"])
-    if not csv_path.exists():
+    csv_path = _resolve_job_metrics_csv(job)
+    if csv_path is None:
         return JSONResponse({"error": "CSV not found"}, status_code=404)
-    return FileResponse(csv_path, media_type="text/csv", filename="hyphal_metrics.csv")
+    return FileResponse(csv_path, media_type="text/csv", filename=csv_path.name)
 
 
 @app.post("/api/jobs/{job_id}/annotations/{frame_index}/reset")
@@ -1949,28 +2085,18 @@ async def get_results(job_id: str):
     if job["status"] not in ("completed", "review"):
         return JSONResponse({"error": "Job not completed yet"}, status_code=400)
 
-    metrics_path = job["results"]["metrics_csv"]
-    df = pd.read_csv(metrics_path)
+    metrics_path = _resolve_job_metrics_csv(job)
+    if metrics_path is None:
+        return JSONResponse({"error": "Metrics not available for this job"}, status_code=404)
 
-    stats = {
-        "frames_processed": len(df),
-        "max_growth_rate_um_min": df["length_growth_um_per_min"].max()
-        if not df["length_growth_um_per_min"].isna().all()
-        else 0,
-        "avg_growth_rate_um_min": df["length_growth_um_per_min"].mean()
-        if not df["length_growth_um_per_min"].isna().all()
-        else 0,
-        "total_branches_end": int(df.iloc[-1]["branch_points"]) if not df.empty else 0,
-        "max_tips": int(df["tip_count"].max()) if not df.empty else 0,
-    }
+    try:
+        df = pd.read_csv(metrics_path)
+    except Exception as exc:
+        return JSONResponse({"error": f"Failed to read metrics: {exc}"}, status_code=500)
 
-    chart_data = (
-        df[["time_min", "hyphal_length_um", "branch_points", "tip_count"]]
-        .fillna(0)
-        .to_dict(orient="records")
-    )
-
-    return {"stats": stats, "chart_data": chart_data}
+    payload = _build_results_payload(df)
+    payload["metrics_csv_url"] = f"/api/jobs/{job_id}/media/metrics_csv"
+    return payload
 
 
 @app.get("/api/media/video")

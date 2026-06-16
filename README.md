@@ -94,6 +94,9 @@ Double-click the launcher script for your operating system:
 - **macOS**: `start_mac.command`
 - **Windows**: `start_windows.bat`
 
+### Google Colab
+To run in Google Colab (single port, GPU runtime), see [`colab/README.md`](colab/README.md) and open [`colab/Fungi_Colab.ipynb`](colab/Fungi_Colab.ipynb).
+
 The script will automatically:
 1. Create a local virtual environment (`.venv`) and install FastAPI, PyTorch, Skan, and OpenCV.
 2. Clone and install the CellSAM model package.

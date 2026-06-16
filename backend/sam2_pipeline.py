@@ -659,7 +659,7 @@ def _finalize_job_outputs(
     )
     from object_classification import classify_mask_layers
     from performance_logger import PerformanceLogger
-    from segmentation_config import get_workflow_config, PRESET_BACTERIA, PRESET_FUNGAL_HYPHAE
+    from segmentation_config import get_workflow_config, PRESET_BACTERIA, PRESET_FUNGAL_HYPHAE, PRESET_MIXED
     from skeleton_branch_nodes import render_skeleton_overlay, save_skeleton_debug
 
     output_dir = Path(output_dir)
@@ -905,7 +905,7 @@ def _finalize_job_outputs(
         pd.DataFrame(fungi_tracks).to_csv(fungi_tracks_csv, index=False)
         result_paths["fungi_metrics_csv"] = str(fungi_metrics_csv)
         result_paths["fungi_tracks_csv"] = str(fungi_tracks_csv)
-        if target_type == PRESET_FUNGAL_HYPHAE:
+        if target_type in (PRESET_FUNGAL_HYPHAE, PRESET_MIXED):
             legacy_df = fungi_df
             legacy_tracks = fungi_tracks
             metrics_csv_path = results_dir / "hyphal_metrics.csv"
@@ -923,7 +923,9 @@ def _finalize_job_outputs(
         bacteria_metrics_csv = Path(output_dir) / "bacteria_metrics.csv"
         bacteria_df.to_csv(bacteria_metrics_csv, index=False)
         result_paths["bacteria_metrics_csv"] = str(bacteria_metrics_csv)
-        if target_type == PRESET_BACTERIA:
+        if target_type == PRESET_BACTERIA or (
+            target_type == PRESET_MIXED and not result_paths.get("metrics_csv")
+        ):
             result_paths["metrics_csv"] = str(bacteria_metrics_csv)
 
         from bacterial_tracking import merge_bacterial_tracking_config, run_bacterial_tracking_pipeline

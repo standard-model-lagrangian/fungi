@@ -122,16 +122,18 @@ def save_setup_mask(output_dir, mask_type: str, mask: np.ndarray, shape: Tuple[i
     if mask_type == "roi":
         save_mask_png(roi_mask_path(setup_dir), mask_bool)
         meta_key = "roi_defined"
+        defined = bool(np.any(mask_bool)) and not bool(np.all(mask_bool))
     elif mask_type == "ignore":
         save_mask_png(ignore_mask_path(setup_dir), mask_bool)
         meta_key = "ignore_defined"
+        defined = bool(np.any(mask_bool))
     else:
         raise ValueError(f"Unknown setup mask type: {mask_type}")
 
     return save_setup_metadata(
         output_dir,
         {
-            meta_key: bool(np.any(mask_bool)),
+            meta_key: defined,
             "image_width": w,
             "image_height": h,
         },

@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+python-multipart
+numpy
+opencv-python
+pillow
+pandas
+scikit-image
+tifffile
+scipy
+matplotlib
+skan

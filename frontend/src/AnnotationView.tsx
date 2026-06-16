@@ -17,10 +17,9 @@ import {
   ScanEye,
 } from 'lucide-react'
 
-const API_URL = 'http://localhost:8000/api'
-const BACKEND_ORIGIN = 'http://localhost:8000'
+import { API_URL, BACKEND_ORIGIN } from './config'
 
-export type ViewerMode = 'overlay' | 'skeleton' | 'original'
+export type ViewerMode = 'overlay' | 'skeleton' | 'original' | 'bacterial_tracking'
 export type CorrectionTool = 'add' | 'remove' | 'static' | 'erase_correction'
 
 export interface FrameAsset {
@@ -29,6 +28,13 @@ export interface FrameAsset {
   auto_overlay_url: string | null
   auto_mask_url: string | null
   skeleton_frame_url: string | null
+  bacterial_tracking_overlay_url?: string | null
+}
+
+interface BacterialTrackingInfo {
+  available: boolean
+  label_overlay_video_url?: string | null
+  label_overlay_frame_url_template?: string | null
 }
 
 interface SegmentationPreviewResult {
@@ -369,9 +375,13 @@ export default function AnnotationView({
   })
   const [segmentationPreview, setSegmentationPreview] = useState<SegmentationPreviewResult | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
+  const [bacterialTrackingInfo, setBacterialTrackingInfo] = useState<BacterialTrackingInfo | null>(null)
 
   const cacheSuffix = videoVersion > 0 ? `?v=${videoVersion}` : ''
   const videoUrl = `${BACKEND_ORIGIN}/api/jobs/${jobId}/media/video${cacheSuffix}`
+  const bacterialTrackingVideoUrl = bacterialTrackingInfo?.label_overlay_video_url
+    ? `${BACKEND_ORIGIN}${bacterialTrackingInfo.label_overlay_video_url}${cacheSuffix}`
+    : null
 
   const assetUrl = useCallback((path: string | null | undefined) => {
     if (!path) return null
@@ -405,7 +415,24 @@ export default function AnnotationView({
   const previewOverlayUrl = showSegmentationPreview
     ? previewImageUrl(segmentationPreview?.guided_overlay_url)
     : null
+  const bacterialTrackingFrameUrl = (() => {
+    const assetUrlPath = currentAsset.bacterial_tracking_overlay_url
+    if (assetUrlPath) return assetUrl(assetUrlPath)
+    if (bacterialTrackingInfo?.available) {
+      return `${BACKEND_ORIGIN}/api/jobs/${jobId}/bacterial-tracking/overlay/${frameIndex}${cacheSuffix}`
+    }
+    return null
+  })()
+  const bacterialTrackingAvailable = Boolean(
+    bacterialTrackingInfo?.available && bacterialTrackingFrameUrl,
+  )
   const showOverlayVideo = viewerMode === 'overlay' && playing && !showSegmentationPreview
+  const showBacterialTrackingVideo =
+    viewerMode === 'bacterial_tracking' && playing && Boolean(bacterialTrackingVideoUrl)
+  const showViewerVideo = showOverlayVideo || showBacterialTrackingVideo
+  const activeVideoUrl = showBacterialTrackingVideo && bacterialTrackingVideoUrl
+    ? bacterialTrackingVideoUrl
+    : videoUrl
 
   useEffect(() => {
     annotationRef.current = annotation
@@ -578,7 +605,7 @@ export default function AnnotationView({
     })
 
     setFrameIndex(idx)
-    if (playing && viewerMode === 'overlay') seekVideoToFrame(idx)
+    if (playing && (viewerMode === 'overlay' || viewerMode === 'bacterial_tracking')) seekVideoToFrame(idx)
   }, [registerUserInteraction, persistCorrections, correctionUndoStack, correctionRedoStack, playing, viewerMode, seekVideoToFrame])
 
   const goToFrame = useCallback((idx: number) => {
@@ -586,7 +613,7 @@ export default function AnnotationView({
   }, [switchToFrame])
 
   const togglePlay = () => {
-    if (viewerMode !== 'overlay') {
+    if (viewerMode !== 'overlay' && viewerMode !== 'bacterial_tracking') {
       setViewerMode('overlay')
     }
     const video = videoRef.current
@@ -765,6 +792,9 @@ export default function AnnotationView({
     void fetch(`${API_URL}/jobs/${jobId}/temporal-settings`).then(async (r) => {
       if (r.ok) setTemporalSettings(await r.json())
     })
+    void fetch(`${API_URL}/jobs/${jobId}/bacterial-tracking/info`).then(async (r) => {
+      if (r.ok) setBacterialTrackingInfo(await r.json())
+    })
   }, [jobId, loadFrameAssets, loadKeyframes, videoVersion])
 
   useEffect(() => {
@@ -822,14 +852,24 @@ export default function AnnotationView({
 
   useEffect(() => {
     const video = videoRef.current
-    if (!playing || viewerMode !== 'overlay' || !video?.paused) return
+    if (
+      !playing
+      || (viewerMode !== 'overlay' && viewerMode !== 'bacterial_tracking')
+      || !video?.paused
+    ) return
     seekVideoToFrame(frameIndex)
     void video.play()
-  }, [playing, viewerMode, videoUrl, frameIndex, seekVideoToFrame])
+  }, [playing, viewerMode, activeVideoUrl, frameIndex, seekVideoToFrame])
 
   useEffect(() => {
-    if (viewerMode !== 'overlay') registerUserInteraction()
+    if (viewerMode !== 'overlay' && viewerMode !== 'bacterial_tracking') registerUserInteraction()
   }, [viewerMode, registerUserInteraction])
+
+  useEffect(() => {
+    if (viewerMode === 'bacterial_tracking' && !bacterialTrackingAvailable) {
+      setViewerMode('overlay')
+    }
+  }, [viewerMode, bacterialTrackingAvailable])
 
   useEffect(() => {
     if (!isDrawing) return
@@ -859,7 +899,8 @@ export default function AnnotationView({
   }, [isDrawing, brushSize, correctionTool, finishDrawing, getCorrectionTargetCanvases, scheduleRedraw])
 
   const handleVideoTimeUpdate = () => {
-    if (syncingRef.current || viewerMode !== 'overlay' || !playing) return
+    if (syncingRef.current || !playing) return
+    if (viewerMode !== 'overlay' && viewerMode !== 'bacterial_tracking') return
     const video = videoRef.current
     if (!video?.duration || totalFrames <= 0) return
     const idx = Math.min(totalFrames - 1, Math.max(0, Math.round((video.currentTime / video.duration) * (totalFrames - 1))))
@@ -901,7 +942,7 @@ export default function AnnotationView({
             <button type="button" className="btn btn-secondary btn-compact" onClick={onBack}>Back</button>
             <span className="annotation-mode-pill">Review & Correct</span>
             <button type="button" className="btn btn-secondary btn-compact" onClick={togglePlay} title={playing ? 'Pause' : 'Play'}>
-              {playing && viewerMode === 'overlay' ? <Pause size={16} /> : <Play size={16} />}
+              {playing && (viewerMode === 'overlay' || viewerMode === 'bacterial_tracking') ? <Pause size={16} /> : <Play size={16} />}
             </button>
             <button type="button" className="btn btn-secondary btn-compact" disabled={frameIndex <= 0} onClick={() => goToFrame(frameIndex - 1)}><ChevronLeft size={16} /></button>
             <input
@@ -977,12 +1018,12 @@ export default function AnnotationView({
       <div className="annotation-main">
         <div className="annotation-viewer" ref={viewerRef} onMouseDown={() => registerUserInteraction()}>
           <div className="annotation-viewer-content">
-            {showOverlayVideo ? (
+            {showViewerVideo ? (
               <video
                 ref={videoRef}
-                key={videoUrl}
+                key={activeVideoUrl}
                 className="annotation-viewer-media annotation-overlay-video is-visible"
-                src={videoUrl}
+                src={activeVideoUrl}
                 muted
                 loop
                 playsInline
@@ -1001,6 +1042,17 @@ export default function AnnotationView({
                 />
                 <div className="annotation-viewer-preview-badge">Segmentation preview</div>
               </div>
+            ) : viewerMode === 'bacterial_tracking' ? (
+              bacterialTrackingFrameUrl ? (
+                <img
+                  key={`bacterial-tracking-${frameIndex}-${videoVersion}`}
+                  src={bacterialTrackingFrameUrl}
+                  alt="Bacterial tracking overlay with labels"
+                  className="annotation-viewer-media annotation-viewer-image"
+                />
+              ) : (
+                <div className="annotation-viewer-placeholder"><ImageIcon size={32} /><p>Bacterial tracking overlay not available.</p></div>
+              )
             ) : viewerMode === 'skeleton' ? (
               skeletonUrl ? (
                 <img
@@ -1031,7 +1083,21 @@ export default function AnnotationView({
                 {mode.label}
               </button>
             ))}
+            {bacterialTrackingAvailable && (
+              <button
+                type="button"
+                className={`viewer-mode-btn ${viewerMode === 'bacterial_tracking' ? 'active' : ''}`}
+                onClick={() => { registerUserInteraction(); setViewerMode('bacterial_tracking') }}
+              >
+                Bacterial Tracking Overlay
+              </button>
+            )}
           </div>
+          {viewerMode === 'bacterial_tracking' && (
+            <p className="annotation-settings-hint">
+              Bounding boxes and stable labels per tracked bacterium. Use Play to scrub the overlay video.
+            </p>
+          )}
           {viewerMode === 'skeleton' && (
             <label className="annotation-toggle-row">
               <input
