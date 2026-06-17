@@ -31,17 +31,25 @@ graph TD
 
 ```text
 ├── backend/
-│   ├── main.py              # FastAPI server endpoints (/api/upload, /api/status, /api/results, etc.)
-│   ├── sam2_pipeline.py     # Core logic: CellSAM/SAM2 wrapper, skeletonization, tracking, & kinetics
-│   └── uploads/             # (Ignored) Temporary folder for uploaded source files
+│   ├── main.py                    # FastAPI server endpoints (/api/upload, /api/status, etc.)
+│   ├── sam2_pipeline.py           # Core logic: CellSAM wrapper and pipeline orchestration
+│   ├── pre_segmentation_setup.py  # Initial ROI extraction and mask preprocessing
+│   ├── temporal_continuity.py     # Object persistence and mask alignment across frames
+│   ├── bacterial_tracking.py      # Dedicated tracking module for bacteria
+│   ├── object_classification.py   # Distinguishes distinct object classes (fungi vs. bacteria)
+│   ├── skeleton_branch_nodes.py   # Network graph skeletonization and kinetics calculation
+│   ├── annotations.py             # Rendering visual overlays and tracks
+│   └── uploads/                   # (Ignored) Temporary folder for uploaded source files
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx          # Main React UI, forms, and charting dashboard
-│   │   ├── index.css        # Glassmorphism design system variables & core styling
-│   │   └── main.tsx         # React entry point
-│   ├── package.json         # Node dependencies (Recharts, Lucide React, etc.)
-│   └── vite.config.ts       # Vite bundler configuration
-├── .gitignore               # Configured to ignore .venv, node_modules, checkpoints, uploads, and outputs
+│   │   ├── App.tsx                  # Main React UI, forms, and charting dashboard
+│   │   ├── AnnotationView.tsx       # Frame and result viewer component
+│   │   ├── PreSegmentationSetup.tsx # Interactive UI for configuring ROIs
+│   │   ├── index.css                # Glassmorphism design system & variables
+│   │   └── main.tsx                 # React entry point
+│   ├── package.json               # Node dependencies
+│   └── vite.config.ts             # Vite bundler configuration
+├── .gitignore               # Configures git ignores for virtual envs and output artifacts
 ├── start_mac.command        # Double-click script to run backend/frontend on macOS
 └── start_windows.bat        # Double-click script to run backend/frontend on Windows
 ```

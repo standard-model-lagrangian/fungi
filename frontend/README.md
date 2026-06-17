@@ -1,73 +1,28 @@
-# React + TypeScript + Vite
+# Fungi AI Pipeline - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the Vite + React + TypeScript frontend for the Fungi AI Pipeline dashboard.
 
-Currently, two official plugins are available:
+It features a modern, premium glassmorphic UI for tracking automated microscopy analysis jobs, visualizing growth kinetics with Recharts, and playing back overlay videos.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Core Components
 
-## React Compiler
+- `App.tsx`: The primary dashboard containing the upload forms, settings drawer, job status polling, and metrics charting.
+- `PreSegmentationSetup.tsx`: An interactive canvas-based UI step allowing users to define specific Regions of Interest (ROIs) before the main segmentation pipeline runs.
+- `AnnotationView.tsx`: Displays the generated frame-by-frame outputs.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Styling
 
-## Expanding the ESLint configuration
+Styling is handled using vanilla CSS (`index.css` and `App.css`) to enforce strict glassmorphic design tokens (blur, semi-transparent backgrounds, vibrant accent colors) without relying on utility frameworks like Tailwind.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Running Locally
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+In the context of the larger project, you should run the application using the `start_mac.command` or `start_windows.bat` scripts located in the root directory.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+If you are developing strictly on the frontend:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+(Ensure the FastAPI backend is running concurrently on port 8000 for full functionality).
